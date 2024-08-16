@@ -3,7 +3,8 @@ import session from "express-session";
 import crypto from "crypto";
 import passport, { Profile } from "passport";
 
-import * as passportStrategy from "passport-local";
+import { ApolloServer } from "@apollo/server";
+import { Strategy as LocalStrategy } from "passport-local";
 import {
   Strategy as GitHubStrategy,
   Profile as GithubProfile,
@@ -17,15 +18,31 @@ import {
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
 import "dotenv/config";
+import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import http from "http";
 
 console.log(process.env.hi);
 
-let redisClient = createClient();
+const redisClient = createClient();
 redisClient.connect().catch(console.error);
-let redisStore = new RedisStore({
+const redisStore = new RedisStore({
   client: redisClient,
   prefix: "myapp:",
 });
+
+const typeDefs = `#graphql
+  type Query {
+    hello: String
+  }
+`;
+
+// A map of functions which return data for the schema.
+const resolvers = {
+  Query: {
+    hello: () => "world",
+  },
+};
 
 const db = new Pool({
   host: "localhost", // or wherever the db is hosted
@@ -58,7 +75,7 @@ const verfiy = async (username: string, password: string, done: Function) => {
   return done(null, data.rows[0]);
 };
 
-const start = new local.Strategy(verfiy);
+const start = new LocalStrategy(verfiy);
 passport.use(start);
 
 passport.serializeUser((user, done) => {
@@ -86,6 +103,11 @@ app.use(
   }),
 );
 
+const loger = (req: Request, res, next) => {
+  console.log(req.body);
+  next();
+};
+app.use(loger);
 passport.use(
   new GoogleStrategy(
     {
@@ -159,9 +181,9 @@ passport.use(
 
 app.use(passport.session());
 
-//app.get("/", (req, res) => {
-//  res.send("<h2>hello, world</h2>");
-//});
+app.get("/", (req, res) => {
+  res.send("<h2>hello, world</h2>");
+});
 
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
