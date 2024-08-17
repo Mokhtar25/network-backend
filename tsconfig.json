@@ -1,14 +1,15 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "outDir": "./build/",
-    "module": "commonjs",
+    "outDir": "./dist/",
+    "moduleResolution":"node",
+    "module": "ES6",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
-      "resolveJsonModule": true,
+    "resolveJsonModule": true,
   }
 }
