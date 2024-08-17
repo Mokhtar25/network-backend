@@ -18,7 +18,7 @@ import {
   VerifyCallback,
   GoogleCallbackParameters,
 } from "passport-google-oauth20";
-import RedisStore, { RedisStore as RedisStoreInterface } from "connect-redis";
+import RedisStore from "connect-redis";
 import { createClient } from "redis";
 import "dotenv/config";
 import { expressMiddleware } from "@apollo/server/express4";
@@ -135,6 +135,56 @@ const loger = ( req: Express.Request, _: Express.Response, next: NextFunction,) 
 
 app.use(loger);
 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+//passport.use(
+//  new GoogleStrategy(
+//    {
+//      clientID: env.GoogleClientID,
+//      clientSecret: env.GithubClientSecret,
+//      callbackURL: "http://localhost:8080/login/google",
+//      passReqToCallback: true,
+//    },
+//
+//    async function (
+//      _: express.Request,
+//      __: string,
+//      ___: string,
+//      ____: GoogleCallbackParameters,
+//      profile: GoogleProfile,
+//      done: VerifyCallback,
+//    ) {
+//      try {
+//        const data = await db.query(
+//          "select * from usernames where username = $1",
+//          [profile.id],
+//        );
+//        console.log(data.rows[0], "------------- find");
+//        if (!data.rows[0]) {
+//          console.log(profile.id);
+//          console.log("create ================================");
+//          await db.query(
+//            "insert into usernames (username, password) values ($1, 'google')",
+//            [profile.id],
+//          );
+//
+//          const res = await db.query(
+//            "select * from usernames where username = $1",
+//            [profile.id],
+//          );
+//          console.log(res, "---------------------------");
+//
+//          return done(null, res.rows[0]);
+//        }
+//        return done(null, data.rows[0]);
+//      } catch (err) {
+//        console.log(err);
+//        return done(err);
+//      }
+//    },
+//  ),
+//);
+//
+
 passport.use(
   new GoogleStrategy(
     {
@@ -143,9 +193,7 @@ passport.use(
       callbackURL: "http://localhost:8080/login/google",
       passReqToCallback: true,
     },
-
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    async function (
+    function (
       _: express.Request,
       __: string,
       ___: string,
@@ -153,32 +201,73 @@ passport.use(
       profile: GoogleProfile,
       done: VerifyCallback,
     ) {
-      const data = await db.query(
-        "select * from usernames where username = $1",
-        [profile.id],
-      );
-      console.log(data.rows[0], "------------- find");
-      if (!data.rows[0]) {
-        console.log(profile.id);
-        console.log("create ================================");
-        await db.query(
-          "insert into usernames (username, password) values ($1, 'google')",
-          [profile.id],
-        );
-
-        const res = await db.query(
-          "select * from usernames where username = $1",
-          [profile.id],
-        );
-        console.log(res, "---------------------------");
-
-        return done(null, res.rows[0]);
-      }
-      return done(null, data.rows[0]);
+      // First query to check if the user exists
+      db.query("SELECT * FROM usernames WHERE username = $1", [profile.id])
+        .then((data) => {
+          // If user does not exist, insert the new user
+          if (!data.rows[0]) {
+            return db
+              .query(
+                "INSERT INTO usernames (username, password) VALUES ($1, 'google')",
+                [profile.id],
+              )
+              .then(() => {
+                // Query again to get the newly created user
+                return db.query("SELECT * FROM usernames WHERE username = $1", [
+                  profile.id,
+                ]);
+              })
+              .then((res) => {
+                // Pass the new user to the done callback
+                return done(null, res.rows[0]);
+              });
+          }
+          // If user exists, pass the existing user to the done callback
+          return done(null, data.rows[0]);
+        })
+        .catch((err) => {
+          // Handle any errors by passing them to the done callback
+          console.error(err);
+          return done(err);
+        });
     },
   ),
 );
 
+//passport.use(
+//  new GitHubStrategy(
+//    {
+//      clientID: env.GithubClientID,
+//      clientSecret: env.GithubClientSecret,
+//      callbackURL: "http://localhost:8080/login/github",
+//    },
+//    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+//    async function (
+//      _: string,
+//      __: string,
+//      profile: GithubProfile,
+//      done: passport.DoneCallback,
+//    ) {
+//      const data = await db.query(
+//        "select * from usernames where username = $1",
+//        [profile.username],
+//      );
+//      console.log(data.rows[0], "------------- find");
+//      console.log(profile);
+//      if (!data.rows[0]) {
+//        console.log("create ================================");
+//        const res = await db.query(
+//          "insert into usernames (username, password) values ($1, 'github')",
+//          [profile.username],
+//        );
+//        console.log(res.rows[0], "---------------------------");
+//        return done(null, res.rows[0]);
+//      }
+//      return done(null, data.rows[0]);
+//    },
+//  ),
+//);
+//
 passport.use(
   new GitHubStrategy(
     {
@@ -186,29 +275,49 @@ passport.use(
       clientSecret: env.GithubClientSecret,
       callbackURL: "http://localhost:8080/login/github",
     },
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    async function (
+    function (
       _: string,
       __: string,
       profile: GithubProfile,
       done: passport.DoneCallback,
     ) {
-      const data = await db.query(
-        "select * from usernames where username = $1",
-        [profile.username],
-      );
-      console.log(data.rows[0], "------------- find");
-      console.log(profile);
-      if (!data.rows[0]) {
-        console.log("create ================================");
-        const res = await db.query(
-          "insert into usernames (username, password) values ($1, 'github')",
-          [profile.username],
-        );
-        console.log(res.rows[0], "---------------------------");
-        return done(null, res.rows[0]);
-      }
-      return done(null, data.rows[0]);
+      // Query to find the user by GitHub username
+      db.query("SELECT * FROM usernames WHERE username = $1", [
+        profile.username,
+      ])
+        .then((data) => {
+          console.log(data.rows[0], "------------- find");
+          console.log(profile);
+
+          // If user does not exist, insert the new user
+          if (!data.rows[0]) {
+            console.log("create ================================");
+
+            return db
+              .query(
+                "INSERT INTO usernames (username, password) VALUES ($1, 'github')",
+                [profile.username],
+              )
+              .then(() => {
+                // Return the newly inserted user
+                return db.query("SELECT * FROM usernames WHERE username = $1", [
+                  profile.username,
+                ]);
+              })
+              .then((res) => {
+                console.log(res.rows[0], "---------------------------");
+                return done(null, res.rows[0]);
+              });
+          }
+
+          // If user exists, pass the existing user to the done callback
+          return done(null, data.rows[0]);
+        })
+        .catch((err) => {
+          // Handle any errors by passing them to the done callback
+          console.error(err);
+          return done(err);
+        });
     },
   ),
 );
