@@ -25,6 +25,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "http";
 import { loginRouter } from "./controllers/auth";
+import { typeDefs, resolvers } from "./graphql";
 
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
@@ -33,19 +34,6 @@ const redisStore = new RedisStore({
   client: redisClient,
   prefix: "myapp:",
 });
-
-const typeDefs = `#graphql
-  type Query {
-    hello: String
-  }
-`;
-
-// A map of functions which return data for the schema.
-const resolvers = {
-  Query: {
-    hello: () => "world",
-  },
-};
 
 export const db = new Pool({
   host: "localhost", // or wherever the db is hosted

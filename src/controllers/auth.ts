@@ -39,7 +39,7 @@ const verfiy: VerifyFunction = (username, password, done) => {
         done(null, data.rows[0] as User);
       }
     })
-    .catch(() => done(null, false));
+    .catch((err) => done(err, false));
 };
 
 const start = new LocalStrategy(verfiy);
@@ -171,9 +171,6 @@ loginRouter.get("/test", (_req, res) => {
   res.send("<h2>hello, world auth</h2>");
 });
 
-//loginRouter.get("/login", (_req, res) => {
-//  res.sendFile(path.join(__dirname, "index.html"));
-//});
 // prettier-ignore
 loginRouter.post( "/login", passport.authenticate("local", { failureRedirect: "/" }) as RequestHandler,
   (_req, res ) => {
@@ -194,7 +191,7 @@ loginRouter.get(
 );
 
 loginRouter.get(
-  "/login/api/google",
+  "/api/google",
   passport.authenticate("google", {
     scope: ["profile"],
   }) as RequestHandler,
@@ -210,7 +207,7 @@ loginRouter.get(
     res.redirect("/login/pro");
   },
   loginRouter.get(
-    "/login/google",
+    "/google",
     passport.authenticate("google", {
       failureRedirect: "/login",
     }) as RequestHandler,
@@ -222,6 +219,6 @@ loginRouter.get(
 );
 loginRouter.get("/pro", (req, res) => {
   console.log(req.isAuthenticated(), req.session);
-  if (req.isAuthenticated()) return res.send("auth ypi are");
-  return res.send("inot auth");
+  if (req.isAuthenticated()) return res.send("authenticated");
+  return res.send("not authenticated");
 });
