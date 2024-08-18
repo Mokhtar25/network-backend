@@ -1,5 +1,4 @@
 import express, { NextFunction } from "express";
-import bodyParser from "body-parser";
 
 import session from "express-session";
 // import crypto from "crypto";
@@ -26,8 +25,9 @@ import "dotenv/config";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "http";
-import { loginRouter } from "./controllers/auth";
+import { loginRouter, User } from "./controllers/auth";
 import { typeDefs, resolvers } from "./graphql";
+import env from "../env";
 
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
@@ -370,26 +370,30 @@ app.get("/", (_req, res) => {
 //});
 //
 const httpServer = http.createServer(app);
-const server = new ApolloServer({
+interface MyContext {
+  // You can optionally create a TS interface to set up types
+  // for your contextValue
+  user?: User;
+  isAuthenticated?: () => boolean;
+}
+
+const server = new ApolloServer<MyContext>({
   typeDefs,
   resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-  context: ({ req }: { req: express.Request }) => {
-    console.log("xasddsa------", req.user);
-    return { user: req.user };
-  },
 });
+
 server.start().then(() => {
   app.use(
     "/graphql",
-    bodyParser.json(),
+    express.json(),
     expressMiddleware(server, {
-      context: ({ req }) => ({ user: req.user }),
+      context: async ({ req }) => ({ user: req.user }),
     }),
   );
-  httpServer.listen({ port: 4000 });
+  httpServer.listen({ port: env.PORT });
 });
-console.log(`🚀 Server ready at http://localhost:8080`);
+console.log(`🚀 Server ready at http://localhost:${env.PORT}`);
 
 //void server.start().then(() => {
 //  app.use("/graphql", expressMiddleware(server));

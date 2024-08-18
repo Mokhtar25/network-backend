@@ -17,7 +17,7 @@ import "dotenv/config";
 import { db } from "../server";
 
 export const loginRouter = Router();
-interface User {
+export interface User {
   username: string;
   password: string;
   id: string;
