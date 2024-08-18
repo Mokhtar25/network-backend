@@ -17,6 +17,7 @@ import "dotenv/config";
 import { db } from "../server";
 
 export const loginRouter = Router();
+
 export interface User {
   username: string;
   password: string;
@@ -66,7 +67,7 @@ passport.use(
   new GoogleStrategy(
     {
       clientID: env.GoogleClientID,
-      clientSecret: env.GithubClientSecret,
+      clientSecret: env.GoogleClientSecret,
       callbackURL: "http://localhost:8080/login/google",
       passReqToCallback: true,
     },
@@ -116,7 +117,7 @@ passport.use(
     {
       clientID: env.GithubClientID,
       clientSecret: env.GithubClientSecret,
-      callbackURL: "http://localhost:4000/login/github/callback",
+      callbackURL: "http://localhost:4000/auth/github/callback",
     },
     function (
       _: string,
@@ -167,12 +168,14 @@ passport.use(
 
 loginRouter.use(passport.session());
 
-loginRouter.get("/test", (_req, res) => {
+const routesAuth = Router();
+
+routesAuth.get("/test", (_req, res) => {
   res.send("<h2>hello, world auth</h2>");
 });
 
 // prettier-ignore
-loginRouter.post( "/login", passport.authenticate("local", { failureRedirect: "/" }) as RequestHandler,
+routesAuth.post( "/login", passport.authenticate("local", { failureRedirect: "/" }) as RequestHandler,
   (_req, res ) => {
     res.send("hi");
     console.log("da");
@@ -187,21 +190,21 @@ const log = (
   console.log("run");
   next();
 };
-loginRouter.use(log);
+routesAuth.use(log);
 
-loginRouter.get(
+routesAuth.get(
   "/api/github",
   passport.authenticate("github", { scope: ["user:email"] }) as RequestHandler,
 );
 
-loginRouter.get(
+routesAuth.get(
   "/api/google",
   passport.authenticate("google", {
     scope: ["profile"],
   }) as RequestHandler,
 );
 
-loginRouter.get(
+routesAuth.get(
   "/github/callback",
   passport.authenticate("github", {
     failureRedirect: "/login",
@@ -210,7 +213,7 @@ loginRouter.get(
     // Successful authentication, redirect home.
     res.redirect("/login/pro");
   },
-  loginRouter.get(
+  routesAuth.get(
     "/google",
     passport.authenticate("google", {
       failureRedirect: "/login",
@@ -221,8 +224,10 @@ loginRouter.get(
     },
   ),
 );
-loginRouter.get("/pro", (req, res) => {
+routesAuth.get("/pro", (req, res) => {
   console.log(req.isAuthenticated(), req.session);
   if (req.isAuthenticated()) return res.send("authenticated");
   return res.send("not authenticated");
 });
+
+loginRouter.use("/auth", routesAuth);

@@ -53,6 +53,7 @@ const redis_1 = require("redis");
 require("dotenv/config");
 const express4_1 = require("@apollo/server/express4");
 const drainHttpServer_1 = require("@apollo/server/plugin/drainHttpServer");
+const { env } = require("process");
 const http_1 = __importDefault(require("http"));
 console.log(process.env.hi);
 const redisClient = (0, redis_1.createClient)();
@@ -252,6 +253,6 @@ const log = () => console.log("run");
 server.start().then(() => {
   app.use(log, (0, express4_1.expressMiddleware)(server));
   httpServer.listen({ port: 4000 }, () => {
-    console.log(`🚀 Server ready at http://localhost:$`);
+    console.log(`🚀 Server ready at http://localhost:${3000}`);
   });
 });
