@@ -1,5 +1,5 @@
 import passport from "passport";
-import express, { Router, RequestHandler } from "express";
+import express, { Router, RequestHandler, NextFunction } from "express";
 
 import env from "../../env";
 import { Strategy as LocalStrategy, VerifyFunction } from "passport-local";
@@ -96,11 +96,11 @@ passport.use(
               })
               .then((res) => {
                 // Pass the new user to the done callback
-                return done(null, res.rows[0]);
+                return done(null, res.rows[0] as User);
               });
           }
           // If user exists, pass the existing user to the done callback
-          return done(null, data.rows[0]);
+          return done(null, data.rows[0] as User);
         })
         .catch((err) => {
           // Handle any errors by passing them to the done callback
@@ -149,12 +149,12 @@ passport.use(
               })
               .then((res) => {
                 console.log(res.rows[0], "---------------------------");
-                return done(null, res.rows[0]);
+                return done(null, res.rows[0] as User);
               });
           }
 
           // If user exists, pass the existing user to the done callback
-          return done(null, data.rows[0]);
+          return done(null, data.rows[0] as User);
         })
         .catch((err) => {
           // Handle any errors by passing them to the done callback
@@ -179,7 +179,11 @@ loginRouter.post( "/login", passport.authenticate("local", { failureRedirect: "/
   },
 );
 
-const log = (req, res, next) => {
+const log = (
+  _req: express.Request,
+  _res: express.Response,
+  next: NextFunction,
+) => {
   console.log("run");
   next();
 };

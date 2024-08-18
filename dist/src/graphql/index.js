@@ -8,14 +8,13 @@ export const typeDefs = `#graphql
       username : String!
   }
 `;
-
 // A map of functions which return data for the schema.
 export const resolvers = {
-  Query: {
-    hello: () => "world",
-    me: (root, args, context) => {
-      console.log(context, args, root, "--------");
-      return context.user;
+    Query: {
+        hello: () => "world",
+        me: (root, args, context) => {
+            console.log(context, args, root, "--------");
+            return context.user;
+        },
     },
-  },
 };

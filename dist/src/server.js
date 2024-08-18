@@ -1,10 +1,7 @@
-import express, { NextFunction } from "express";
-import bodyParser from "body-parser";
-
+import express from "express";
 import session from "express-session";
 // import crypto from "crypto";
 //import passport from "passport";
-
 //import env from "../env";
 import { ApolloServer } from "@apollo/server";
 //import { Strategy as LocalStrategy, VerifyFunction } from "passport-local";
@@ -28,29 +25,23 @@ import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHt
 import http from "http";
 import { loginRouter } from "./controllers/auth";
 import { typeDefs, resolvers } from "./graphql";
-
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
-
 const redisStore = new RedisStore({
-  client: redisClient,
-  prefix: "myapp:",
+    client: redisClient,
+    prefix: "myapp:",
 });
-
 export const db = new Pool({
-  host: "localhost", // or wherever the db is hosted
-  user: "moktarali",
-  database: "users_passport",
-  password: "200106",
-  port: 5432, // The default port
+    host: "localhost", // or wherever the db is hosted
+    user: "moktarali",
+    database: "users_passport",
+    password: "200106",
+    port: 5432, // The default port
 });
-
 const app = express();
 app.use(express.static(path.join(__dirname, "index")));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 //
 //interface User {
 //  username: string;
@@ -96,19 +87,16 @@ app.use(express.urlencoded({ extended: true }));
 //  //console.log(user.rows[0], "----------user");
 //  done(null, userI);
 //});
-app.use(
-  session({
+app.use(session({
     secret: "asdkosadakods;",
     resave: false,
     saveUninitialized: true,
     store: redisStore,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24,
+        maxAge: 1000 * 60 * 60 * 24,
     },
-  }),
-);
+}));
 app.use(loginRouter);
-
 //passport.deserializeUser((userId, done) => {
 //  db.query("select * from usernames where username = $1", [userId])
 //    .then((result) => {
@@ -121,13 +109,11 @@ app.use(loginRouter);
 //});
 //
 // prettier-ignore
-const loger = ( req: Express.Request, _: Express.Response, next: NextFunction,) => {
-  console.log(req.cookies,  "---req");
-  next();
+const loger = (req, _, next) => {
+    console.log(req.user, req.isAuthenticated(), "---req");
+    next();
 };
-
 app.use(loger);
-
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 //passport.use(
 //  new GoogleStrategy(
@@ -177,7 +163,6 @@ app.use(loger);
 //  ),
 //);
 //
-
 //passport.use(
 //  new GoogleStrategy(
 //    {
@@ -318,7 +303,7 @@ app.use(loger);
 //app.use(passport.session());
 //
 app.get("/", (_req, res) => {
-  res.send("<h2>hello, world</h2>");
+    res.send("<h2>hello, world</h2>");
 });
 //
 //app.get("/login", (_req, res) => {
@@ -345,7 +330,6 @@ app.get("/", (_req, res) => {
 //     res.redirect("/");
 //   },
 // );
-
 //app.get(
 //  "/login/api/google",
 //  passport.authenticate("google", {
@@ -371,29 +355,17 @@ app.get("/", (_req, res) => {
 //
 const httpServer = http.createServer(app);
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-  context: ({ req }: { req: express.Request }) => {
-    console.log("xasddsa------", req.user);
-    return { user: req.user };
-  },
+    typeDefs,
+    resolvers,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    context: ({ req }) => {
+        console.log("xasddsa------", req.user);
+        return { user: req.user };
+    },
 });
-server.start().then(() => {
-  app.use(
-    "/graphql",
-    bodyParser.json(),
-    expressMiddleware(server, {
-      context: ({ req }) => ({ user: req.user }),
-    }),
-  );
-  httpServer.listen({ port: 4000 });
+void server.start().then(() => {
+    app.use("/graphql", expressMiddleware(server));
+    httpServer.listen({ port: 4000 }, () => {
+        console.log(`🚀 Server ready at http://localhost:4000`);
+    });
 });
-console.log(`🚀 Server ready at http://localhost:8080`);
-
-//void server.start().then(() => {
-//  app.use("/graphql", expressMiddleware(server));
-//  httpServer.listen({ port: 4000 }, () => {
-//    console.log(`🚀 Server ready at http://localhost:4000`);
-//  });
-//});
