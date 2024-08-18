@@ -15,6 +15,9 @@ import {
 } from "passport-google-oauth20";
 import "dotenv/config";
 import { db } from "../server";
+import dbs from "../database";
+import { eq } from "drizzle-orm";
+import { users } from "../database/schema";
 
 export const loginRouter = Router();
 
@@ -119,12 +122,39 @@ passport.use(
       clientSecret: env.GithubClientSecret,
       callbackURL: "http://localhost:4000/auth/github/callback",
     },
-    function (
+    // eslint-disable-next-line
+    async function (
       _: string,
       __: string,
       profile: GithubProfile,
       done: passport.DoneCallback,
     ) {
+      const data = await dbs
+        .select()
+        .from(users)
+        .where(eq(users.username, profile.username));
+
+      if (data.length === 0) {
+        console.log(profile);
+        const userList = await dbs
+          .insert(users)
+          .values({
+            name: profile.name ?? "adam",
+            username: profile.username,
+            email: profile.emails && profile.emails[0],
+            role: "user",
+          })
+          .returning();
+
+        const user = userList[0];
+        console.log(userList);
+
+        return done(null, user);
+      }
+
+      console.log(data);
+      return done(null, data[0]);
+
       // Query to find the user by GitHub username
       db.query("SELECT * FROM usernames WHERE username = $1", [
         profile.username,
