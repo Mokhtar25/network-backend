@@ -13,11 +13,17 @@ import { sql } from "drizzle-orm";
 export const createTable = pgTableCreator((name) => `test_network:${name}`);
 
 export const users = createTable("users_test", {
-  id: serial("id").primaryKey().notNull(),
-  name: text("name").notNull(),
+  id: serial("id").primaryKey().notNull().unique(),
+  name: text("name"),
+  password: text("password"),
   username: varchar("username", { length: 256 }).unique().notNull(),
   email: text("email"),
-  role: text("role", { enum: ["admin", "user"] }).notNull(),
+  provider: text("provider", { enum: ["github", "google", "local"] }).default(
+    "local",
+  ),
+  role: text("role", { enum: ["admin", "user"] })
+    .notNull()
+    .default("user"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

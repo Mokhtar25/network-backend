@@ -11,7 +11,7 @@ import { ApolloServer } from "@apollo/server";
 //  Strategy as GitHubStrategy,
 //  Profile as GithubProfile,
 //} from "passport-github2";
-import { Pool } from "pg";
+//import { Pool } from "pg";
 import path from "path";
 //import {
 //  Strategy as GoogleStrategy,
@@ -37,14 +37,14 @@ const redisStore = new RedisStore({
   prefix: "myapp:",
 });
 
-export const db = new Pool({
-  host: "localhost", // or wherever the db is hosted
-  user: "moktarali",
-  database: "users_passport",
-  password: "200106",
-  port: 5432, // The default port
-});
-
+//export const db = new Pool({
+//  host: "localhost", // or wherever the db is hosted
+//  user: "moktarali",
+//  database: "users_passport",
+//  password: "200106",
+//  port: 5432, // The default port
+//});
+//
 const app = express();
 app.use(express.static(path.join(__dirname, "index")));
 
@@ -62,8 +62,8 @@ app.use(
     },
   }),
 );
-app.use(loginRouter);
 
+app.use(loginRouter);
 // prettier-ignore
 const loger = ( req: Express.Request, _: Express.Response, next: NextFunction,) => {
   console.log(req.user,  "---req");

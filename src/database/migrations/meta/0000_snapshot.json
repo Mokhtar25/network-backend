@@ -1,5 +1,5 @@
 {
-  "id": "f25e418e-57ed-4f1d-ab32-04f9bfbda079",
+  "id": "753237e0-e052-4820-bf37-27aef252bb59",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -18,7 +18,13 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "username": {
           "name": "username",
@@ -32,11 +38,19 @@
           "primaryKey": false,
           "notNull": false
         },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'local'"
+        },
         "role": {
           "name": "role",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'user'"
         },
         "created_at": {
           "name": "created_at",

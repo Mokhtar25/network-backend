@@ -14,7 +14,7 @@ import {
   GoogleCallbackParameters,
 } from "passport-google-oauth20";
 import "dotenv/config";
-import { db } from "../server";
+//import { db } from "../server";
 import dbs from "../database";
 import { eq } from "drizzle-orm";
 import { users } from "../database/schema";
@@ -52,10 +52,16 @@ passport.use(start);
 passport.serializeUser((user, done) => {
   console.log("run ser", user);
 
-  done(null, (user as User).username);
+  done(null, (user as User).id);
 });
 
-passport.deserializeUser((userId, done) => {
+passport.deserializeUser(async (userId, done) => {
+  const da = await dbs.select().from(users).where(eq(users.id, userId));
+
+  console.log(da[0], " irs herer");
+
+  if (!da[0]) return done(null, false);
+  return done(null, da[0]);
   db.query("select * from usernames where username = $1", [userId])
     .then((result) => {
       if (!result.rows[0]) return done(null, false);
@@ -71,7 +77,7 @@ passport.use(
     {
       clientID: env.GoogleClientID,
       clientSecret: env.GoogleClientSecret,
-      callbackURL: "http://localhost:8080/login/google",
+      callbackURL: "http://localhost:4000/auth/google",
       passReqToCallback: true,
     },
     function (
@@ -82,6 +88,11 @@ passport.use(
       profile: GoogleProfile,
       done: VerifyCallback,
     ) {
+      findOrMake(profile)
+        .then((data) => done(null, data))
+        .catch((err) => done(err));
+
+      return;
       // First query to check if the user exists
       db.query("SELECT * FROM usernames WHERE username = $1", [profile.id])
         .then((data) => {
@@ -115,6 +126,18 @@ passport.use(
   ),
 );
 
+async function findOrMake(profile) {
+  const data = await dbs.select().from(users).where(eq(users.id, profile.id));
+
+  if (data.length === 0) {
+    console.log(profile);
+    const userList = await dbs.insert(users).values(profile).returning();
+
+    return userList[0];
+  }
+  return data[0];
+}
+
 passport.use(
   new GitHubStrategy(
     {
@@ -129,6 +152,10 @@ passport.use(
       profile: GithubProfile,
       done: passport.DoneCallback,
     ) {
+      const datas = await findOrMake(profile);
+      console.log(datas);
+      done(null, datas);
+      return;
       const data = await dbs
         .select()
         .from(users)
@@ -241,21 +268,21 @@ routesAuth.get(
   }) as RequestHandler,
   function (_req, res) {
     // Successful authentication, redirect home.
-    res.redirect("/login/pro");
+    res.redirect("/auth/pro");
   },
   routesAuth.get(
     "/google",
     passport.authenticate("google", {
-      failureRedirect: "/login",
+      failureRedirect: "/auth/test",
     }) as RequestHandler,
     function (_req, res) {
       // Successful authentication, redirect home.
-      res.redirect("/");
+      res.redirect("/auth/pro");
     },
   ),
 );
 routesAuth.get("/pro", (req, res) => {
-  console.log(req.isAuthenticated(), req.session);
+  console.log(req.isAuthenticated(), req.session.cookie);
   if (req.isAuthenticated()) return res.send("authenticated");
   return res.send("not authenticated");
 });
