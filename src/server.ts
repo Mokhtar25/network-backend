@@ -122,7 +122,7 @@ app.use(loginRouter);
 //
 // prettier-ignore
 const loger = ( req: Express.Request, _: Express.Response, next: NextFunction,) => {
-  console.log(req.cookies,  "---req");
+  console.log(req.user,  "---req");
   next();
 };
 
@@ -370,7 +370,7 @@ app.get("/", (_req, res) => {
 //});
 //
 const httpServer = http.createServer(app);
-interface MyContext {
+export interface MyContext {
   // You can optionally create a TS interface to set up types
   // for your contextValue
   user?: User;
@@ -383,21 +383,17 @@ const server = new ApolloServer<MyContext>({
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
-server.start().then(() => {
-  app.use(
-    "/graphql",
-    express.json(),
-    expressMiddleware(server, {
-      context: async ({ req }) => ({ user: req.user }),
+await server.start();
+app.use(
+  "/graphql",
+  express.json(),
+  expressMiddleware(server, {
+    // eslint-disable-next-line
+    context: async ({ req }) => ({
+      user: req.user,
+      isAuthenticated: () => req.isAuthenticated(),
     }),
-  );
-  httpServer.listen({ port: env.PORT });
-});
+  }),
+);
+httpServer.listen({ port: env.PORT });
 console.log(`🚀 Server ready at http://localhost:${env.PORT}`);
-
-//void server.start().then(() => {
-//  app.use("/graphql", expressMiddleware(server));
-//  httpServer.listen({ port: 4000 }, () => {
-//    console.log(`🚀 Server ready at http://localhost:4000`);
-//  });
-//});

@@ -25,6 +25,7 @@ import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHt
 import http from "http";
 import { loginRouter } from "./controllers/auth";
 import { typeDefs, resolvers } from "./graphql";
+import env from "../env";
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
 const redisStore = new RedisStore({
@@ -110,7 +111,7 @@ app.use(loginRouter);
 //
 // prettier-ignore
 const loger = (req, _, next) => {
-    console.log(req.user, req.isAuthenticated(), "---req");
+    console.log(req.user, "---req");
     next();
 };
 app.use(loger);
@@ -358,14 +359,14 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-    context: ({ req }) => {
-        console.log("xasddsa------", req.user);
-        return { user: req.user };
-    },
 });
-void server.start().then(() => {
-    app.use("/graphql", expressMiddleware(server));
-    httpServer.listen({ port: 4000 }, () => {
-        console.log(`🚀 Server ready at http://localhost:4000`);
-    });
-});
+await server.start();
+app.use("/graphql", express.json(), expressMiddleware(server, {
+    // eslint-disable-next-line
+    context: async ({ req }) => ({
+        user: req.user,
+        isAuthenticated: () => req.isAuthenticated(),
+    }),
+}));
+httpServer.listen({ port: env.PORT });
+console.log(`🚀 Server ready at http://localhost:${env.PORT}`);

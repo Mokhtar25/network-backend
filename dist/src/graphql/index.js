@@ -1,3 +1,4 @@
+import { GraphQLError } from "graphql";
 export const typeDefs = `#graphql
   type Query {
     hello: String
@@ -12,8 +13,10 @@ export const typeDefs = `#graphql
 export const resolvers = {
     Query: {
         hello: () => "world",
-        me: (root, args, context) => {
-            console.log(context, args, root, "--------");
+        me: (_, __, context) => {
+            if (!context.isAuthenticated)
+                throw new GraphQLError("no auth function");
+            console.log(context.isAuthenticated(), __, "--------");
             return context.user;
         },
     },

@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import passport from "passport";
 import { Router } from "express";
 import env from "../../env";
@@ -17,10 +8,10 @@ import "dotenv/config";
 import { db } from "../server";
 export const loginRouter = Router();
 const verfiy = (username, password, done) => {
-    const dataFunc = () => __awaiter(void 0, void 0, void 0, function* () {
-        const data = yield db.query("select * from usernames where username = $1 and password = $2", [username, password]);
+    const dataFunc = async () => {
+        const data = await db.query("select * from usernames where username = $1 and password = $2", [username, password]);
         return data;
-    });
+    };
     dataFunc()
         .then((data) => {
         if (!data.rows[0])
