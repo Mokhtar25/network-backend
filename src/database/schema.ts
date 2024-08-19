@@ -14,10 +14,14 @@ export const createTable = pgTableCreator((name) => `test_network:${name}`);
 
 export const users = createTable("users_test", {
   id: serial("id").primaryKey().notNull().unique(),
+  providerId: varchar("providerId", { length: 256 }),
   name: text("name"),
   password: text("password"),
-  username: varchar("username", { length: 256 }).unique().notNull(),
+  username: varchar("username", { length: 256 })
+    .unique()
+    .default(sql<string>`LOWER($1)`),
   email: text("email"),
+  description: text("description"),
   provider: text("provider", { enum: ["github", "google", "local"] }).default(
     "local",
   ),
@@ -47,12 +51,12 @@ export const insertUserSchema = createInsertSchema(users);
 
 // Usage
 
-const user = insertUserSchema.parse({
+const user = insertUserSchema.safeParse({
   name: "John Doe",
   email: "johndoe@test.com",
   role: "admin",
-  username: "dsaas",
 });
 
+//console.log(user);
 //// Zod schema type is also inferred from the table schema, so you have full type safety
 //const requestSchema = insertUserSchema.pick({ name: true, email: true });

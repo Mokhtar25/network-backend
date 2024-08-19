@@ -26,7 +26,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "http";
 import { loginRouter, User } from "./controllers/auth";
-import { typeDefs, resolvers } from "./graphql";
+import { typeDefs, resolvers, schema } from "./graphql";
 import env from "../env";
 
 const redisClient = createClient();
@@ -66,7 +66,7 @@ app.use(
 app.use(loginRouter);
 // prettier-ignore
 const loger = ( req: Express.Request, _: Express.Response, next: NextFunction,) => {
-  console.log(req.user,  "---req");
+  //console.log(req.user,  "---req");
   next();
 };
 
@@ -82,8 +82,7 @@ export interface MyContext {
 }
 
 const server = new ApolloServer<MyContext>({
-  typeDefs,
-  resolvers,
+  schema: schema,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 

@@ -16,8 +16,10 @@ import {
 import "dotenv/config";
 //import { db } from "../server";
 import dbs from "../database";
-import { eq } from "drizzle-orm";
-import { users } from "../database/schema";
+import { and, eq } from "drizzle-orm";
+import { insertUserSchema, users } from "../database/schema";
+import { z } from "zod";
+import { error } from "console";
 
 export const loginRouter = Router();
 
@@ -58,7 +60,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (userId, done) => {
   const da = await dbs.select().from(users).where(eq(users.id, userId));
 
-  console.log(da[0], " irs herer");
+  //console.log(da[0], " irs herer");
 
   if (!da[0]) return done(null, false);
   return done(null, da[0]);
@@ -126,12 +128,36 @@ passport.use(
   ),
 );
 
-async function findOrMake(profile) {
-  const data = await dbs.select().from(users).where(eq(users.id, profile.id));
+const provides = ["google", "github"];
+async function findOrMake(profile: passport.Profile) {
+  console.log(profile);
+  if (!provides.includes(profile.provider)) {
+    throw new Error("unkowun provider");
+  }
+
+  const data = await dbs
+    .select()
+    .from(users)
+    .where(
+      and(
+        eq(users.providerId, profile.id),
+        eq(users.provider, profile.provider),
+      ),
+    );
 
   if (data.length === 0) {
     console.log(profile);
-    const userList = await dbs.insert(users).values(profile).returning();
+    profile.name = profile.displayName;
+    const account = insertUserSchema.safeParse({ ...profile, id: undefined });
+    const userList = await dbs
+      .insert(users)
+      .values({
+        ...account.data,
+        providerId: profile.id,
+        name: profile.displayName,
+        id: undefined,
+      })
+      .returning();
 
     return userList[0];
   }
@@ -152,7 +178,7 @@ passport.use(
       profile: GithubProfile,
       done: passport.DoneCallback,
     ) {
-      const datas = await findOrMake(profile);
+      const datas = await findOrMake({ ...profile, name: profile.displayName });
       console.log(datas);
       done(null, datas);
       return;
