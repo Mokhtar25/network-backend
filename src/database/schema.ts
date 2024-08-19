@@ -6,6 +6,8 @@ import {
   text,
   timestamp,
   pgTableCreator,
+  uuid,
+  integer,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
@@ -59,4 +61,43 @@ const user = insertUserSchema.safeParse({
 
 //console.log(user);
 //// Zod schema type is also inferred from the table schema, so you have full type safety
+
 //const requestSchema = insertUserSchema.pick({ name: true, email: true });
+
+const posts = createTable("posts", {
+  id: uuid("id").primaryKey().unique().defaultRandom(),
+  userId: serial("userId")
+    .references(() => users.id)
+    .notNull(),
+  textContent: text("textContent").notNull(),
+  pictureUrls: varchar("username", { length: 256 }).array().unique(),
+  likesNumber: integer("likesNumber").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
+});
+
+const comments = createTable("comments", {
+  id: uuid("id").primaryKey().unique().defaultRandom(),
+  postId: uuid("postId")
+    .references(() => posts.id)
+    .notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
+});
+
+//const postsPicture = createTable("postsPicture", {
+//  id: uuid("id").primaryKey().unique().defaultRandom(),
+//  postId: uuid("postId")
+//    .references(() => posts.id)
+//    .notNull(),
+//  url: varchar("url", { length: 256 }).notNull(),
+//});

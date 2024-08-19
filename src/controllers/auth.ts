@@ -29,15 +29,16 @@ export const loginRouter = Router();
 //}
 
 const verfiy: VerifyFunction = (username, password, done) => {
+  console.log("run ", username, password);
   dbs
     .select()
     .from(users)
     .where(and(eq(users.username, username), eq(users.password, password)))
     .then((res) => {
-      if (!res) {
+      if (!res[0]) {
         done(null, false);
       } else {
-        done(null, res);
+        done(null, res[0]);
       }
     })
     .catch((err) => done(err));

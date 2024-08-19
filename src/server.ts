@@ -66,7 +66,7 @@ app.use(
 app.use(loginRouter);
 // prettier-ignore
 const loger = ( req: Express.Request, _: Express.Response, next: NextFunction,) => {
-  //console.log(req.user,  "---req");
+  console.log(req.user,  "---req");
   next();
 };
 
