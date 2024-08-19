@@ -15,6 +15,20 @@
       "when": 1724061915968,
       "tag": "0001_aberrant_shinobi_shaw",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1724087945063,
+      "tag": "0002_eminent_sister_grimm",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1724088316815,
+      "tag": "0003_goofy_viper",
+      "breakpoints": true
     }
   ]
 }

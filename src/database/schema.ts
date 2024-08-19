@@ -17,9 +17,7 @@ export const users = createTable("users_test", {
   providerId: varchar("providerId", { length: 256 }),
   name: text("name"),
   password: text("password"),
-  username: varchar("username", { length: 256 })
-    .unique()
-    .default(sql<string>`LOWER($1)`),
+  username: varchar("username", { length: 256 }).unique(),
   email: text("email"),
   description: text("description"),
   provider: text("provider", { enum: ["github", "google", "local"] }).default(
@@ -35,6 +33,8 @@ export const users = createTable("users_test", {
     () => new Date(),
   ),
 });
+
+export type User = typeof users.$inferSelect; // return type when queried
 
 // Schema for inserting a user - can be used to validate API requests
 export const insertUserSchema = createInsertSchema(users);

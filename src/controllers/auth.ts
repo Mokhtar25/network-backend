@@ -17,44 +17,37 @@ import "dotenv/config";
 //import { db } from "../server";
 import dbs from "../database";
 import { and, eq } from "drizzle-orm";
-import { insertUserSchema, users } from "../database/schema";
-import { z } from "zod";
-import { error } from "console";
+import { insertUserSchema, User, users } from "../database/schema";
+import { infer, z } from "zod";
 
 export const loginRouter = Router();
 
-export interface User {
-  username: string;
-  password: string;
-  id: string;
-}
+//export interface User {
+//  username: string;
+//  password: string;
+//  id: string;
+//}
 
 const verfiy: VerifyFunction = (username, password, done) => {
-  const dataFunc = async () => {
-    const data = await db.query(
-      "select * from usernames where username = $1 and password = $2",
-      [username, password],
-    );
-
-    return data;
-  };
-  dataFunc()
-    .then((data) => {
-      if (!data.rows[0]) done(null, false);
-      else {
-        done(null, data.rows[0] as User);
+  dbs
+    .select()
+    .from(users)
+    .where(and(eq(users.username, username), eq(users.password, password)))
+    .then((res) => {
+      if (!res) {
+        done(null, false);
+      } else {
+        done(null, res);
       }
     })
-    .catch((err) => done(err, false));
+    .catch((err) => done(err));
 };
 
 const start = new LocalStrategy(verfiy);
 passport.use(start);
 
 passport.serializeUser((user, done) => {
-  console.log("run ser", user);
-
-  done(null, (user as User).id);
+  done(null, user.id);
 });
 
 passport.deserializeUser(async (userId, done) => {
