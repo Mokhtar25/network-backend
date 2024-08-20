@@ -5,85 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1724016446509,
-      "tag": "0000_burly_doctor_faustus",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1724061915968,
-      "tag": "0001_aberrant_shinobi_shaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1724087945063,
-      "tag": "0002_eminent_sister_grimm",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1724088316815,
-      "tag": "0003_goofy_viper",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1724150077910,
-      "tag": "0004_nasty_puppet_master",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1724150470299,
-      "tag": "0005_sleepy_white_queen",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1724150518699,
-      "tag": "0006_lean_outlaw_kid",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1724150871025,
-      "tag": "0007_stale_mister_sinister",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1724158818618,
-      "tag": "0008_thin_blindfold",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1724158923160,
-      "tag": "0009_tiresome_captain_britain",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1724159066080,
-      "tag": "0010_glossy_loa",
-      "breakpoints": true
-    },
-    {
-      "idx": 11,
-      "version": "7",
-      "when": 1724159390175,
-      "tag": "0011_colorful_moira_mactaggert",
+      "when": 1724160694982,
+      "tag": "0000_brainy_retro_girl",
       "breakpoints": true
     }
   ]

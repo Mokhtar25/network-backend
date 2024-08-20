@@ -20,6 +20,7 @@ import { and, eq } from "drizzle-orm";
 import {
   insertUserSchema,
   insertUserSchemaOauth,
+  posts,
   selectUserSchema,
   User,
   users,
