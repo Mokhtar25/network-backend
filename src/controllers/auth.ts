@@ -17,7 +17,13 @@ import "dotenv/config";
 //import { db } from "../server";
 import dbs from "../database";
 import { and, eq } from "drizzle-orm";
-import { insertUserSchema, User, users } from "../database/schema";
+import {
+  insertUserSchema,
+  insertUserSchemaOauth,
+  selectUserSchema,
+  User,
+  users,
+} from "../database/schema";
 import { infer, z } from "zod";
 
 export const loginRouter = Router();
@@ -122,35 +128,32 @@ passport.use(
   ),
 );
 
-const provides = ["google", "github"];
+const profileValid = z
+  .object({
+    id: z.string(),
+    provider: z.enum(["github", "google"]),
+    displayName: z.string().optional().nullish(),
+    username: z.string().optional(),
+    emails: z.array(z.string()).optional(),
+  })
+  .passthrough();
 async function findOrMake(profile: passport.Profile) {
-  console.log(profile);
-  if (!provides.includes(profile.provider)) {
-    throw new Error("unkowun provider");
-  }
+  const userProfile = profileValid.parse(profile);
 
   const data = await dbs
     .select()
     .from(users)
     .where(
       and(
-        eq(users.providerId, profile.id),
-        eq(users.provider, profile.provider),
+        eq(users.providerId, userProfile.id),
+        eq(users.provider, userProfile.provider),
       ),
     );
 
   if (data.length === 0) {
-    console.log(profile);
-    profile.name = profile.displayName;
-    const account = insertUserSchema.safeParse({ ...profile, id: undefined });
     const userList = await dbs
       .insert(users)
-      .values({
-        ...account.data,
-        providerId: profile.id,
-        name: profile.displayName,
-        id: undefined,
-      })
+      .values({ ...userProfile, providerId: userProfile.id, id: undefined })
       .returning();
 
     return userList[0];
@@ -172,7 +175,9 @@ passport.use(
       profile: GithubProfile,
       done: passport.DoneCallback,
     ) {
+      console.log(profile);
       const datas = await findOrMake({ ...profile, name: profile.displayName });
+
       console.log(datas);
       done(null, datas);
       return;
