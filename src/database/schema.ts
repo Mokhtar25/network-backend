@@ -52,7 +52,8 @@ export const insertUserSchemaOauth = createInsertSchema(users, {
 //// Schema for selecting a user - can be used to validate API responses
 export const selectUserSchema = createSelectSchema(users);
 
-//// Refining the fields - useful if you want to change the fields before they become nullable/optional in the final schema
+//// Refining the fields - useful if you want to change the fields before they become nullable/optional in the final schem
+
 //const insertUserSchema = createInsertSchema(users, {
 //  id: (schema) => schema.id.positive(),
 //  email: (schema) => schema.email.email(),

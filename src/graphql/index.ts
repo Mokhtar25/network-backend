@@ -7,18 +7,19 @@ import {
   GraphQLString,
 } from "graphql";
 import { MyContext } from "../server";
-import { buildSchema } from "drizzle-graphql";
+import { buildSchema, extractFilters } from "drizzle-graphql";
 import db from "../database";
 import { users } from "../database/schema";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { QueryBuilder } from "drizzle-orm/pg-core";
 
-export const { schema, entities } = buildSchema(db);
+export const { entities } = buildSchema(db);
 
+console.log(typeof extractFilters);
 //console.log(entities.inputs.UsersFilters, "foi ----------------------------");
 // build half of this using already method as readONly and mutation and users manually
-export const Aschema = new GraphQLSchema({
+export const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: "query",
     fields: {
@@ -38,15 +39,23 @@ export const Aschema = new GraphQLSchema({
         resolve: async (root, args, context: MyContext, info) => {
           console.log(args, context.user, "0000000000000:-----");
           console.log(args.where.username.eq);
-          const user = await db.select().from(user);
+          const user = await db
+            .select()
+            .from(users)
+            .where(extractFilters(users, entities.queries.users, args.where));
 
+          console.log(
+            extractFilters(users, entities.queries.users, args.where),
+            "here-----------",
+          );
+          console.log(user);
           return user;
         },
       },
     },
   }),
 });
-//
+
 //export const typeDefs = `#graphql
 //  type Query {
 //    hello: String
