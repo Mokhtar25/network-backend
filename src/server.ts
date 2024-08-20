@@ -21,6 +21,7 @@ import path from "path";
 //} from "passport-google-oauth20";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
+import bodyParser from "body-parser";
 import "dotenv/config";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -63,14 +64,17 @@ app.use(
   }),
 );
 
-app.use(loginRouter);
-// prettier-ignore
-const loger = ( req: Express.Request, _: Express.Response, next: NextFunction,) => {
-  console.log(req.user,  "---req");
+const loger = (
+  req: Express.Request,
+  _: Express.Response,
+  next: NextFunction,
+) => {
+  console.log(req.body.username, "---req");
   next();
 };
-
 app.use(loger);
+app.use(loginRouter);
+// prettier-ignore
 
 app.get("/", (_req, res) => {
   res.send("<h2>hello, world</h2>");

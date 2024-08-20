@@ -10,6 +10,6 @@ export const pool = new Pool({
   port: 5432, // The default port
 });
 
-const dbs = drizzle(pool, { schema, logger: true });
+const db = drizzle(pool, { schema, logger: true });
 
-export default dbs;
+export default db;

@@ -15,7 +15,7 @@ import {
 } from "passport-google-oauth20";
 import "dotenv/config";
 //import { db } from "../server";
-import dbs from "../database";
+import db from "../database";
 import { and, eq } from "drizzle-orm";
 import {
   insertUserSchema,
@@ -26,26 +26,27 @@ import {
   users,
 } from "../database/schema";
 import { infer, z } from "zod";
+import { checkPassword, makeHash } from "../lib/auth/authUtils";
 
 export const loginRouter = Router();
 
-//export interface User {
-//  username: string;
-//  password: string;
-//  id: string;
-//}
-
 const verfiy: VerifyFunction = (username, password, done) => {
-  console.log("run ", username, password);
-  dbs
-    .select()
+  db.select()
     .from(users)
-    .where(and(eq(users.username, username), eq(users.password, password)))
+    .where(and(eq(users.username, username)))
     .then((res) => {
-      if (!res[0]) {
-        done(null, false);
+      if (!res[0] || !res[0].password) {
+        return done(null, false);
       } else {
-        done(null, res[0]);
+        checkPassword(password, res[0].password)
+          .then((correct) => {
+            if (correct) {
+              return done(null, res[0]);
+            } else {
+              done(null, false);
+            }
+          })
+          .catch((err) => done(err));
       }
     })
     .catch((err) => done(err));
@@ -59,8 +60,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((userId: number, done) => {
-  dbs
-    .select()
+  db.select()
     .from(users)
     .where(eq(users.id, userId))
     .then((res) => {
@@ -105,7 +105,7 @@ const profileValid = z
 async function findOrMake(profile: passport.Profile) {
   const userProfile = profileValid.parse(profile);
 
-  const data = await dbs
+  const data = await db
     .select()
     .from(users)
     .where(
@@ -116,7 +116,7 @@ async function findOrMake(profile: passport.Profile) {
     );
 
   if (data.length === 0) {
-    const userList = await dbs
+    const userList = await db
       .insert(users)
       .values({ ...userProfile, providerId: userProfile.id, id: undefined })
       .returning();
@@ -159,7 +159,7 @@ routesAuth.get("/test", (_req, res) => {
 // prettier-ignore
 routesAuth.post( "/login", passport.authenticate("local", { failureRedirect: "/" }) as RequestHandler,
   (_req, res ) => {
-    res.send("hi");
+    res.json(_req.user);
     console.log("da");
   },
 );
@@ -178,6 +178,35 @@ routesAuth.get(
   "/api/github",
   passport.authenticate("github", { scope: ["user:email"] }) as RequestHandler,
 );
+
+routesAuth.post("/signUp", (async (req, res, next) => {
+  try {
+    const type = z.object({
+      username: z.string().min(1),
+      password: z.string().min(1),
+    });
+    const userSchema = type.parse(req.body);
+
+    if (!userSchema.password || !userSchema.username) {
+      res.send("Invalid data").status(400);
+    }
+
+    const hash = await makeHash(userSchema.password);
+
+    const user = await db
+      .insert(users)
+      .values({ username: userSchema.username, password: hash })
+      .returning();
+
+    req.login(user[0], (err) => {
+      if (err) return next(err);
+      return res.redirect("pro");
+    });
+  } catch (err) {
+    console.log(err);
+    res.send("Invalid data").status(400);
+  }
+}) as RequestHandler);
 
 routesAuth.get(
   "/api/google",

@@ -40,11 +40,9 @@ export const users = createTable("users_test", {
 export type User = typeof users.$inferSelect; // return type when queried
 
 // Schema for inserting a user - can be used to validate API requests
-export const insertUserSchema = createInsertSchema(users, {
-  //id: (schema) => schema.id.nullish(),
-  id: z.string().or(z.number()).optional(),
-  username: z.string().optional(),
-  role: z.string(),
+export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  password: true,
 });
 
 export const insertUserSchemaOauth = createInsertSchema(users, {
