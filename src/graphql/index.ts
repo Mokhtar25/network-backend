@@ -42,7 +42,7 @@ export const schema = new GraphQLSchema({
           const user = await db
             .select()
             .from(users)
-            .where(extractFilters(users, entities.queries.users, args.where));
+            .where(extractFilters(users, "users", args.where));
 
           console.log(
             extractFilters(users, entities.queries.users, args.where),
