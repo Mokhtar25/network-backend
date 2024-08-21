@@ -10,7 +10,7 @@ import {
   integer,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { z } from "zod";
 
 export const createTable = pgTableCreator((name) => `test_network:${name}`);
@@ -59,14 +59,6 @@ export const selectUserSchema = createSelectSchema(users);
 //  email: (schema) => schema.email.email(),
 //  role: z.string(),
 //});
-
-// Usage
-
-const user = insertUserSchema.safeParse({
-  name: "John Doe",
-  email: "johndoe@test.com",
-  role: "admin",
-});
 
 //console.log(user);
 /// schema type is also inferred from the table schema, so you have full type safety
@@ -153,3 +145,45 @@ export const postsPicture = createTable("postsPicture", {
   url: varchar("url", { length: 256 }).notNull(),
 });
 // build drizzle relations
+export const usersRelations = relations(users, ({ many }) => ({
+  posts: many(posts),
+  likes: many(like),
+  comment: many(comment),
+}));
+
+export const postsRelations = relations(posts, ({ one, many }) => ({
+  pictures: many(postsPicture),
+  comments: many(comment),
+  likes: many(like),
+  author: one(users, {
+    fields: [posts.userId],
+    references: [users.id],
+  }),
+}));
+
+export const picturePostsRelations = relations(postsPicture, ({ one }) => ({
+  post: one(posts, {
+    fields: [postsPicture.postId],
+    references: [posts.id],
+  }),
+}));
+export const commentRelations = relations(comment, ({ one }) => ({
+  user: one(users, {
+    fields: [comment.userId],
+    references: [users.id],
+  }),
+  posts: one(posts, {
+    fields: [comment.postId],
+    references: [posts.id],
+  }),
+}));
+export const likeRelations = relations(like, ({ one }) => ({
+  user: one(users, {
+    fields: [like.userId],
+    references: [users.id],
+  }),
+  posts: one(posts, {
+    fields: [like.postId],
+    references: [posts.id],
+  }),
+}));
