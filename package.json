@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "dev": "nodemon",
     "build": "rimraf dist && npx tsc",
     "prestart": "npm run build",
     "start": "node dist/src/server.js",

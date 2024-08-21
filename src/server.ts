@@ -29,6 +29,7 @@ import http from "http";
 import { loginRouter, User } from "./controllers/auth";
 import { typeDefs, resolvers, schema } from "./graphql";
 import env from "../env";
+import { GraphQLError } from "graphql";
 
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
@@ -69,7 +70,7 @@ const loger = (
   _: Express.Response,
   next: NextFunction,
 ) => {
-  console.log(req.body.username, "---req");
+  console.log(req.session.cookie, "---req");
   next();
 };
 app.use(loger);
@@ -93,13 +94,24 @@ const server = new ApolloServer<MyContext>({
 await server.start();
 app.use(
   "/graphql",
+
   express.json(),
   expressMiddleware(server, {
     // eslint-disable-next-line
-    context: async ({ req }) => ({
-      user: req.user,
-      isAuthenticated: () => req.isAuthenticated(),
-    }),
+    context: async ({ req }) => {
+      if (!req.isAuthenticated()) {
+        throw new GraphQLError("User is not authenticated", {
+          extensions: {
+            code: "UNAUTHENTICATED",
+            http: { status: 401 },
+          },
+        });
+      }
+      return {
+        user: req.user,
+        isAuthenticated: () => req.isAuthenticated(),
+      };
+    },
   }),
 );
 httpServer.listen({ port: env.PORT });
