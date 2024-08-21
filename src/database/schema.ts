@@ -71,7 +71,7 @@ export const selectUserSchema = createSelectSchema(users);
 export const posts = createTable("posts", {
   id: uuid("id").primaryKey().unique().defaultRandom(),
   userId: serial("userId")
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   textContent: text("textContent"),
   likesCount: integer("likesCount").default(0),
@@ -98,10 +98,10 @@ export const insertPostSchema = createInsertSchema(posts).omit({
 export const comment = createTable("comment", {
   id: uuid("id").primaryKey().unique().defaultRandom(),
   userId: serial("userId")
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   postId: uuid("postId")
-    .references(() => posts.id)
+    .references(() => posts.id, { onDelete: "cascade" })
     .notNull(),
   content: text("content").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -122,10 +122,10 @@ export type Comment = typeof comment.$inferSelect;
 
 export const like = createTable("like", {
   userId: serial("userId")
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   postId: uuid("postId")
-    .references(() => posts.id)
+    .references(() => posts.id, { onDelete: "cascade" })
     .notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
@@ -140,7 +140,7 @@ export const insertLikeSchema = createInsertSchema(like).omit({
 
 export const postsPicture = createTable("postsPicture", {
   postId: uuid("postId")
-    .references(() => posts.id)
+    .references(() => posts.id, { onDelete: "cascade" })
     .notNull(),
   url: varchar("url", { length: 256 }).notNull(),
 });

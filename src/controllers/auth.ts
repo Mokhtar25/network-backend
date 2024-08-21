@@ -227,21 +227,15 @@ routesAuth.get(
   "/github/callback",
   passport.authenticate("github", {
     failureRedirect: "/login",
+    successRedirect: "pro",
   }) as RequestHandler,
-  function (_req, res) {
-    // Successful authentication, redirect home.
-    res.redirect("/auth/pro");
-  },
-  routesAuth.get(
-    "/google",
-    passport.authenticate("google", {
-      failureRedirect: "/auth/test",
-    }) as RequestHandler,
-    function (_req, res) {
-      // Successful authentication, redirect home.
-      res.redirect("/auth/pro");
-    },
-  ),
+);
+routesAuth.get(
+  "/google",
+  passport.authenticate("google", {
+    failureRedirect: "/auth/test",
+    successRedirect: "pro",
+  }) as RequestHandler,
 );
 routesAuth.post("/logout", (req, res, next) => {
   req.logout(function (err) {

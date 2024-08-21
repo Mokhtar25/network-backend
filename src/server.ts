@@ -82,8 +82,8 @@ app.get("/", (_req, res) => {
 });
 const httpServer = http.createServer(app);
 export interface MyContext {
-  user?: User;
-  isAuthenticated?: () => boolean;
+  user: Express.User;
+  isAuthenticated: () => boolean;
 }
 
 const server = new ApolloServer<MyContext>({

@@ -9,10 +9,11 @@ import {
 import { MyContext } from "../server";
 import { buildSchema, extractFilters } from "drizzle-graphql";
 import db from "../database";
-import { postsPicture, users } from "../database/schema";
+import { posts, postsPicture, users } from "../database/schema";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { QueryBuilder } from "drizzle-orm/pg-core";
+import { makePost } from "./resolvers/posts";
 
 export const { entities } = buildSchema(db);
 
@@ -56,6 +57,20 @@ export const schema = new GraphQLSchema({
           console.log(user);
           return user;
         },
+      },
+    },
+  }),
+  mutation: new GraphQLObjectType({
+    name: "Mutation",
+    fields: {
+      makePost: {
+        type: new GraphQLNonNull(entities.types.PostsItem),
+        args: {
+          textContent: {
+            type: GraphQLString,
+          },
+        },
+        resolve: makePost,
       },
     },
   }),

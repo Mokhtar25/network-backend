@@ -15,6 +15,20 @@
       "when": 1724236251863,
       "tag": "0001_demonic_mantis",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1724265803585,
+      "tag": "0002_large_purifiers",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1724265908866,
+      "tag": "0003_reflective_punisher",
+      "breakpoints": true
     }
   ]
 }
