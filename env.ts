@@ -13,6 +13,8 @@ const envSchema = z.object({
 
   GoogleClientSecret: z.string().min(1),
 
+  DATABASE_URI: z.string().min(1),
+
   ENV: z
     .union([
       z.literal("development"),

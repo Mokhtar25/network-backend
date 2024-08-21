@@ -31,13 +31,17 @@ import { checkPassword, makeHash } from "../lib/auth/authUtils";
 export const loginRouter = Router();
 
 const verfiy: VerifyFunction = (username, password, done) => {
+  console.log("run verfiy");
   db.select()
     .from(users)
     .where(and(eq(users.username, username)))
     .then((res) => {
+      console.log("got user");
       if (!res[0] || !res[0].password) {
+        console.log("false pass");
         return done(null, false);
       } else {
+        console.log("chech pass");
         checkPassword(password, res[0].password)
           .then((correct) => {
             if (correct) {
@@ -56,15 +60,18 @@ const start = new LocalStrategy(verfiy);
 passport.use(start);
 
 passport.serializeUser((user, done) => {
+  console.log("run");
   done(null, user.id);
 });
 
 passport.deserializeUser((userId: number, done) => {
+  console.log("here");
   db.select()
     .from(users)
     .where(eq(users.id, userId))
     .then((res) => {
       if (!res[0]) return done(null, false);
+      console.log(res[0]);
       done(null, res[0]);
     })
     .catch((err) => done(err));
@@ -105,6 +112,7 @@ const profileValid = z
 async function findOrMake(profile: passport.Profile) {
   const userProfile = profileValid.parse(profile);
 
+  console.log("find or make start");
   const data = await db
     .select()
     .from(users)
@@ -121,8 +129,11 @@ async function findOrMake(profile: passport.Profile) {
       .values({ ...userProfile, providerId: userProfile.id, id: undefined })
       .returning();
 
+    console.log("find or maek done");
     return userList[0];
   }
+
+  console.log("find or maek done");
   return data[0];
 }
 
@@ -169,7 +180,7 @@ const log = (
   _res: express.Response,
   next: NextFunction,
 ) => {
-  console.log("run");
+  console.log("run logger");
   next();
 };
 routesAuth.use(log);
