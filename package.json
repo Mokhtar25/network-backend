@@ -8,7 +8,11 @@
     "prestart": "npm run build",
     "start": "node dist/src/server.js",
     "preserve": "npm run build",
-    "serve": "concurrently \"npx tsc -w\"  \"nodemon dist/index.js\""
+    "serve": "concurrently \"npx tsc -w\"  \"nodemon dist/index.js\"",
+    "db:generate": "npx drizzle-kit generate",
+    "db:migrate": "npx drizzle-kit migrate",
+    "db:studio": "npx drizzle-kit studio",
+    "db:push": "npx drizzle-kit push"
   },
   "author": "",
   "license": "ISC",

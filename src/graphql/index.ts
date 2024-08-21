@@ -9,7 +9,7 @@ import {
 import { MyContext } from "../server";
 import { buildSchema, extractFilters } from "drizzle-graphql";
 import db from "../database";
-import { users } from "../database/schema";
+import { postsPicture, users } from "../database/schema";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { QueryBuilder } from "drizzle-orm/pg-core";
@@ -23,7 +23,14 @@ export const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: "query",
     fields: {
-      user: entities.queries.usersSingle,
+      postSingle: entities.queries.postsSingle,
+      posts: entities.queries.posts,
+      commentSingle: entities.queries.commentSingle,
+      likeSingle: entities.queries.likeSingle,
+      likes: entities.queries.like,
+      comments: entities.queries.comment,
+      postsPictureSingle: entities.queries.postsPictureSingle,
+      postsPictures: entities.queries.postsPicture,
 
       findUser: {
         type: new GraphQLList(new GraphQLNonNull(entities.types.UsersItem)),
@@ -42,12 +49,10 @@ export const schema = new GraphQLSchema({
           const user = await db
             .select()
             .from(users)
+            // method needs to be updated by package devs, currently manually exposed
+            // eslint-disable-next-line
             .where(extractFilters(users, "users", args.where));
 
-          console.log(
-            extractFilters(users, entities.queries.users, args.where),
-            "here-----------",
-          );
           console.log(user);
           return user;
         },
@@ -55,27 +60,3 @@ export const schema = new GraphQLSchema({
     },
   }),
 });
-
-//export const typeDefs = `#graphql
-//  type Query {
-//    hello: String
-//    me : User
-//  }
-//  type User {
-//      id : ID!
-//      username : String!
-//  }
-//`;
-//
-//// A map of functions which return data for the schema.
-//export const resolvers = {
-//  Query: {
-//    hello: () => "world",
-//    me: (_: string, __: Request, context: MyContext) => {
-//      if (!context.isAuthenticated) throw new GraphQLError("no auth function");
-//      //console.log(context.isAuthenticated(), __, "--------");
-//
-//      return context.user;
-//    },
-//  },
-//};
