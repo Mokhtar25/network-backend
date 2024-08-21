@@ -31,7 +31,6 @@ import { checkPassword, makeHash } from "../lib/auth/authUtils";
 export const loginRouter = Router();
 
 const verfiy: VerifyFunction = (username, password, done) => {
-  console.log("run verfiy");
   db.select()
     .from(users)
     .where(and(eq(users.username, username)))
@@ -65,13 +64,11 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((userId: number, done) => {
-  console.log("here");
   db.select()
     .from(users)
     .where(eq(users.id, userId))
     .then((res) => {
       if (!res[0]) return done(null, false);
-      console.log(res[0]);
       done(null, res[0]);
     })
     .catch((err) => done(err));
@@ -246,6 +243,15 @@ routesAuth.get(
     },
   ),
 );
+routesAuth.post("/logout", (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.send(200);
+  });
+});
+
 routesAuth.get("/pro", (req, res) => {
   console.log(req.isAuthenticated(), req.session.cookie);
   if (req.isAuthenticated()) return res.send("authenticated");

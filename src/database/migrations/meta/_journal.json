@@ -8,6 +8,13 @@
       "when": 1724160694982,
       "tag": "0000_brainy_retro_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1724236251863,
+      "tag": "0001_demonic_mantis",
+      "breakpoints": true
     }
   ]
 }

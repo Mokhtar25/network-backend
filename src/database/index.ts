@@ -15,7 +15,5 @@ const pool = new Pool({
 });
 
 const db = drizzle(pool, { schema, logger: true });
-const test = await db.select().from(schema.users);
-console.log(test);
 
 export default db;

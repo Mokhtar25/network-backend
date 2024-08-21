@@ -18,7 +18,7 @@ export const createTable = pgTableCreator((name) => `test_network:${name}`);
 export const users = createTable("users_test", {
   id: serial("id").primaryKey().notNull().unique(),
   providerId: varchar("providerId", { length: 256 }),
-  displayName: text("name"),
+  displayName: text("displayName"),
   password: text("password"),
   username: varchar("username", { length: 256 }).unique(),
   email: text("email"),
@@ -167,6 +167,7 @@ export const picturePostsRelations = relations(postsPicture, ({ one }) => ({
     references: [posts.id],
   }),
 }));
+
 export const commentRelations = relations(comment, ({ one }) => ({
   user: one(users, {
     fields: [comment.userId],
