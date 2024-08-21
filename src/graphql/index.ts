@@ -1,5 +1,6 @@
 import {
   GraphQLError,
+  GraphQLID,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -13,7 +14,7 @@ import { posts, postsPicture, users } from "../database/schema";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { QueryBuilder } from "drizzle-orm/pg-core";
-import { makePost } from "./resolvers/posts";
+import { addComment, addLike, addPost } from "./resolvers/posts";
 
 export const { entities } = buildSchema(db);
 
@@ -63,14 +64,36 @@ export const schema = new GraphQLSchema({
   mutation: new GraphQLObjectType({
     name: "Mutation",
     fields: {
-      makePost: {
+      addComment: {
+        type: new GraphQLNonNull(entities.types.CommentItem),
+        args: {
+          content: {
+            type: new GraphQLNonNull(GraphQLString),
+          },
+          postId: {
+            type: new GraphQLNonNull(GraphQLID),
+          },
+        },
+        resolve: addComment,
+      },
+
+      addLike: {
+        type: new GraphQLNonNull(entities.types.LikeItem),
+        args: {
+          postId: {
+            type: new GraphQLNonNull(GraphQLID),
+          },
+        },
+        resolve: addLike,
+      },
+      addPost: {
         type: new GraphQLNonNull(entities.types.PostsItem),
         args: {
           textContent: {
-            type: GraphQLString,
+            type: new GraphQLNonNull(GraphQLString),
           },
         },
-        resolve: makePost,
+        resolve: addPost,
       },
     },
   }),

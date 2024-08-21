@@ -8,6 +8,7 @@ import {
   pgTableCreator,
   uuid,
   integer,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations, sql } from "drizzle-orm";
@@ -120,17 +121,25 @@ export const insertCommentSchema = createInsertSchema(comment).omit({
 
 export type Comment = typeof comment.$inferSelect;
 
-export const like = createTable("like", {
-  userId: serial("userId")
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  postId: uuid("postId")
-    .references(() => posts.id, { onDelete: "cascade" })
-    .notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-});
+export const like = createTable(
+  "like",
+  {
+    userId: serial("userId")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    postId: uuid("postId")
+      .references(() => posts.id, { onDelete: "cascade" })
+      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => {
+    return {
+      id: primaryKey({ columns: [table.postId, table.userId] }),
+    };
+  },
+);
 
 export type Like = typeof like.$inferSelect;
 
