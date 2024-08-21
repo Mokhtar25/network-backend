@@ -136,7 +136,7 @@ export const like = createTable(
   },
   (table) => {
     return {
-      id: primaryKey({ columns: [table.postId, table.userId] }),
+      id: primaryKey({ name: "likeId", columns: [table.postId, table.userId] }),
     };
   },
 );

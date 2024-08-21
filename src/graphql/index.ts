@@ -73,6 +73,9 @@ export const schema = new GraphQLSchema({
           postId: {
             type: new GraphQLNonNull(GraphQLID),
           },
+          commentId: {
+            type: GraphQLID,
+          },
         },
         resolve: addComment,
       },
