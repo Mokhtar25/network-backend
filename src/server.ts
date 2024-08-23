@@ -70,7 +70,7 @@ const loger = (
   _: Express.Response,
   next: NextFunction,
 ) => {
-  console.log(req.session.cookie, "---req");
+  //console.log(req.session.cookie, "---req");
   next();
 };
 app.use(loger);

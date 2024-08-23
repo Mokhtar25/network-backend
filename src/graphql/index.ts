@@ -1,4 +1,5 @@
 import {
+  GraphQLBoolean,
   GraphQLError,
   GraphQLID,
   GraphQLList,
@@ -6,6 +7,7 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
+  graphqlSync,
 } from "graphql";
 import { MyContext } from "../server";
 import { buildSchema, extractFilters } from "drizzle-graphql";
@@ -33,7 +35,6 @@ export const schema = new GraphQLSchema({
       comments: entities.queries.comment,
       postsPictureSingle: entities.queries.postsPictureSingle,
       postsPictures: entities.queries.postsPicture,
-
       findUser: {
         type: new GraphQLList(new GraphQLNonNull(entities.types.UsersItem)),
         args: {
@@ -85,6 +86,9 @@ export const schema = new GraphQLSchema({
         args: {
           postId: {
             type: new GraphQLNonNull(GraphQLID),
+          },
+          unLike: {
+            type: GraphQLBoolean,
           },
         },
         resolve: addLike,

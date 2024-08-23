@@ -51,6 +51,7 @@ export const addComment = async (
 ) => {
   notAuthError(context.user);
 
+  console.log("ryn");
   const makePostArgs = z.object({
     commentId: z.string().optional().nullish(),
     content: z.string().min(1),
@@ -84,29 +85,45 @@ export const addComment = async (
       postId: safeArgs.data.postId,
     })
     .returning();
+  console.log(commentReturn[0]);
 
   return commentReturn[0];
 };
 
 // this takes more logic
+// logic to add or delete likes. more like toggling
 export const addLike = async (_: string, args: unknown, context: MyContext) => {
   notAuthError(context.user);
 
   const makePostArgs = z.object({
     postId: z.string().min(1),
+    unLike: z.boolean().optional(),
   });
   const safeArgs = makePostArgs.safeParse(args);
 
   if (!safeArgs.success) return badContentError();
 
+  if (safeArgs.data.unLike) {
+    const likeReturned = await db
+      .delete(like)
+      .where(
+        and(
+          eq(like.userId, context.user.id),
+          eq(like.postId, safeArgs.data.postId),
+        ),
+      )
+      .returning();
+
+    if (!likeReturned[0]) return new GraphQLError("Like was not found");
+    return likeReturned[0];
+  }
   const likeReturned = await db
     .insert(like)
     .values({
       userId: context.user.id,
       postId: safeArgs.data.postId,
     })
-    .returning()
-    .onConflictDoUpdate({ set: { userId: null, postId: null } });
+    .returning();
 
   return likeReturned[0];
 };
