@@ -1,15 +1,21 @@
 import { GraphQLError } from "graphql";
 import db from "../../database";
 import { z } from "zod";
-import { comment, like, posts, users } from "../../database/schema";
+import { comment, like, posts } from "../../database/schema";
 import { MyContext } from "../../server";
 import { and, eq } from "drizzle-orm";
 
+const RequestTypeEnum = ["update, post, delete"] as const;
+// could have added a var or an enum with every request to check what opreation that is wanted to be done
+// like add, update. or delete. and make the opreation mandtoary to add
+// this would solve the issue completely.
+// no need for socket.io, you can use subscriptions in graphql
 export const addPost = async (_: string, args: unknown, context: MyContext) => {
   notAuthError(context.user);
 
   const makePostArgs = z.object({
     textContent: z.string().min(1),
+    type: z.enum(RequestTypeEnum),
   });
   const safeArgs = makePostArgs.safeParse(args);
 

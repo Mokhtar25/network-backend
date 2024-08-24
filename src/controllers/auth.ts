@@ -227,7 +227,7 @@ routesAuth.get(
   "/github/callback",
   passport.authenticate("github", {
     failureRedirect: "/login",
-    successRedirect: "pro",
+    successRedirect: "/auth/pro",
   }) as RequestHandler,
 );
 routesAuth.get(
