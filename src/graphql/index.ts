@@ -1,5 +1,7 @@
+console.log("run before ");
 import {
   GraphQLBoolean,
+  GraphQLEnumType,
   GraphQLError,
   GraphQLID,
   GraphQLList,
@@ -16,9 +18,20 @@ import { posts, postsPicture, users } from "../database/schema";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { QueryBuilder } from "drizzle-orm/pg-core";
-import { addComment, addLike, addPost } from "./resolvers/posts";
+import { crudComment, crudLike, crudPost } from "./resolvers/posts";
+
+console.log("run index after import");
 
 export const { entities } = buildSchema(db);
+
+export const RequestTypeEnumGraphQl = new GraphQLEnumType({
+  name: "requestMethod",
+  values: {
+    update: { value: "update" },
+    post: { value: "post" },
+    delete: { value: "delete" },
+  },
+});
 
 console.log(typeof extractFilters);
 //console.log(entities.inputs.UsersFilters, "foi ----------------------------");
@@ -64,10 +77,14 @@ export const schema = new GraphQLSchema({
   }),
   mutation: new GraphQLObjectType({
     name: "Mutation",
+
     fields: {
-      addComment: {
+      crudComment: {
         type: new GraphQLNonNull(entities.types.CommentItem),
         args: {
+          type: {
+            type: new GraphQLNonNull(RequestTypeEnumGraphQl),
+          },
           content: {
             type: new GraphQLNonNull(GraphQLString),
           },
@@ -78,29 +95,35 @@ export const schema = new GraphQLSchema({
             type: GraphQLID,
           },
         },
-        resolve: addComment,
+        resolve: crudComment,
       },
 
-      addLike: {
+      crudLike: {
         type: new GraphQLNonNull(entities.types.LikeItem),
         args: {
+          type: {
+            type: new GraphQLNonNull(RequestTypeEnumGraphQl),
+          },
           postId: {
             type: new GraphQLNonNull(GraphQLID),
           },
-          unLike: {
-            type: GraphQLBoolean,
-          },
         },
-        resolve: addLike,
+        resolve: crudLike,
       },
-      addPost: {
+      crudPost: {
         type: new GraphQLNonNull(entities.types.PostsItem),
         args: {
+          type: {
+            type: new GraphQLNonNull(RequestTypeEnumGraphQl),
+          },
           textContent: {
             type: new GraphQLNonNull(GraphQLString),
           },
+          postId: {
+            type: GraphQLString,
+          },
         },
-        resolve: addPost,
+        resolve: crudPost,
       },
     },
   }),

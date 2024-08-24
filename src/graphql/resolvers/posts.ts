@@ -5,31 +5,97 @@ import { comment, like, posts } from "../../database/schema";
 import { MyContext } from "../../server";
 import { and, eq } from "drizzle-orm";
 
-const RequestTypeEnum = ["update, post, delete"] as const;
+export const RequestTypeEnum = ["update", "post", "delete"] as const;
 // could have added a var or an enum with every request to check what opreation that is wanted to be done
 // like add, update. or delete. and make the opreation mandtoary to add
 // this would solve the issue completely.
 // no need for socket.io, you can use subscriptions in graphql
-export const addPost = async (_: string, args: unknown, context: MyContext) => {
-  notAuthError(context.user);
-
-  const makePostArgs = z.object({
-    textContent: z.string().min(1),
+const requestObject = z
+  .object({
     type: z.enum(RequestTypeEnum),
-  });
-  const safeArgs = makePostArgs.safeParse(args);
+  })
+  .passthrough();
 
-  if (!safeArgs.success) return badContentError();
+const noMehtodError = (args: unknown) => {
+  const safeParse = requestObject.safeParse(args);
+  console.log(safeParse.error);
+  if (!safeParse.success) throw new GraphQLError("no Method Provided");
+  return safeParse;
+};
+export const crudPost = async (
+  _: string,
+  args: unknown,
+  context: MyContext,
+) => {
+  notAuthError(context.user);
+  const argsMethode = noMehtodError(args);
 
-  const post = await db
-    .insert(posts)
-    .values({
-      textContent: safeArgs.data.textContent,
-      userId: context.user.id,
-    })
-    .returning();
+  console.log("run");
+  if (argsMethode.data.type === "post") {
+    const makePostArgs = z.object({
+      textContent: z.string().min(1),
+    });
+    const safeArgs = makePostArgs.safeParse(args);
 
-  return post[0];
+    if (!safeArgs.success) return badContentError();
+
+    const post = await db
+      .insert(posts)
+      .values({
+        textContent: safeArgs.data.textContent,
+        userId: context.user.id,
+      })
+      .returning();
+
+    return post[0];
+  } else if (argsMethode.data.type === "update") {
+    const makePostArgs = z.object({
+      textContent: z.string().min(1),
+      postId: z.string().min(1),
+    });
+    const safeArgs = makePostArgs.safeParse(args);
+    console.log(safeArgs);
+
+    if (!safeArgs.success) return badContentError();
+
+    const post = await db
+      .update(posts)
+      .set({
+        textContent: safeArgs.data.textContent,
+      })
+      .where(
+        and(
+          eq(posts.id, safeArgs.data.postId),
+          eq(posts.userId, context.user.id),
+        ),
+      )
+      .returning();
+
+    if (!post[0]) throw new GraphQLError("Post not found, or Not Authorized");
+
+    return post[0];
+  } else {
+    const makePostArgs = z.object({
+      postId: z.string().min(1),
+    });
+    const safeArgs = makePostArgs.safeParse(args);
+
+    if (!safeArgs.success) return badContentError();
+
+    const post = await db
+      .delete(posts)
+      .where(
+        and(
+          eq(posts.id, safeArgs.data.postId),
+          eq(posts.userId, context.user.id),
+        ),
+      )
+      .returning();
+
+    if (!post[0]) throw new GraphQLError("Not found or unAuthorized");
+
+    return post[0];
+  }
 };
 
 const badContentError = () => {
@@ -50,12 +116,13 @@ const notAuthError = (user: unknown) => {
       },
     });
 };
-export const addComment = async (
+export const crudComment = async (
   _: string,
   args: unknown,
   context: MyContext,
 ) => {
   notAuthError(context.user);
+  noMehtodError(args);
 
   console.log("ryn");
   const makePostArgs = z.object({
@@ -98,8 +165,13 @@ export const addComment = async (
 
 // this takes more logic
 // logic to add or delete likes. more like toggling
-export const addLike = async (_: string, args: unknown, context: MyContext) => {
+export const crudLike = async (
+  _: string,
+  args: unknown,
+  context: MyContext,
+) => {
   notAuthError(context.user);
+  noMehtodError(args);
 
   const makePostArgs = z.object({
     postId: z.string().min(1),
