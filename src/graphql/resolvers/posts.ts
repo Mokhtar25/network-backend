@@ -4,6 +4,10 @@ import { z } from "zod";
 import { comment, like, posts } from "../../database/schema";
 import { MyContext } from "../../server";
 import { and, eq } from "drizzle-orm";
+import {
+  updatePostCommentCount,
+  updatePostLikeCount,
+} from "../utils/sqlHelpers";
 
 export const RequestTypeEnum = ["update", "post", "delete"] as const;
 // could have added a var or an enum with every request to check what opreation that is wanted to be done
@@ -30,7 +34,6 @@ export const crudPost = async (
   notAuthError(context.user);
   const argsMethode = noMehtodError(args);
 
-  console.log("run");
   if (argsMethode.data.type === "post") {
     const makePostArgs = z.object({
       textContent: z.string().min(1),
@@ -54,7 +57,6 @@ export const crudPost = async (
       postId: z.string().min(1),
     });
     const safeArgs = makePostArgs.safeParse(args);
-    console.log(safeArgs);
 
     if (!safeArgs.success) return badContentError();
 
@@ -122,9 +124,8 @@ export const crudComment = async (
   context: MyContext,
 ) => {
   notAuthError(context.user);
-  noMehtodError(args);
+  const method = noMehtodError(args);
 
-  console.log("ryn");
   const makePostArgs = z.object({
     commentId: z.string().optional().nullish(),
     content: z.string().min(1),
@@ -134,33 +135,56 @@ export const crudComment = async (
 
   if (!safeArgs.success) return badContentError();
 
-  console.log(safeArgs.data.commentId, "here is the id");
-  if (safeArgs.data.commentId) {
-    console.log("ran inside");
+  if (method.data.type === "post") {
+    const commentReturn = await db
+      .insert(comment)
+      .values({
+        content: safeArgs.data.content,
+        userId: context.user.id,
+        postId: safeArgs.data.postId,
+      })
+      .returning();
+
+    updatePostCommentCount(commentReturn[0].postId, "increment");
+
+    return commentReturn[0];
+  } else if (method.data.type === "update") {
+    if (!safeArgs.data.commentId) return badContentError();
     const commentReturn = await db
       .update(comment)
       .set({
         content: safeArgs.data.content,
       })
-      .where(eq(comment.id, safeArgs.data.commentId))
+      .where(
+        and(
+          eq(comment.id, safeArgs.data.commentId),
+          eq(comment.userId, context.user.id),
+        ),
+      )
       .returning();
-    console.log("old and new", safeArgs.data.commentId, commentReturn[0].id);
+
+    if (!commentReturn[0]) throw new GraphQLError("not found or unAuthorized");
 
     return commentReturn[0];
+  } else {
+    if (!safeArgs.data.commentId) return badContentError();
+    const commentReturn = await db
+      .delete(comment)
+      .where(
+        and(
+          eq(comment.id, safeArgs.data.commentId),
+          eq(comment.userId, context.user.id),
+        ),
+      )
+      .returning();
+
+    if (!commentReturn[0]) throw new GraphQLError("not found or unAuthorized");
+
+    // update db with count
+
+    updatePostCommentCount(commentReturn[0].postId, "decrement");
+    return commentReturn[0];
   }
-  console.log("ran outside");
-
-  const commentReturn = await db
-    .insert(comment)
-    .values({
-      content: safeArgs.data.content,
-      userId: context.user.id,
-      postId: safeArgs.data.postId,
-    })
-    .returning();
-  console.log(commentReturn[0]);
-
-  return commentReturn[0];
 };
 
 // this takes more logic
@@ -171,17 +195,27 @@ export const crudLike = async (
   context: MyContext,
 ) => {
   notAuthError(context.user);
-  noMehtodError(args);
+  const method = noMehtodError(args);
 
+  if (method.data.type === "update")
+    throw new GraphQLError("Updates are not allowed in likes");
   const makePostArgs = z.object({
     postId: z.string().min(1),
-    unLike: z.boolean().optional(),
   });
   const safeArgs = makePostArgs.safeParse(args);
-
   if (!safeArgs.success) return badContentError();
+  if (method.data.type === "post") {
+    const likeReturned = await db
+      .insert(like)
+      .values({
+        userId: context.user.id,
+        postId: safeArgs.data.postId,
+      })
+      .returning();
 
-  if (safeArgs.data.unLike) {
+    updatePostLikeCount(likeReturned[0].postId, "increment");
+    return likeReturned[0];
+  } else {
     const likeReturned = await db
       .delete(like)
       .where(
@@ -193,15 +227,8 @@ export const crudLike = async (
       .returning();
 
     if (!likeReturned[0]) return new GraphQLError("Like was not found");
+
+    updatePostLikeCount(likeReturned[0].postId, "decrement");
     return likeReturned[0];
   }
-  const likeReturned = await db
-    .insert(like)
-    .values({
-      userId: context.user.id,
-      postId: safeArgs.data.postId,
-    })
-    .returning();
-
-  return likeReturned[0];
 };
