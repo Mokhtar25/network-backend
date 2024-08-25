@@ -15,6 +15,14 @@ const envSchema = z.object({
 
   DATABASE_URI: z.string().url(),
 
+  SUPERBASE_KEY: z.string().min(1),
+
+  SUPERBASE_URL: z.string().url(),
+
+  CLOUD_API_SECRET: z.string().min(1),
+  CLOUD_NAME: z.string().min(1),
+  CLOUD_API_KEY: z.string().min(1),
+
   NODE_ENV: z
     .union([
       z.literal("development"),

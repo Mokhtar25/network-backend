@@ -30,6 +30,7 @@ import { loginRouter, User } from "./controllers/auth";
 import { typeDefs, resolvers, schema } from "./graphql";
 import env from "../env";
 import { GraphQLError } from "graphql";
+import fileRouter from "./controllers/fileManger";
 
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
@@ -75,6 +76,7 @@ const loger = (
 };
 app.use(loger);
 app.use(loginRouter);
+app.use("/files", fileRouter);
 // prettier-ignore
 
 app.get("/", (_req, res) => {

@@ -147,17 +147,18 @@ passport.use(
       profile: GithubProfile,
       done: passport.DoneCallback,
     ) {
-      const headers = new Headers();
-      headers.set("Authorization", "Bearer " + _);
-
-      console.log(_, __, "tokens are here");
-      fetch(`https://api.github.com/user/emails`, {
-        method: "get",
-        headers: headers,
-      })
-        .then((re) => re.json())
-        .then((re) => console.log(re, "result "))
-        .catch((er) => console.log(er, "error"));
+      // this is how you get users email in github
+      //const headers = new Headers();
+      //headers.set("Authorization", "Bearer " + _);
+      //
+      //console.log(_, __, "tokens are here");
+      //fetch(`https://api.github.com/user/emails`, {
+      //  method: "get",
+      //  headers: headers,
+      //})
+      //  .then((re) => re.json())
+      //  .then((re) => console.log(re, "result "))
+      //  .catch((er) => console.log(er, "error"));
       findOrMake(profile)
         .then((e) => {
           done(null, e);
@@ -184,8 +185,8 @@ routesAuth.post( "/login", passport.authenticate("local", { failureRedirect: "/"
 );
 
 const log = (
-  _req: express.Request,
-  _res: express.Response,
+  _req: Express.Request,
+  _res: Express.Response,
   next: NextFunction,
 ) => {
   console.log("run logger");

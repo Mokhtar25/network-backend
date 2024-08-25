@@ -1,0 +1,17 @@
+import { createClient } from "@supabase/supabase-js";
+
+import env from "../../env";
+// Create a single supabase client for interacting with your database
+
+console.log(env.SUPERBASE_URL, env.SUPERBASE_KEY);
+export const supabase = createClient(env.SUPERBASE_URL, env.SUPERBASE_KEY);
+const { data, error } = await supabase.storage
+  .from("netWorkStorage")
+  .createSignedUploadUrl("/file.png");
+console.log(data, error);
+
+//supabase.storage
+//  .from("network")
+//  .info("/")
+//  .then((re) => console.log("hi", re))
+//  .catch((err) => console.log(err));
