@@ -147,6 +147,17 @@ passport.use(
       profile: GithubProfile,
       done: passport.DoneCallback,
     ) {
+      const headers = new Headers();
+      headers.set("Authorization", "Bearer " + _);
+
+      console.log(_, __, "tokens are here");
+      fetch(`https://api.github.com/user/emails`, {
+        method: "get",
+        headers: headers,
+      })
+        .then((re) => re.json())
+        .then((re) => console.log(re, "result "))
+        .catch((er) => console.log(er, "error"));
       findOrMake(profile)
         .then((e) => {
           done(null, e);
@@ -184,7 +195,9 @@ routesAuth.use(log);
 
 routesAuth.get(
   "/api/github",
-  passport.authenticate("github", { scope: ["user:email"] }) as RequestHandler,
+  passport.authenticate("github", {
+    scope: ["user:email"],
+  }) as RequestHandler,
 );
 
 routesAuth.post("/signUp", (async (req, res, next) => {
