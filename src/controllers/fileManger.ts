@@ -37,12 +37,16 @@ fileRouter.post("/addpics", (async (req, res) => {
 }) as RequestHandler);
 
 fileRouter.post("/getSignUrl", (req, res) => {
-  console.log(req.isAuthenticated(), "is aurh---");
-  console.log(req.body.fileName, "--------------------");
   if (!req.isAuthenticated()) return res.send("unAuth");
+
+  const params = z.object({
+    fileName: z.string().min(1),
+  });
+  const body = params.safeParse(req.body);
+  if (!body.success) return res.send("Missing content : File name").status(400);
+
   const timestamp = Math.round(new Date().getTime() / 1000);
-  console.log(req.body.fileName, "--------------------");
-  const name = `${req.user.id}_${req.body.fileName}_${timestamp}`;
+  const name = `${req.user.id}_${timestamp}_name:${body.data.fileName}`;
   const signature = cloudinary.utils.api_sign_request(
     {
       timestamp: timestamp,
