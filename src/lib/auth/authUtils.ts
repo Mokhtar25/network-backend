@@ -13,6 +13,8 @@ export async function makeHash(password: string): Promise<string> {
     throw err;
   }
 }
+console.log(makeHash("hiFirst"));
+console.log(makeHash("hiFirst"));
 
 export async function checkPassword(
   password: string,

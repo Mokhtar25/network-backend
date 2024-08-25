@@ -246,6 +246,25 @@ routesAuth.post("/logout", (req, res, next) => {
   });
 });
 
+routesAuth.post("/updateUser", (async (req, res) => {
+  if (!req.isAuthenticated() || !req.user) return res.send(401);
+
+  const updateUserZod = z.object({
+    password: z.string().min(1),
+  });
+
+  const newUser = updateUserZod.safeParse(req.body);
+  if (!newUser.success) return res.send("Missing data").status(401);
+  // to do update user password
+  await db
+    .update(users)
+    .set({
+      password: await makeHash(newUser.data.password),
+    })
+    .where(eq(users.id, req.user.id));
+  res.sendStatus(200);
+}) as RequestHandler);
+
 routesAuth.get("/pro", (req, res) => {
   console.log(req.isAuthenticated(), req.session.cookie);
   if (req.isAuthenticated()) return res.send("authenticated");

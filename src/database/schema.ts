@@ -13,9 +13,11 @@ import {
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations, sql } from "drizzle-orm";
 import { z } from "zod";
+import { arrayBuffer } from "stream/consumers";
 
 export const createTable = pgTableCreator((name) => `test_network:${name}`);
 
+// set up indexes for what you wanna query by, like for postsPicture make it post id
 export const users = createTable("users_test", {
   id: serial("id").primaryKey().notNull().unique(),
   providerId: varchar("providerId", { length: 256 }),
