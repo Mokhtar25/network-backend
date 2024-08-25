@@ -22,6 +22,7 @@ import path from "path";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
 import bodyParser from "body-parser";
+import cors from "cors";
 import "dotenv/config";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -51,6 +52,12 @@ const redisStore = new RedisStore({
 const app = express();
 app.use(express.static(path.join(__dirname, "index")));
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -71,7 +78,7 @@ const loger = (
   _: Express.Response,
   next: NextFunction,
 ) => {
-  //console.log(req.session.cookie, "---req");
+  console.log(req.user, "---req");
   next();
 };
 app.use(loger);

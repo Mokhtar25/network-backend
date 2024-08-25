@@ -31,6 +31,7 @@
     "cloudinary": "^2.4.0",
     "concurrently": "^8.2.2",
     "connect-redis": "^7.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "drizzle-graphql": "^0.8.5",
     "drizzle-orm": "^0.33.0",

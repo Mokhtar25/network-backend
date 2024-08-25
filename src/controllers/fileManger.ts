@@ -15,7 +15,8 @@ cloudinary.config({
 
 function auth(req: Request, res: Response, next: NextFunction) {
   if (!req.isAuthenticated() || !req.user) {
-    res.send("Not Auth").status(401);
+    res.send("Not Auth here it ran").status(401);
+    console.log("scho");
   }
   next();
 }
@@ -35,17 +36,22 @@ fileRouter.post("/addpics", (async (req, res) => {
   // add pictures to db
 }) as RequestHandler);
 
-fileRouter.get("/getSignUrl", (req, res) => {
+fileRouter.post("/getSignUrl", (req, res) => {
+  console.log(req.isAuthenticated(), "is aurh---");
+  console.log(req.body.fileName, "--------------------");
   if (!req.isAuthenticated()) return res.send("unAuth");
   const timestamp = Math.round(new Date().getTime() / 1000);
+  console.log(req.body.fileName, "--------------------");
+  const name = `${req.user.id}_${req.body.fileName}_${timestamp}`;
   const signature = cloudinary.utils.api_sign_request(
     {
       timestamp: timestamp,
+      public_id: name,
     },
     env.CLOUD_API_SECRET,
   );
 
-  return res.json({ timestamp, signature });
+  return res.json({ timestamp, signature, fileName: name });
 });
 
 export default fileRouter;

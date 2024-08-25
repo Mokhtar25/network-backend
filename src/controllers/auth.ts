@@ -189,7 +189,7 @@ const log = (
   _res: Express.Response,
   next: NextFunction,
 ) => {
-  console.log("run logger");
+  console.log("run logger", _req.user);
   next();
 };
 routesAuth.use(log);
