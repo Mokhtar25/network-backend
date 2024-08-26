@@ -45,6 +45,7 @@ fileRouter.post("/getSignUrl", (req, res) => {
   const body = params.safeParse(req.body);
   if (!body.success) return res.send("Missing content : File name").status(400);
 
+  // timestamp is needed for signature, Valid for an hour
   const timestamp = Math.round(new Date().getTime() / 1000);
   const name = `${req.user.id}_${timestamp}_name:${body.data.fileName}`;
   const signature = cloudinary.utils.api_sign_request(
