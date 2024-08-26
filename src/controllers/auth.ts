@@ -176,13 +176,15 @@ routesAuth.get("/test", (_req, res) => {
   res.send("<h2>hello, world auth</h2>");
 });
 
-// edit this
 routesAuth.post(
   "/login",
   passport.authenticate("local", {
     failureRedirect: "/",
-    successReturnToOrRedirect: "success",
   }) as RequestHandler,
+  (_req, res) => {
+    res.json(_req.user);
+    console.log("da");
+  },
 );
 
 const log = (

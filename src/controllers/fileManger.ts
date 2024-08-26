@@ -43,15 +43,19 @@ fileRouter.post("/addpics", (async (req, res) => {
       ),
   );
 
-  const data = await db
-    .with(subQ)
-    .insert(postsPicture)
-    .values({
-      postId: sql`(select "id" from "subQ")`,
-      url: safeArgs.data.pictures[0],
-    });
-
-  return res.json(data).status(200);
+  await Promise.all(
+    safeArgs.data.pictures.map(async (e) => {
+      const data = await db
+        .with(subQ)
+        .insert(postsPicture)
+        .values({
+          postId: sql`(select "id" from "subQ")`,
+          url: e,
+        });
+      console.log(data);
+    }),
+  );
+  return res.status(200);
 }) as RequestHandler);
 
 fileRouter.post("/getSignUrl", (req, res) => {
