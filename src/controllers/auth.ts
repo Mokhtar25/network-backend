@@ -176,12 +176,13 @@ routesAuth.get("/test", (_req, res) => {
   res.send("<h2>hello, world auth</h2>");
 });
 
-// prettier-ignore
-routesAuth.post( "/login", passport.authenticate("local", { failureRedirect: "/" }) as RequestHandler,
-  (_req, res ) => {
-    res.json(_req.user);
-    console.log("da");
-  },
+// edit this
+routesAuth.post(
+  "/login",
+  passport.authenticate("local", {
+    failureRedirect: "/",
+    successReturnToOrRedirect: "success",
+  }) as RequestHandler,
 );
 
 const log = (
@@ -276,7 +277,8 @@ routesAuth.post("/updateUser", (async (req, res) => {
       password: await makeHash(newUser.data.password),
     })
     .where(eq(users.id, req.user.id));
-  res.sendStatus(200);
+
+  return res.sendStatus(200);
 }) as RequestHandler);
 
 routesAuth.get("/pro", (req, res) => {

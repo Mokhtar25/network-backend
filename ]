@@ -1,0 +1,48 @@
+import db from "../database";
+import { and, eq, sql } from "drizzle-orm";
+
+import { posts } from "../database/schema";
+import { postsPicture } from "../database/schema";
+const sq = db.$with("sq").as(
+  db
+    .select({ id: posts.id })
+    .from(posts)
+    .where(
+      and(
+        eq(posts.id, "cd3fdfa9-6a64-4c21-9946-3af1113bacaf"),
+        eq(posts.userId, 1),
+      ),
+    ),
+);
+
+const result = await db.with(sq).select().from(sq);
+console.log(result);
+console.log(
+  await db
+    .select({ id: posts.id })
+    .from(posts)
+    .where(
+      and(
+        eq(posts.id, "cd3fdfa9-6a64-4c21-9946-3af1113bacaf"),
+        eq(posts.userId, 1),
+      ),
+    ),
+);
+console.log("run");
+// to do
+
+console.log(
+  "-----------------",
+  await db.execute(
+    sql`select "id" from "test_network:posts" where ("test_network:posts"."id" = "cd3fdfa9-6a64-4c21-9946-3af1113bacaf" and "test_network:posts"."userId" = 1)`,
+  ),
+);
+
+const data = await db
+  //.with(sq)
+  .insert(postsPicture)
+  .values({
+    postId: sql`select "id" from "test_network:posts" where ("test_network:posts"."id" = "1" and "test_network:posts"."userId" = "cd3fdfa9-6a64-4c21-9946-3af1113bacaf")`,
+    url: "test 1",
+  });
+console.log(data);

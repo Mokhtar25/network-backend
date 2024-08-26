@@ -4,6 +4,8 @@ import { NextFunction, RequestHandler, Router } from "express";
 import env from "../../env";
 import { z } from "zod";
 import db from "../database";
+import { posts, postsPicture } from "../database/schema";
+import { and, eq, sql } from "drizzle-orm";
 
 const fileRouter = Router();
 
@@ -29,11 +31,27 @@ fileRouter.post("/addpics", (async (req, res) => {
     pictures: z.array(z.string()).min(1),
   });
   const safeArgs = validData.safeParse(req.body);
-  if (!safeArgs.success) return res.send("bad content").status(400);
+  if (!safeArgs.success || !req.user)
+    return res.send("bad content").status(400);
 
-  // to do
-  const data = await db.insert().values({});
-  // add pictures to db
+  const subQ = db.$with("subQ").as(
+    db
+      .select({ id: posts.id })
+      .from(posts)
+      .where(
+        and(eq(posts.id, safeArgs.data.postId), eq(posts.userId, req.user.id)),
+      ),
+  );
+
+  const data = await db
+    .with(subQ)
+    .insert(postsPicture)
+    .values({
+      postId: sql`(select "id" from "subQ")`,
+      url: safeArgs.data.pictures[0],
+    });
+
+  return res.json(data).status(200);
 }) as RequestHandler);
 
 fileRouter.post("/getSignUrl", (req, res) => {
@@ -45,7 +63,7 @@ fileRouter.post("/getSignUrl", (req, res) => {
   const body = params.safeParse(req.body);
   if (!body.success) return res.send("Missing content : File name").status(400);
 
-  // timestamp is needed for signature, Valid for an hour
+  // timestamp is needed for signature, Valid for an hout
   const timestamp = Math.round(new Date().getTime() / 1000);
   const name = `${req.user.id}_${timestamp}_name:${body.data.fileName}`;
   const signature = cloudinary.utils.api_sign_request(
@@ -56,6 +74,10 @@ fileRouter.post("/getSignUrl", (req, res) => {
     env.CLOUD_API_SECRET,
   );
 
+  console.log(
+    cloudinary.utils.verifyNotificationSignature(name, signature, timestamp),
+    "test verfity fun",
+  );
   return res.json({ timestamp, signature, fileName: name });
 });
 

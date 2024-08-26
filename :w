@@ -1,0 +1,16 @@
+import db from "../database";
+import { and, eq } from "drizzle-orm";
+
+import { posts } from "../database/schema";
+const sub = db.$with("sq").as(
+  db
+    .select()
+    .from(posts)
+    .where(and(eq(posts.id, ""), eq(posts.userId, ""))),
+);
+
+// to do
+const data = await db.insert(postsPicture).values({
+  postId: sub.id,
+  url: safeArgs.data.pictures[0],
+});
