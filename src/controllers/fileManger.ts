@@ -43,19 +43,25 @@ fileRouter.post("/addpics", (async (req, res) => {
       ),
   );
 
-  await Promise.all(
-    safeArgs.data.pictures.map(async (e) => {
-      const data = await db
-        .with(subQ)
-        .insert(postsPicture)
-        .values({
-          postId: sql`(select "id" from "subQ")`,
-          url: e,
-        });
-      console.log(data);
-    }),
-  );
-  return res.status(200);
+  try {
+    await Promise.all(
+      safeArgs.data.pictures.map(async (e) => {
+        const data = await db
+          .with(subQ)
+          .insert(postsPicture)
+          .values({
+            postId: sql`(select "id" from "subQ")`,
+            url: e,
+          });
+        console.log(data);
+      }),
+    );
+
+    return res.status(200);
+  } catch (err) {
+    console.log(err);
+    res.send("Unauthorized for this action").status(401);
+  }
 }) as RequestHandler);
 
 fileRouter.post("/getSignUrl", (req, res) => {
