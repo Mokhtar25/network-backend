@@ -33,7 +33,7 @@ import { typeDefs, resolvers, schema } from "./graphql";
 import env from "../env";
 import { GraphQLError } from "graphql";
 import fileRouter from "./controllers/fileManger";
-//import helmet from "helmet";
+import helmet from "helmet";
 
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
@@ -54,6 +54,7 @@ const redisStore = new RedisStore({
 const app = express();
 app.use(express.static(path.join(__dirname, "index")));
 
+app.use(helmet());
 //app.use(helmet.hidePoweredBy());
 //app.use(helmet.frameguard({ action: "deny" }));
 //app.use(helmet.xssFilter());
@@ -73,7 +74,10 @@ app.use(
     saveUninitialized: true,
     store: redisStore,
     cookie: {
+      httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24,
+      secure: env.NODE_ENV === "production",
+      sameSite: "strict",
     },
   }),
 );
@@ -86,6 +90,7 @@ const loger = (
   console.log(req.user, "---req");
   next();
 };
+
 app.use(loger);
 app.use(loginRouter);
 app.use("/files", fileRouter);
