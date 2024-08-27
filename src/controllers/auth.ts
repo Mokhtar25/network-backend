@@ -27,6 +27,7 @@ import {
 } from "../database/schema";
 import { infer, z } from "zod";
 import { checkPassword, makeHash } from "../lib/auth/authUtils";
+import { isArray } from "util";
 
 export const loginRouter = Router();
 
@@ -90,6 +91,23 @@ passport.use(
       profile: GoogleProfile,
       done: VerifyCallback,
     ) {
+      const parseEmails = z
+        .object({
+          emails: z.array(
+            z.object({
+              value: z.string(),
+            }),
+          ),
+        })
+        .passthrough();
+      const emails = parseEmails.safeParse(profile);
+
+      if (emails.success) {
+        // @ts-expect-error annoying to deal with, this is how the data is coming from google
+        profile.emails = [emails.data.emails[0].value];
+      }
+
+      console.log(profile.emails);
       findOrMake(profile)
         .then((data) => done(null, data))
         .catch((err) => done(err));
@@ -102,14 +120,14 @@ const profileValid = z
     id: z.string(),
     provider: z.enum(["github", "google"]),
     displayName: z.string().optional().nullish(),
-    username: z.string().optional(),
-    emails: z.array(z.string()).optional(),
+    username: z.string().toLowerCase().optional(),
+    emails: z.array(z.string()),
   })
   .passthrough();
 async function findOrMake(profile: passport.Profile) {
   const userProfile = profileValid.parse(profile);
 
-  console.log("find or make start");
+  console.log("find or make start", userProfile);
   const data = await db
     .select()
     .from(users)
@@ -120,13 +138,19 @@ async function findOrMake(profile: passport.Profile) {
       ),
     );
 
+  console.log(data.length);
   if (data.length === 0) {
     const userList = await db
       .insert(users)
-      .values({ ...userProfile, providerId: userProfile.id, id: undefined })
+      .values({
+        ...userProfile,
+        providerId: userProfile.id,
+        id: undefined,
+        email: userProfile.emails[0],
+      })
       .returning();
 
-    console.log("find or maek done");
+    console.log("find or make done");
     return userList[0];
   }
 
@@ -147,23 +171,34 @@ passport.use(
       profile: GithubProfile,
       done: passport.DoneCallback,
     ) {
-      // this is how you get users email in github
-      //const headers = new Headers();
-      //headers.set("Authorization", "Bearer " + _);
-      //
-      //console.log(_, __, "tokens are here");
-      //fetch(`https://api.github.com/user/emails`, {
-      //  method: "get",
-      //  headers: headers,
-      //})
-      //  .then((re) => re.json())
-      //  .then((re) => console.log(re, "result "))
-      //  .catch((er) => console.log(er, "error"));
-      findOrMake(profile)
-        .then((e) => {
-          done(null, e);
+      //this is how you get users email in github
+      const headers = new Headers();
+      headers.set("Authorization", "Bearer " + _);
+
+      console.log(_, __, "tokens are here");
+      fetch(`https://api.github.com/user/emails`, {
+        method: "get",
+        headers: headers,
+      })
+        .then((re) => re.json())
+        .then((re) => {
+          const parseEmail = z.array(z.object({ email: z.string() }));
+          const emails = parseEmail.safeParse(re);
+
+          // @ts-expect-error data from github
+          if (emails.success) profile.emails = [emails.data[0].email];
+          findOrMake(profile)
+            .then((e) => {
+              done(null, e);
+            })
+            .catch((err) => done(err));
         })
-        .catch((err) => done(err));
+        .catch((er) => console.log(er, "error"));
+      //findOrMake(profile)
+      //  .then((e) => {
+      //    done(null, e);
+      //  })
+      //  .catch((err) => done(err));
     },
   ),
 );
@@ -236,7 +271,7 @@ routesAuth.post("/signUp", (async (req, res, next) => {
 routesAuth.get(
   "/api/google",
   passport.authenticate("google", {
-    scope: ["profile"],
+    scope: ["profile", "email"],
   }) as RequestHandler,
 );
 
