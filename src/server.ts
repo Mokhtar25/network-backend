@@ -1,4 +1,5 @@
-import express, { NextFunction } from "express";
+import express from "express";
+import type { Request, Response, NextFunction } from "express";
 
 import session from "express-session";
 // import crypto from "crypto";
@@ -32,6 +33,7 @@ import { typeDefs, resolvers, schema } from "./graphql";
 import env from "../env";
 import { GraphQLError } from "graphql";
 import fileRouter from "./controllers/fileManger";
+//import helmet from "helmet";
 
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
@@ -52,6 +54,9 @@ const redisStore = new RedisStore({
 const app = express();
 app.use(express.static(path.join(__dirname, "index")));
 
+//app.use(helmet.hidePoweredBy());
+//app.use(helmet.frameguard({ action: "deny" }));
+//app.use(helmet.xssFilter());
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -106,6 +111,7 @@ app.use(
 
   express.json(),
   expressMiddleware(server, {
+    // apollo context requires a promise
     // eslint-disable-next-line
     context: async ({ req }) => {
       if (!req.isAuthenticated()) {
@@ -123,5 +129,11 @@ app.use(
     },
   }),
 );
+// todo more logic goes in here to identify error
+const errorHandler = (err, _: Request, res: Response, __: NextFunction) => {
+  console.log(err);
+  res.send("error has ouccred").status(501);
+};
+app.use(errorHandler);
 httpServer.listen({ port: env.PORT });
 console.log(`🚀 Server ready at http://localhost:${env.PORT}`);
