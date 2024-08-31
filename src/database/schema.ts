@@ -9,6 +9,7 @@ import {
   uuid,
   integer,
   primaryKey,
+  unique,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations, sql } from "drizzle-orm";
@@ -155,6 +156,39 @@ export const postsPicture = createTable("postsPicture", {
     .notNull(),
   url: varchar("url", { length: 256 }).notNull(),
 });
+
+export const profile = createTable("profile", {
+  userId: serial("userId")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  profilePic: varchar("ProfilePic", { length: 256 }),
+  backgroundPic: varchar("backgroundPic", { length: 256 }),
+  bio: text("text"),
+});
+
+export const followers = createTable(
+  "following",
+  {
+    userId: serial("userId")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    followeId: serial("id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => {
+    return {
+      id: primaryKey({
+        name: "id",
+        columns: [table.userId, table.followeId],
+      }),
+    };
+  },
+);
+
 // build drizzle relations
 export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts),

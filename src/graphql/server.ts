@@ -37,6 +37,7 @@ const yest = await db
     ),
   );
 console.log(yest);
+console.time("start of bulider");
 const sa = await db
   .select({
     postContent: posts.textContent,
@@ -49,8 +50,11 @@ const sa = await db
   .leftJoin(comment, eq(comment.postId, posts.id))
   .leftJoin(postsPicture, eq(postsPicture.postId, posts.id));
 
+console.timeEnd("end builder");
 console.log(sa);
 // this returns an array. easier to use
+
+console.time("start of query");
 const qw = await db.query.posts.findMany({
   columns: {
     textContent: true,
@@ -66,5 +70,6 @@ const qw = await db.query.posts.findMany({
     likes: true,
   },
 });
+console.timeEnd("end query");
 console.log(qw);
 console.log(qw[0].comments);
