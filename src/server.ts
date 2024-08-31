@@ -34,6 +34,9 @@ import env from "../env";
 import { GraphQLError } from "graphql";
 import fileRouter from "./controllers/fileManger";
 import helmet from "helmet";
+// web sockets
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
 
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
@@ -104,12 +107,27 @@ export interface MyContext {
   user: Express.User;
   isAuthenticated: () => boolean;
 }
+const wsServer = new WebSocketServer({
+  server: httpServer,
+  path: "/",
+});
+const serverCleanup = useServer({ schema }, wsServer);
 
 const server = new ApolloServer<MyContext>({
   schema: schema,
-  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  plugins: [
+    ApolloServerPluginDrainHttpServer({ httpServer }),
+    {
+      async serverWillStart() {
+        return {
+          async drainServer() {
+            await serverCleanup.dispose();
+          },
+        };
+      },
+    },
+  ],
 });
-
 await server.start();
 app.use(
   "/graphql",

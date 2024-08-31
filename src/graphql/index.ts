@@ -20,8 +20,11 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { QueryBuilder } from "drizzle-orm/pg-core";
 import { crudComment, crudLike, crudPost } from "./resolvers/posts";
 
-console.log("run index after import");
+import { PubSub } from "graphql-subscriptions";
 
+const pubsub = new PubSub();
+import { mergeSchemas } from "@graphql-tools/schema";
+console.log("run index after import");
 export const { entities } = buildSchema(db);
 
 export const RequestTypeEnumGraphQl = new GraphQLEnumType({
@@ -36,7 +39,7 @@ export const RequestTypeEnumGraphQl = new GraphQLEnumType({
 console.log(typeof extractFilters);
 //console.log(entities.inputs.UsersFilters, "foi ----------------------------");
 // build half of this using already method as readONly and mutation and users manually
-export const schema = new GraphQLSchema({
+export const schemaS = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: "query",
     fields: {
@@ -127,4 +130,17 @@ export const schema = new GraphQLSchema({
       },
     },
   }),
+});
+export const schema = mergeSchemas({
+  schemas: [schemaS],
+  typeDefs: /* GraphQL */ `
+    type ExtraType {
+      foo: String
+    }
+  `,
+  resolvers: {
+    ExtraType: {
+      foo: () => "FOO",
+    },
+  },
 });
