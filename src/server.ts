@@ -54,7 +54,26 @@ const redisStore = new RedisStore({
 const app = express();
 app.use(express.static(path.join(__dirname, "index")));
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        imgSrc: [
+          `'self'`,
+          "data:",
+          "apollo-server-landing-page.cdn.apollographql.com",
+        ],
+        scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+        manifestSrc: [
+          `'self'`,
+          "apollo-server-landing-page.cdn.apollographql.com",
+        ],
+        frameSrc: [`'self'`, "sandbox.embed.apollographql.com"],
+      },
+    },
+  }),
+);
 //app.use(helmet.hidePoweredBy());
 //app.use(helmet.frameguard({ action: "deny" }));
 //app.use(helmet.xssFilter());
