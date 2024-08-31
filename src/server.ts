@@ -57,7 +57,26 @@ const redisStore = new RedisStore({
 const app = express();
 app.use(express.static(path.join(__dirname, "index")));
 
-app.use(helmet());
+//app.use(
+//  helmet({
+//    crossOriginEmbedderPolicy: false,
+//    contentSecurityPolicy: {
+//      directives: {
+//        imgSrc: [
+//          `'self'`,
+//          "data:",
+//          "apollo-server-landing-page.cdn.apollographql.com",
+//        ],
+//        scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+//        manifestSrc: [
+//          `'self'`,
+//          "apollo-server-landing-page.cdn.apollographql.com",
+//        ],
+//        frameSrc: [`'self'`, "sandbox.embed.apollographql.com"],
+//      },
+//    },
+//  }),
+//);
 //app.use(helmet.hidePoweredBy());
 //app.use(helmet.frameguard({ action: "deny" }));
 //app.use(helmet.xssFilter());
@@ -109,9 +128,9 @@ export interface MyContext {
 }
 const wsServer = new WebSocketServer({
   server: httpServer,
-  path: "/",
+  path: "/graphql",
 });
-const serverCleanup = useServer({ schema }, wsServer);
+const serverCleanup = useServer({ schema }, wsServer, 0);
 
 const server = new ApolloServer<MyContext>({
   schema: schema,
@@ -137,16 +156,16 @@ app.use(
     // apollo context requires a promise
     // eslint-disable-next-line
     context: async ({ req }) => {
-      if (!req.isAuthenticated()) {
-        throw new GraphQLError("User is not authenticated", {
-          extensions: {
-            code: "UNAUTHENTICATED",
-            http: { status: 401 },
-          },
-        });
-      }
+      //if (!req.isAuthenticated()) {
+      //  throw new GraphQLError("User is not authenticated", {
+      //    extensions: {
+      //      code: "UNAUTHENTICATED",
+      //      http: { status: 401 },
+      //    },
+      //  });
+      //}
       return {
-        user: req.user,
+        user: { id: 1 },
         isAuthenticated: () => req.isAuthenticated(),
       };
     },

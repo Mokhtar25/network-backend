@@ -64,6 +64,7 @@ export const schemaS = new GraphQLSchema({
 
         resolve: async (root, args, context: MyContext, info) => {
           console.log(args, context.user, "0000000000000:-----");
+          pubsub.publish("PERSON_ADDED", { personAdded: { name: "him" } });
           console.log(args.where.username.eq);
           const user = await db
             .select()
@@ -134,13 +135,21 @@ export const schemaS = new GraphQLSchema({
 export const schema = mergeSchemas({
   schemas: [schemaS],
   typeDefs: /* GraphQL */ `
-    type ExtraType {
-      foo: String
+    type Subscription {
+      personAdded: Person!
+    }
+    type Person {
+      name: String
     }
   `,
   resolvers: {
-    ExtraType: {
-      foo: () => "FOO",
+    Person: {
+      name: () => "adam",
+    },
+    Subscription: {
+      personAdded: {
+        subscribe: () => pubsub.asyncIterator("PERSON_ADDED"),
+      },
     },
   },
 });
