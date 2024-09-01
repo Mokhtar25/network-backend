@@ -86,7 +86,7 @@ export const selectUserSchema = createSelectSchema(users);
 //  email: true,
 //});
 
-const notificationsEnum = pgEnum("type", [
+export const notificationsEnum = pgEnum("type", [
   "commnet",
   "like",
   "request",
@@ -107,22 +107,31 @@ export const notifications = createTable("notifications", {
     .notNull(),
 });
 
-export const chats = createTable("chats", {
-  id: uuid("id").primaryKey().unique().defaultRandom(),
-  userId: serial("userId")
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  reciverId: serial("reciverId").references(() => users.id, {
-    onDelete: "cascade",
-  }),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-    () => new Date(),
-  ),
-});
-const messageType = pgEnum("messageType", ["image", "text"]);
+export const chats = createTable(
+  "chats",
+  {
+    id: uuid("id").primaryKey(),
+    userId: serial("userId")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    reciverId: serial("reciverId").references(() => users.id, {
+      onDelete: "cascade",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (table) => {
+    return {
+      unique: unique().on(table.reciverId, table.userId),
+    };
+  },
+);
+
+export const messageType = pgEnum("messageType", ["image", "text"]);
 export const message = createTable("message", {
   id: uuid("id").primaryKey().unique().defaultRandom(),
   senderId: serial("senderId")

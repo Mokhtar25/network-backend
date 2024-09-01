@@ -253,15 +253,20 @@ routesAuth.post("/signUp", (async (req, res, next) => {
 
     const hash = await makeHash(userSchema.password);
 
-    const user = await db
-      .insert(users)
-      .values({ username: userSchema.username, password: hash })
-      .returning();
+    try {
+      const user = await db
+        .insert(users)
+        .values({ username: userSchema.username, password: hash })
+        .returning();
 
-    req.login(user[0], (err) => {
-      if (err) return next(err);
-      return res.redirect("pro");
-    });
+      req.login(user[0], (err) => {
+        if (err) return next(err);
+        return res.redirect("pro");
+      });
+    } catch (err) {
+      console.log(err);
+      return res.send("Username is taken").status(400);
+    }
   } catch (err) {
     console.log(err);
     res.send("Invalid data").status(400);

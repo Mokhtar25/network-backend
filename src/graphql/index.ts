@@ -44,6 +44,7 @@ export const schemaS = new GraphQLSchema({
     name: "query",
     fields: {
       postSingle: entities.queries.postsSingle,
+
       posts: entities.queries.posts,
       commentSingle: entities.queries.commentSingle,
       likeSingle: entities.queries.likeSingle,
@@ -138,8 +139,8 @@ export const schema = mergeSchemas({
     type Subscription {
       personAdded: Person!
     }
-    type Person {
       name: String
+      type: Thing
     }
   `,
   resolvers: {

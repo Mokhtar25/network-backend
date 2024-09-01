@@ -60,13 +60,12 @@ fileRouter.post("/addpics", (async (req, res) => {
     return res.status(200);
   } catch (err) {
     console.log(err);
-    res.send("Unauthorized for this action").status(401);
+    return res.send("Unauthorized for this action").status(401);
   }
 }) as RequestHandler);
 
 fileRouter.post("/getSignUrl", (req, res) => {
   if (!req.isAuthenticated()) return res.send("unAuth");
-
   const params = z.object({
     fileName: z.string().min(1),
   });
@@ -85,7 +84,7 @@ fileRouter.post("/getSignUrl", (req, res) => {
   );
 
   console.log(
-    cloudinary.utils.verifyNotificationSignature(name, signature, timestamp),
+    cloudinary.utils.verifyNotificationSignature(name, timestamp, signature),
     "test verfity fun",
   );
   return res.json({ timestamp, signature, fileName: name });
