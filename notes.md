@@ -21,3 +21,13 @@ check n + 1 problem
 setup tables for friends and requested adds, notifications, messages, chats, profile, 
 
 AUTH/ Check if the username already exists in the dataBase and if the Github or other usernames also collides with first
+
+-----------------------------------
+-clear up datebase stuff. and separate the schemas into a folder
+-clear up graphql mutations, messages, posts, friends and requested, notifications, resolvers etc. no sockets,
+-setup sending a photo with messaging and pictures
+-clear up the sup models, for messaging first, then comments, then others.
+-set up production environment. redirect urls, etc
+=
+
+
