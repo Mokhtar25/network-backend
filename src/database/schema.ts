@@ -10,36 +10,50 @@ import {
   integer,
   primaryKey,
   unique,
+  uniqueIndex,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations, sql } from "drizzle-orm";
 import { z } from "zod";
 import { arrayBuffer } from "stream/consumers";
+import { type } from "os";
 
 export const createTable = pgTableCreator((name) => `test_network:${name}`);
 
 // set up indexes for what you wanna query by, like for postsPicture make it post id
-export const users = createTable("users_test", {
-  id: serial("id").primaryKey().notNull().unique(),
-  providerId: varchar("providerId", { length: 256 }),
-  displayName: text("displayName"),
-  password: text("password"),
-  username: varchar("username", { length: 256 }).unique(),
-  email: text("email"),
-  description: text("description"),
-  provider: text("provider", { enum: ["github", "google", "local"] }).default(
-    "local",
-  ),
-  role: text("role", { enum: ["admin", "user"] })
-    .notNull()
-    .default("user"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-    () => new Date(),
-  ),
-});
+export const users = createTable(
+  "users_test",
+  {
+    id: serial("id").primaryKey().notNull().unique(),
+    providerId: varchar("providerId", { length: 256 }),
+    displayName: text("displayName"),
+    password: text("password"),
+    username: varchar("username", { length: 256 }).unique(),
+    email: text("email"),
+    description: text("description"),
+    provider: text("provider", { enum: ["github", "google", "local"] }).default(
+      "local",
+    ),
+    role: text("role", { enum: ["admin", "user"] })
+      .notNull()
+      .default("user"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (table) => {
+    return {
+      uniquieUsernameWithAuth: unique("provider and username").on(
+        table.username,
+        table.provider,
+      ),
+    };
+  },
+);
 
 export type User = typeof users.$inferSelect; // return type when queried
 
@@ -71,6 +85,67 @@ export const selectUserSchema = createSelectSchema(users);
 //  displayName: true,
 //  email: true,
 //});
+
+const notificationsEnum = pgEnum("type", [
+  "commnet",
+  "like",
+  "request",
+  "acceptRequest",
+]);
+export const notifications = createTable("notifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: serial("userId")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  // not putting a relation to make it more versatile
+  itemID: uuid("itemId").notNull(),
+  textContent: text("textContent"),
+  read: boolean("read").default(false),
+  type: notificationsEnum("type").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});
+
+export const chats = createTable("chats", {
+  id: uuid("id").primaryKey().unique().defaultRandom(),
+  userId: serial("userId")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  reciverId: serial("reciverId").references(() => users.id, {
+    onDelete: "cascade",
+  }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
+});
+const messageType = pgEnum("messageType", ["image", "text"]);
+export const message = createTable("message", {
+  id: uuid("id").primaryKey().unique().defaultRandom(),
+  senderId: serial("senderId")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  textContent: text("textContent"),
+  chatId: uuid("chatId")
+    .references(() => chats.id, { onDelete: "cascade" })
+    .notNull(),
+  reciverId: serial("reciverId")
+    .references(() => users.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  read: boolean("read").default(false),
+  messageType: messageType("messageType").default("text"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
+});
 
 export const posts = createTable("posts", {
   id: uuid("id").primaryKey().unique().defaultRandom(),

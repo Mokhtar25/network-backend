@@ -136,6 +136,7 @@ const server = new ApolloServer<MyContext>({
   schema: schema,
   plugins: [
     ApolloServerPluginDrainHttpServer({ httpServer }),
+
     {
       async serverWillStart() {
         return {
@@ -156,14 +157,14 @@ app.use(
     // apollo context requires a promise
     // eslint-disable-next-line
     context: async ({ req }) => {
-      //if (!req.isAuthenticated()) {
-      //  throw new GraphQLError("User is not authenticated", {
-      //    extensions: {
-      //      code: "UNAUTHENTICATED",
-      //      http: { status: 401 },
-      //    },
-      //  });
-      //}
+      if (!req.isAuthenticated()) {
+        throw new GraphQLError("User is not authenticated", {
+          extensions: {
+            code: "UNAUTHENTICATED",
+            http: { status: 401 },
+          },
+        });
+      }
       return {
         user: { id: 1 },
         isAuthenticated: () => req.isAuthenticated(),

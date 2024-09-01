@@ -19,3 +19,5 @@ import errorhandling
 check n + 1 problem 
 
 setup tables for friends and requested adds, notifications, messages, chats, profile, 
+
+AUTH/ Check if the username already exists in the dataBase and if the Github or other usernames also collides with first
