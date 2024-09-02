@@ -1,0 +1,10 @@
+export { posts } from "./post";
+export { like } from "./like";
+export { comment } from "./comment";
+export { users } from "./usersSchema";
+export { profile } from "./profile";
+export { postsPicture } from "./postPictures";
+export { chats } from "./chats";
+export { notifications } from "./noti";
+export { message } from "./message";
+export { followers } from "./followers";

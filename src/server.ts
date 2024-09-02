@@ -138,6 +138,8 @@ const server = new ApolloServer<MyContext>({
     ApolloServerPluginDrainHttpServer({ httpServer }),
 
     {
+      // has to be async
+      // eslint-disable-next-line
       async serverWillStart() {
         return {
           async drainServer() {
@@ -166,16 +168,21 @@ app.use(
         });
       }
       return {
-        user: { id: 1 },
+        user: req.user,
         isAuthenticated: () => req.isAuthenticated(),
       };
     },
   }),
 );
 // todo more logic goes in here to identify error
-const errorHandler = (err, _: Request, res: Response, __: NextFunction) => {
+const errorHandler = (
+  err: Error,
+  _: Request,
+  res: Response,
+  __: NextFunction,
+) => {
   console.log(err);
-  res.send("error has ouccred").status(501);
+  res.send(`error has ouccred, ${err.message}`).status(501);
 };
 app.use(errorHandler);
 httpServer.listen({ port: env.PORT });
