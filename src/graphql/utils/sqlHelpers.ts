@@ -1,7 +1,7 @@
 import { AnyColumn } from "drizzle-orm";
 import { sql, eq } from "drizzle-orm";
 import db from "../../database";
-import { posts } from "../../database/schema";
+import { posts } from "../../database/schemas";
 
 export const increment = (column: AnyColumn, value = 1) => {
   return sql`${column} + ${value}`;

@@ -14,20 +14,11 @@ import {
   GoogleCallbackParameters,
 } from "passport-google-oauth20";
 import "dotenv/config";
-//import { db } from "../server";
 import db from "../database";
 import { and, eq } from "drizzle-orm";
-import {
-  insertUserSchema,
-  insertUserSchemaOauth,
-  posts,
-  selectUserSchema,
-  User,
-  users,
-} from "../database/schema";
-import { infer, z } from "zod";
+import { users } from "../database/schemas";
+import { z } from "zod";
 import { checkPassword, makeHash } from "../lib/auth/authUtils";
-import { isArray } from "util";
 
 export const loginRouter = Router();
 

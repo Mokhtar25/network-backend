@@ -1,7 +1,7 @@
 import { GraphQLError } from "graphql";
 import db from "../../database";
 import { z } from "zod";
-import { comment, like, posts } from "../../database/schema";
+import { posts, comment, like } from "../../database/schemas";
 import { MyContext } from "../../server";
 import { and, eq } from "drizzle-orm";
 import {

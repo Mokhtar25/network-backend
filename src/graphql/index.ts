@@ -14,7 +14,7 @@ import {
 import { MyContext } from "../server";
 import { buildSchema, extractFilters } from "drizzle-graphql";
 import db from "../database";
-import { posts, postsPicture, users } from "../database/schema";
+import { posts, postsPicture, users } from "../database/schemas";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { QueryBuilder } from "drizzle-orm/pg-core";

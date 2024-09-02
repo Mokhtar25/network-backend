@@ -4,7 +4,7 @@ import { NextFunction, RequestHandler, Router } from "express";
 import env from "../../env";
 import { z } from "zod";
 import db from "../database";
-import { posts, postsPicture } from "../database/schema";
+import { postsPicture, posts } from "../database/schemas";
 import { and, eq, sql } from "drizzle-orm";
 
 const fileRouter = Router();
