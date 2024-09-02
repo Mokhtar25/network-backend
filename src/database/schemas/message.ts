@@ -8,7 +8,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import { users } from "./usersSchema";
+import { users } from "./users";
 import { chats } from "./chats";
 
 export const messageType = pgEnum("messageType", ["image", "text"]);

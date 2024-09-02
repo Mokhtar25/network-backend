@@ -1,7 +1,7 @@
 import { createTable } from "../schema";
 import { primaryKey, serial, timestamp } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import { users } from "./usersSchema";
+import { users } from "./users";
 
 export const followers = createTable(
   "following",

@@ -1,7 +1,7 @@
 import { createTable } from "../schema";
 import { uuid, serial, primaryKey, timestamp } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import { users } from "./usersSchema";
+import { users } from "./users";
 import { posts } from "./post";
 import { createInsertSchema } from "drizzle-zod";
 

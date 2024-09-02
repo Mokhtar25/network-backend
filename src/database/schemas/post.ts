@@ -1,8 +1,8 @@
 import { createTable } from "../schema";
 import { uuid, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import { users } from "./usersSchema";
 import { createInsertSchema } from "drizzle-zod";
+import { users } from "./users";
 
 export const posts = createTable("posts", {
   id: uuid("id").primaryKey().unique().defaultRandom(),

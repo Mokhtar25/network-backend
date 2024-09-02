@@ -1,6 +1,6 @@
 import { createTable } from "../schema";
 import { serial, text, varchar, timestamp } from "drizzle-orm/pg-core";
-import { users } from "./usersSchema";
+import { users } from "./users";
 
 export const profile = createTable("profile", {
   userId: serial("userId")
