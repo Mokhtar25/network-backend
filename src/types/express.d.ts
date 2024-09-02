@@ -1,4 +1,4 @@
-import type { User as appUser } from "../database/schemas/usersSchema";
+import type { User as appUser } from "../database/schemas/users";
 
 export {};
 
