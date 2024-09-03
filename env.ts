@@ -14,6 +14,7 @@ const envSchema = z.object({
   GoogleClientSecret: z.string().min(1),
 
   DATABASE_URI: z.string().url(),
+  SESSION_SECRET: z.string().min(25, { message: "Secret should be lengthy" }),
 
   SUPERBASE_KEY: z.string().min(1),
 

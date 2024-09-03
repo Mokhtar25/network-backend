@@ -254,13 +254,14 @@ routesAuth.post("/signUp", (async (req, res, next) => {
         if (err) return next(err);
         return res.redirect("pro");
       });
+      return;
     } catch (err) {
       console.log(err);
       return res.send("Username is taken").status(400);
     }
   } catch (err) {
     console.log(err);
-    res.send("Invalid data").status(400);
+    return res.send("Invalid data").status(400);
   }
 }) as RequestHandler);
 

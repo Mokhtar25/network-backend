@@ -2,34 +2,16 @@ import express from "express";
 import type { Request, Response, NextFunction } from "express";
 
 import session from "express-session";
-// import crypto from "crypto";
-//import passport from "passport";
-
-//import env from "../env";
 import { ApolloServer } from "@apollo/server";
-//import { Strategy as LocalStrategy, VerifyFunction } from "passport-local";
-//import {
-//  Strategy as GitHubStrategy,
-//  Profile as GithubProfile,
-//} from "passport-github2";
-//import { Pool } from "pg";
-import path from "path";
-//import {
-//  Strategy as GoogleStrategy,
-//  Profile as GoogleProfile,
-//  VerifyCallback,
-//  GoogleCallbackParameters,
-//} from "passport-google-oauth20";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
-import bodyParser from "body-parser";
 import cors from "cors";
 import "dotenv/config";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "http";
-import { loginRouter, User } from "./controllers/auth";
-import { typeDefs, resolvers, schema } from "./graphql";
+import { loginRouter } from "./controllers/auth";
+import { schema } from "./graphql";
 import env from "../env";
 import { GraphQLError } from "graphql";
 import fileRouter from "./controllers/fileManger";
@@ -46,22 +28,14 @@ const redisStore = new RedisStore({
   prefix: "myapp:",
 });
 
-//export const db = new Pool({
-//  host: "localhost", // or wherever the db is hosted
-//  user: "moktarali",
-//  database: "users_passport",
-//  password: "200106",
-//  port: 5432, // The default port
-//});
-//
 const app = express();
-app.use(express.static(path.join(__dirname, "index")));
 
 app.use(
   helmet({
     crossOriginEmbedderPolicy: false,
     contentSecurityPolicy: {
       directives: {
+        // allow Apollo server playground
         imgSrc: [
           `'self'`,
           "data:",
@@ -77,9 +51,7 @@ app.use(
     },
   }),
 );
-//app.use(helmet.hidePoweredBy());
-//app.use(helmet.frameguard({ action: "deny" }));
-//app.use(helmet.xssFilter());
+
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -91,7 +63,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: "asdkosadakods;",
+    secret: env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     store: redisStore,
@@ -116,7 +88,6 @@ const loger = (
 app.use(loger);
 app.use(loginRouter);
 app.use("/files", fileRouter);
-// prettier-ignore
 
 app.get("/", (_req, res) => {
   res.send("<h2>hello, world</h2>");

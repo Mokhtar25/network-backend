@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import { postsPicture, like, posts, comment, users } from "./schemas";
-
 // this for query syntax in drizzle
 
 // build drizzle relations
