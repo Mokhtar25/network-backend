@@ -1,3 +1,12 @@
+import { buildSchema } from "drizzle-graphql";
+import db from "../database";
+
+export const { entities } = buildSchema(db);
+
+import { PubSub } from "graphql-subscriptions";
+
+export const pubsub = new PubSub();
+
 //import db from "../database";
 //import { and, between, eq, sql } from "drizzle-orm";
 //import { comment, users } from "../database/schemas";
