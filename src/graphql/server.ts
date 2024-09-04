@@ -1,5 +1,6 @@
 import { buildSchema } from "drizzle-graphql";
 import db from "../database";
+import { GraphQLEnumType } from "graphql";
 
 export const { entities } = buildSchema(db);
 
@@ -7,6 +8,14 @@ import { PubSub } from "graphql-subscriptions";
 
 export const pubsub = new PubSub();
 
+export const RequestTypeEnumGraphQl = new GraphQLEnumType({
+  name: "requestMethod",
+  values: {
+    update: { value: "update" },
+    post: { value: "post" },
+    delete: { value: "delete" },
+  },
+});
 //import db from "../database";
 //import { and, between, eq, sql } from "drizzle-orm";
 //import { comment, users } from "../database/schemas";

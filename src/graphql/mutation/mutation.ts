@@ -5,7 +5,7 @@ import {
   GraphQLID,
 } from "graphql";
 import { entities } from "../server";
-import { RequestTypeEnumGraphQl } from "..";
+import { RequestTypeEnumGraphQl } from "../server";
 import * as mute from "../resolvers/posts";
 
 export const mutation = new GraphQLObjectType({
