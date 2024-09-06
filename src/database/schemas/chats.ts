@@ -6,7 +6,7 @@ import { users } from "./users";
 export const chats = createTable(
   "chats",
   {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     userId: serial("userId")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),

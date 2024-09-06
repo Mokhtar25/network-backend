@@ -76,6 +76,8 @@ app.use(
   }),
 );
 
+app.use(loginRouter);
+app.use("/files", fileRouter);
 const loger = (
   req: Express.Request,
   _: Express.Response,
@@ -84,10 +86,7 @@ const loger = (
   console.log(req.user, "---req");
   next();
 };
-
 app.use(loger);
-app.use(loginRouter);
-app.use("/files", fileRouter);
 
 app.get("/", (_req, res) => {
   res.send("<h2>hello, world</h2>");
@@ -101,6 +100,7 @@ const wsServer = new WebSocketServer({
   server: httpServer,
   path: "/graphql",
 });
+// the 0 is a bun bug, need a zero to work in bun
 const serverCleanup = useServer({ schema }, wsServer, 0);
 
 const server = new ApolloServer<MyContext>({

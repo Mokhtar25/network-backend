@@ -8,6 +8,7 @@ import {
   updatePostCommentCount,
   updatePostLikeCount,
 } from "../utils/sqlHelpers";
+import { notAuthError, badContentError } from "./errors";
 
 export const RequestTypeEnum = ["update", "post", "delete"] as const;
 // could have added a var or an enum with every request to check what opreation that is wanted to be done
@@ -98,25 +99,6 @@ export const crudPost = async (
 
     return post[0];
   }
-};
-
-const badContentError = () => {
-  throw new GraphQLError("Missing content", {
-    extensions: {
-      code: "Bad Request",
-      http: { status: 400 },
-    },
-  });
-};
-
-const notAuthError = (user: unknown) => {
-  if (!user)
-    throw new GraphQLError("unAuthorized", {
-      extensions: {
-        code: "UNAUTHENTICATED",
-        http: { status: 401 },
-      },
-    });
 };
 export const crudComment = async (
   _: string,

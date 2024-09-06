@@ -22,6 +22,7 @@ export const query = new GraphQLObjectType({
     comments: entities.queries.comment,
     postsPictureSingle: entities.queries.postsPictureSingle,
     postsPictures: entities.queries.postsPicture,
+    profiles: entities.queries.profile,
     profile: entities.queries.profileSingle,
     followers: entities.queries.followers,
     notifications: entities.queries.notifications,

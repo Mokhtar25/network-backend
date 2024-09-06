@@ -6,6 +6,7 @@ import {
   text,
   boolean,
   timestamp,
+  foreignKey,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { users } from "./users";
@@ -14,13 +15,13 @@ import { chats } from "./chats";
 export const messageType = pgEnum("messageType", ["image", "text"]);
 
 export const message = createTable("message", {
-  id: uuid("id").primaryKey().unique().defaultRandom(),
+  id: uuid("id").primaryKey().defaultRandom(),
   senderId: serial("senderId")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   textContent: text("textContent"),
   chatId: uuid("chatId")
-    .references(() => chats.id, { onDelete: "cascade" })
+    .references(() => chats.id)
     .notNull(),
   reciverId: serial("reciverId")
     .references(() => users.id, {

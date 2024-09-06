@@ -7,6 +7,7 @@ import {
 import { entities } from "../server";
 import { RequestTypeEnumGraphQl } from "../server";
 import * as mute from "../resolvers/posts";
+import { CrudProfile } from "../resolvers/profile";
 
 export const mutation = new GraphQLObjectType({
   name: "Mutation",
@@ -42,6 +43,25 @@ export const mutation = new GraphQLObjectType({
         },
       },
       resolve: mute.crudLike,
+    },
+
+    crudProfile: {
+      type: new GraphQLNonNull(entities.types.ProfileItem),
+      args: {
+        type: {
+          type: new GraphQLNonNull(RequestTypeEnumGraphQl),
+        },
+        bio: {
+          type: GraphQLString,
+        },
+        backgrondPic: {
+          type: GraphQLString,
+        },
+        profilePic: {
+          type: GraphQLString,
+        },
+      },
+      resolve: CrudProfile,
     },
     crudPost: {
       type: new GraphQLNonNull(entities.types.PostsItem),

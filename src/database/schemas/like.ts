@@ -20,7 +20,7 @@ export const like = createTable(
   },
   (table) => {
     return {
-      id: primaryKey({ name: "likeId", columns: [table.postId, table.userId] }),
+      likeId: primaryKey({ columns: [table.postId, table.userId] }),
     };
   },
 );

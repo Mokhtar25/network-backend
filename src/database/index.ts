@@ -10,6 +10,4 @@ const pool = new Pool({
 
 const db = drizzle(pool, { schema, logger: true });
 
-console.log(relations);
-
 export default db;
