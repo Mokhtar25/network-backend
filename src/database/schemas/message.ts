@@ -5,8 +5,8 @@ import {
   pgEnum,
   text,
   boolean,
+  integer,
   timestamp,
-  foreignKey,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { users } from "./users";
@@ -16,14 +16,14 @@ export const messageType = pgEnum("messageType", ["image", "text"]);
 
 export const message = createTable("message", {
   id: uuid("id").primaryKey().defaultRandom(),
-  senderId: serial("senderId")
+  senderId: integer("senderId")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   textContent: text("textContent"),
   chatId: uuid("chatId")
-    .references(() => chats.id)
+    .references(() => chats.id, { onDelete: "cascade" })
     .notNull(),
-  reciverId: serial("reciverId")
+  reciverId: integer("reciverId")
     .references(() => users.id, {
       onDelete: "cascade",
     })

@@ -1,5 +1,5 @@
 import { createTable } from "../schema";
-import { uuid, serial, unique, timestamp, integer } from "drizzle-orm/pg-core";
+import { uuid, unique, timestamp, integer } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { users } from "./users";
 
