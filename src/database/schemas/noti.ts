@@ -17,6 +17,8 @@ export const notificationsEnum = pgEnum("type", [
   "request",
   "acceptRequest",
 ]);
+export const NotificationsEnum = notificationsEnum.enumValues;
+
 export const notifications = createTable("notifications", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: serial("userId")
@@ -31,3 +33,6 @@ export const notifications = createTable("notifications", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
+
+export type NotificationsInsert = typeof notifications.$inferInsert;
+export type NotificationsSelection = typeof notifications.$inferSelect;

@@ -1,16 +1,9 @@
 import db from "../../database";
 import { z } from "zod";
 import { MyContext } from "../../server";
-import { and, eq } from "drizzle-orm";
 import { badContentError } from "./errors";
 import { profile } from "../../database/schemas";
-
-export const RequestTypeEnum = ["update", "post", "delete"] as const;
-const requestObject = z
-  .object({
-    type: z.enum(RequestTypeEnum),
-  })
-  .passthrough();
+import { requestObject } from "./posts";
 
 export const CrudProfile = async (
   _: unknown,
@@ -20,11 +13,15 @@ export const CrudProfile = async (
   const request = requestObject.safeParse(args);
   if (!request.success) return badContentError();
 
-  const argsData = z.object({
-    bio: z.string().max(256).optional(),
-    profilePic: z.string().optional(),
-    backgroundPic: z.string().optional(),
-  });
+  // check when to update and when to add stuff/or make its on the frontend to send which fields
+  // // if you dont provide the field it wont be changed. so that is good and is left to the frontend
+  const argsData = z
+    .object({
+      bio: z.string().max(256).optional(),
+      profilePic: z.string().optional(),
+      backgroundPic: z.string().optional(),
+    })
+    .passthrough();
 
   const safeData = argsData.safeParse(args);
   console.log(safeData.error);

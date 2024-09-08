@@ -39,7 +39,10 @@ export const query = new GraphQLObjectType({
       },
 
       resolve: async (_, args, context: MyContext) => {
-        await pubsub.publish("PERSON_ADDED", { personAdded: { name: "him" } });
+        pubsub
+          .publish("PERSON_ADDED", { personAdded: { name: "him" } })
+          .then(() => null)
+          .catch((er) => console.log(er));
         console.log(context);
         const user = await db
           .select()

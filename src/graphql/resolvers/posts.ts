@@ -15,7 +15,7 @@ export const RequestTypeEnum = ["update", "post", "delete"] as const;
 // like add, update. or delete. and make the opreation mandtoary to add
 // this would solve the issue completely.
 // no need for socket.io, you can use subscriptions in graphql
-const requestObject = z
+export const requestObject = z
   .object({
     type: z.enum(RequestTypeEnum),
   })
