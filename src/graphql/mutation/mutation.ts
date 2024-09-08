@@ -3,11 +3,13 @@ import {
   GraphQLNonNull,
   GraphQLString,
   GraphQLID,
+  GraphQLInt,
 } from "graphql";
 import { entities } from "../server";
 import { RequestTypeEnumGraphQl } from "../server";
 import * as mute from "../resolvers/posts";
 import { CrudProfile } from "../resolvers/profile";
+import { Crudfollowers } from "../resolvers/followers";
 
 export const mutation = new GraphQLObjectType({
   name: "Mutation",
@@ -43,6 +45,19 @@ export const mutation = new GraphQLObjectType({
         },
       },
       resolve: mute.crudLike,
+    },
+
+    crudFollower: {
+      type: new GraphQLNonNull(entities.types.FollowersItem),
+      args: {
+        type: {
+          type: new GraphQLNonNull(RequestTypeEnumGraphQl),
+        },
+        followerId: {
+          type: new GraphQLNonNull(GraphQLInt),
+        },
+      },
+      resolve: Crudfollowers,
     },
 
     crudProfile: {

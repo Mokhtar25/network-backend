@@ -1,15 +1,15 @@
 import { createTable } from "../schema";
-import { primaryKey, serial, timestamp } from "drizzle-orm/pg-core";
+import { integer, primaryKey, timestamp } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { users } from "./users";
 
 export const followers = createTable(
   "following",
   {
-    userId: serial("userId")
+    userId: integer("userId")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
-    followeId: serial("id")
+    followeId: integer("id")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })

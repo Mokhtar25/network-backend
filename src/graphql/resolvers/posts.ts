@@ -9,7 +9,7 @@ import {
   updatePostLikeCount,
 } from "../utils/sqlHelpers";
 import { notAuthError, badContentError } from "./errors";
-import { addLikeNotifications } from "../constants";
+import { addCommentNotifications, addLikeNotifications } from "../constants";
 
 export const RequestTypeEnum = ["update", "post", "delete"] as const;
 // could have added a var or an enum with every request to check what opreation that is wanted to be done
@@ -129,6 +129,8 @@ export const crudComment = async (
       .returning();
 
     updatePostCommentCount(commentReturn[0].postId, "increment");
+    // eslint-disable-next-line
+    addCommentNotifications(commentReturn[0].userId, commentReturn[0].postId);
 
     return commentReturn[0];
   } else if (method.data.type === "update") {
@@ -197,6 +199,7 @@ export const crudLike = async (
       .returning();
 
     updatePostLikeCount(likeReturned[0].postId, "increment");
+    // eslint-disable-next-line
     addLikeNotifications(likeReturned[0].userId, likeReturned[0].postId);
     return likeReturned[0];
   } else {
