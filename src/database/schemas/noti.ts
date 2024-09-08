@@ -21,7 +21,10 @@ export const NotificationsEnum = notificationsEnum.enumValues;
 
 export const notifications = createTable("notifications", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: serial("userId")
+  senderId: serial("senderId")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  reciverId: serial("reciverId")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   // not putting a relation to make it more versatile

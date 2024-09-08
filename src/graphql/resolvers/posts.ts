@@ -9,6 +9,7 @@ import {
   updatePostLikeCount,
 } from "../utils/sqlHelpers";
 import { notAuthError, badContentError } from "./errors";
+import { addLikeNotifications } from "../constants";
 
 export const RequestTypeEnum = ["update", "post", "delete"] as const;
 // could have added a var or an enum with every request to check what opreation that is wanted to be done
@@ -196,6 +197,7 @@ export const crudLike = async (
       .returning();
 
     updatePostLikeCount(likeReturned[0].postId, "increment");
+    addLikeNotifications(likeReturned[0].userId, likeReturned[0].postId);
     return likeReturned[0];
   } else {
     const likeReturned = await db

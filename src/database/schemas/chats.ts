@@ -1,5 +1,5 @@
 import { createTable } from "../schema";
-import { uuid, serial, unique, timestamp } from "drizzle-orm/pg-core";
+import { uuid, serial, unique, timestamp, integer } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { users } from "./users";
 
@@ -7,10 +7,10 @@ export const chats = createTable(
   "chats",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: serial("userId")
+    userId: integer("userId")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
-    reciverId: serial("reciverId").references(() => users.id, {
+    receiverId: integer("receiverId").references(() => users.id, {
       onDelete: "cascade",
     }),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -22,7 +22,7 @@ export const chats = createTable(
   },
   (table) => {
     return {
-      unique: unique().on(table.reciverId, table.userId),
+      unique: unique().on(table.receiverId, table.userId),
     };
   },
 );
