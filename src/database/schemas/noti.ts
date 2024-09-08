@@ -11,12 +11,7 @@ import {
 import { sql } from "drizzle-orm";
 import { users } from "./users";
 
-export const notificationsEnum = pgEnum("type", [
-  "commnet",
-  "like",
-  "request",
-  "acceptRequest",
-]);
+export const notificationsEnum = pgEnum("type", ["commnet", "follow", "like"]);
 export const NotificationsEnum = notificationsEnum.enumValues;
 
 export const notifications = createTable("notifications", {
@@ -28,7 +23,7 @@ export const notifications = createTable("notifications", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   // not putting a relation to make it more versatile
-  itemID: uuid("itemId").notNull(),
+  itemID: uuid("itemId"),
   textContent: text("textContent"),
   read: boolean("read").default(false),
   type: notificationsEnum("type").notNull(),

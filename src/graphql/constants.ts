@@ -45,3 +45,22 @@ export const addCommentNotifications = async (
   // do the call here
   console.log("done", userid, postId, returnNot[0]);
 };
+
+export const addFollowerNotifications = async (
+  userId: number,
+  followerId: number,
+) => {
+  // you can maybe combine both queries into a one query
+
+  const returnNot = await db
+    .insert(notifications)
+    .values({
+      type: "follow",
+      reciverId: followerId,
+      senderId: userId,
+    })
+    .returning();
+
+  console.log(returnNot[0]);
+  // do the call here
+};

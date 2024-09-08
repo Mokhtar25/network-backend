@@ -1,9 +1,9 @@
 import { createTable } from "../schema";
-import { serial, text, varchar, timestamp } from "drizzle-orm/pg-core";
+import { integer, text, varchar, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
 export const profile = createTable("profile", {
-  userId: serial("userId")
+  userId: integer("userId")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull()
     .primaryKey(),

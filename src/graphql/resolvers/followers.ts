@@ -6,6 +6,7 @@ import { followers } from "../../database/schemas";
 import { requestObject } from "./posts";
 import { and, eq } from "drizzle-orm";
 import { GraphQLError } from "graphql";
+import { addFollowerNotifications } from "../constants";
 
 export const Crudfollowers = async (
   _: unknown,
@@ -31,6 +32,7 @@ export const Crudfollowers = async (
       })
       .returning();
 
+    addFollowerNotifications(follow[0].userId, follow[0].followeId);
     return follow[0];
   } else {
     const follow = await db
