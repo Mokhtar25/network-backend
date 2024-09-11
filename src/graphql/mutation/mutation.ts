@@ -4,12 +4,16 @@ import {
   GraphQLString,
   GraphQLID,
   GraphQLInt,
+  GraphQLEnumType,
 } from "graphql";
 import { entities } from "../server";
 import { RequestTypeEnumGraphQl } from "../server";
 import * as mute from "../resolvers/posts";
 import { CrudProfile } from "../resolvers/profile";
 import { Crudfollowers } from "../resolvers/followers";
+import { crudMessage } from "../resolvers/message";
+import { messageType } from "../../database/schemas";
+import { MessageType } from "../../database/schemas/message";
 
 export const mutation = new GraphQLObjectType({
   name: "Mutation",
@@ -58,6 +62,33 @@ export const mutation = new GraphQLObjectType({
         },
       },
       resolve: Crudfollowers,
+    },
+    crudMessage: {
+      type: new GraphQLNonNull(entities.types.MessageItem),
+      args: {
+        type: {
+          type: new GraphQLNonNull(RequestTypeEnumGraphQl),
+        },
+        receiverId: {
+          type: new GraphQLNonNull(GraphQLInt),
+        },
+        textContent: {
+          type: GraphQLString,
+        },
+        chatId: {
+          type: GraphQLID,
+        },
+        messageType: {
+          type: new GraphQLEnumType({
+            name: "MessageType",
+            values: {
+              text: { value: "text" },
+              image: { value: "image" },
+            },
+          }),
+        },
+      },
+      resolve: crudMessage,
     },
 
     crudProfile: {

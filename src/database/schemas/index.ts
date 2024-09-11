@@ -5,6 +5,6 @@ export { users } from "./users";
 export { profile } from "./profile";
 export { postsPicture } from "./postPictures";
 export { chats } from "./chats";
-export { notifications } from "./noti";
-export { message } from "./message";
+export { notifications, notificationsEnum } from "./noti";
+export { message, messageType } from "./message";
 export { followers } from "./followers";

@@ -11,7 +11,12 @@ import {
 import { sql } from "drizzle-orm";
 import { users } from "./users";
 
-export const notificationsEnum = pgEnum("type", ["commnet", "follow", "like"]);
+export const notificationsEnum = pgEnum("type", [
+  "commnet",
+  "follow",
+  "like",
+  "message",
+]);
 export const NotificationsEnum = notificationsEnum.enumValues;
 
 export const notifications = createTable("notifications", {

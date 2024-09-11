@@ -64,3 +64,21 @@ export const addFollowerNotifications = async (
   console.log(returnNot[0]);
   // do the call here
 };
+
+export const receiveMessageNori = async (
+  userId: number,
+  receiverId: number,
+  message: string | null,
+) => {
+  const noti = await db
+    .insert(notifications)
+    .values({
+      type: "message",
+      senderId: userId,
+      textContent: message,
+      reciverId: receiverId,
+    })
+    .returning();
+
+  return noti[0];
+};

@@ -32,6 +32,7 @@ export const Crudfollowers = async (
       })
       .returning();
 
+    // eslint-disable-next-line
     addFollowerNotifications(follow[0].userId, follow[0].followeId);
     return follow[0];
   } else {

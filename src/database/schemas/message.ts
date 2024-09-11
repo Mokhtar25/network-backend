@@ -1,7 +1,6 @@
 import { createTable } from "../schema";
 import {
   uuid,
-  serial,
   pgEnum,
   text,
   boolean,
@@ -13,6 +12,7 @@ import { users } from "./users";
 import { chats } from "./chats";
 
 export const messageType = pgEnum("messageType", ["image", "text"]);
+export const MessageType = messageType.enumValues;
 
 export const message = createTable("message", {
   id: uuid("id").primaryKey().defaultRandom(),
