@@ -22,6 +22,7 @@ setup tables for friends and requested adds, notifications, messages, chats, pro
 
 AUTH/ Check if the username already exists in the dataBase and if the Github or other usernames also collides with first
 
+(how would chat work? how are they created or how they are used, are there two per each user, there should be a way to save them between two users or lock for them)
 -----------------------------------
 -[x]clear up datebase stuff. and separate the schemas into a folder
 -[x]clear up graphql mutations, messages, posts, friends and requested, notifications, resolvers etc. no sockets,

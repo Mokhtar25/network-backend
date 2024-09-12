@@ -19,15 +19,23 @@ export const crudMessage = async (
   // // if you dont provide the field it wont be changed. so that is good and is left to the frontend
   const argsData = z
     .object({
-      textContent: z.string(),
+      textContent: z.string().optional(),
       messageType: messageTypeEnum,
-      url: z.string().optional(),
+      imageUrl: z.string().optional(),
       chatId: z.string().uuid(),
       receiverId: z.number(),
     })
-    .passthrough();
+    .passthrough()
+    .refine((input) => {
+      // check if the correct type of message with the correct params
+      if (input.messageType === "text" && !input.textContent) return false;
+      if (input.messageType === "image" && !input.imageUrl) return false;
+
+      return true;
+    });
 
   const safeData = argsData.safeParse(args);
+
   console.log(safeData.error);
   if (!safeData.success) return badContentError();
 
@@ -35,6 +43,7 @@ export const crudMessage = async (
     .insert(message)
     .values({
       chatId: safeData.data.chatId,
+      imageUrl: safeData.data.imageUrl,
       messageType: safeData.data.messageType,
       senderId: context.user.id,
       reciverId: safeData.data.receiverId,

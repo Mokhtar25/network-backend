@@ -12,8 +12,6 @@ import * as mute from "../resolvers/posts";
 import { CrudProfile } from "../resolvers/profile";
 import { Crudfollowers } from "../resolvers/followers";
 import { crudMessage } from "../resolvers/message";
-import { messageType } from "../../database/schemas";
-import { MessageType } from "../../database/schemas/message";
 
 export const mutation = new GraphQLObjectType({
   name: "Mutation",
@@ -76,16 +74,22 @@ export const mutation = new GraphQLObjectType({
           type: GraphQLString,
         },
         chatId: {
-          type: GraphQLID,
+          type: new GraphQLNonNull(GraphQLID),
+        },
+        imageUrl: {
+          type: GraphQLString,
         },
         messageType: {
-          type: new GraphQLEnumType({
-            name: "MessageType",
-            values: {
-              text: { value: "text" },
-              image: { value: "image" },
-            },
-          }),
+          // make this into an enum from database
+          type: new GraphQLNonNull(
+            new GraphQLEnumType({
+              name: "MessageType",
+              values: {
+                text: { value: "text" },
+                image: { value: "image" },
+              },
+            }),
+          ),
         },
       },
       resolve: crudMessage,

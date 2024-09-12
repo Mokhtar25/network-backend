@@ -5,6 +5,7 @@ import {
   text,
   boolean,
   integer,
+  varchar,
   timestamp,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
@@ -20,6 +21,7 @@ export const message = createTable("message", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   textContent: text("textContent"),
+  imageUrl: varchar("imageUrl", { length: 256 }),
   chatId: uuid("chatId")
     .references(() => chats.id, { onDelete: "cascade" })
     .notNull(),

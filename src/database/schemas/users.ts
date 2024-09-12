@@ -4,6 +4,7 @@ import { varchar, serial, text, timestamp, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
+
 export const users = createTable(
   "users_test",
   {

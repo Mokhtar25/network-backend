@@ -70,6 +70,7 @@ export const receiveMessageNori = async (
   receiverId: number,
   message: string | null,
 ) => {
+  // if !textContent then you can handel it as "sent you a message"
   const noti = await db
     .insert(notifications)
     .values({
