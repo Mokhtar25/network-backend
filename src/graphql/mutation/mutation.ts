@@ -76,6 +76,9 @@ export const mutation = new GraphQLObjectType({
         chatId: {
           type: new GraphQLNonNull(GraphQLID),
         },
+        messageId: {
+          type: GraphQLID,
+        },
         imageUrl: {
           type: GraphQLString,
         },

@@ -3,8 +3,14 @@ import { z } from "zod";
 import { MyContext } from "../../server";
 import { badContentError } from "./errors";
 import { requestObject } from "./posts";
-import { message, MessageType } from "../../database/schemas/message";
+import {
+  message,
+  message,
+  messageType,
+  MessageType,
+} from "../../database/schemas/message";
 import { receiveMessageNori } from "../constants";
+import { and, eq } from "drizzle-orm";
 
 const messageTypeEnum = z.enum(MessageType);
 export const crudMessage = async (
@@ -17,6 +23,28 @@ export const crudMessage = async (
 
   // check when to update and when to add stuff/or make its on the frontend to send which fields
   // // if you dont provide the field it wont be changed. so that is good and is left to the frontend
+
+  if (request.data.type === "delete") {
+    const deleteArgs = z.object({
+      messageId: z.string(),
+    });
+    const safeArgs = deleteArgs.safeParse(args);
+    if (!safeArgs.success) return badContentError();
+
+    const messageRetun = await db
+      .delete(message)
+      .where(
+        and(
+          eq(message.id, safeArgs.data.messageId),
+          eq(message.senderId, context.user.id),
+        ),
+      )
+      .returning();
+
+    if (!messageRetun[0]) return badContentError("Message not found");
+
+    return messageRetun[0];
+  }
   const argsData = z
     .object({
       textContent: z.string().optional(),

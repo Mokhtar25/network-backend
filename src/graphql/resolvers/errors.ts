@@ -1,7 +1,8 @@
 import { GraphQLError } from "graphql";
 
-export const badContentError = () => {
-  throw new GraphQLError("Missing content", {
+export const badContentError = (message?: string) => {
+  const text = message ?? "Missing content";
+  throw new GraphQLError(text, {
     extensions: {
       code: "Bad Request",
       http: { status: 400 },
