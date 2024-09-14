@@ -8,3 +8,4 @@ export { chats } from "./chats";
 export { notifications, notificationsEnum } from "./noti";
 export { message, messageType } from "./message";
 export { followers } from "./followers";
+export * from "../relations";

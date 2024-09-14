@@ -3,14 +3,10 @@ import { z } from "zod";
 import { MyContext } from "../../server";
 import { badContentError } from "./errors";
 import { requestObject } from "./posts";
-import {
-  message,
-  message,
-  messageType,
-  MessageType,
-} from "../../database/schemas/message";
+import { message, MessageType } from "../../database/schemas/message";
 import { receiveMessageNori } from "../constants";
 import { and, eq } from "drizzle-orm";
+import { GraphQLError } from "graphql";
 
 const messageTypeEnum = z.enum(MessageType);
 export const crudMessage = async (
@@ -23,6 +19,9 @@ export const crudMessage = async (
 
   // check when to update and when to add stuff/or make its on the frontend to send which fields
   // // if you dont provide the field it wont be changed. so that is good and is left to the frontend
+
+  if (request.data.type === "update")
+    throw new GraphQLError("Method not supported");
 
   if (request.data.type === "delete") {
     const deleteArgs = z.object({

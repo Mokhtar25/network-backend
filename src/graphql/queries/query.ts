@@ -9,13 +9,18 @@ import { pubsub } from "../server";
 import { MyContext } from "../../server";
 import db from "../../database";
 import { extractFilters } from "drizzle-graphql";
+
+import { notiQuery } from "./notiQuery";
 import { users } from "../../database/schemas";
+import { findUser } from "./findUser";
+import { postsQuery } from "./posts";
 // extract resolvers
 
 export const query = new GraphQLObjectType({
   name: "query",
   fields: {
     postSingle: entities.queries.postsSingle,
+    posts: postsQuery,
     commentSingle: entities.queries.commentSingle,
     likeSingle: entities.queries.likeSingle,
     likes: entities.queries.like,
@@ -25,35 +30,7 @@ export const query = new GraphQLObjectType({
     profiles: entities.queries.profile,
     profile: entities.queries.profileSingle,
     followers: entities.queries.followers,
-    notifications: entities.queries.notifications,
-
-    findUser: {
-      type: new GraphQLList(new GraphQLNonNull(entities.types.UsersItem)),
-      args: {
-        where: {
-          type: entities.inputs.UsersFilters,
-        },
-        id: {
-          type: GraphQLString,
-        },
-      },
-
-      resolve: async (_, args, context: MyContext) => {
-        pubsub
-          .publish("PERSON_ADDED", { personAdded: { name: "him" } })
-          .then(() => null)
-          .catch((er) => console.log(er));
-        console.log(context);
-        const user = await db
-          .select()
-          .from(users)
-          // method needs to be updated by package devs, currently manually exposed
-          // eslint-disable-next-line
-          .where(extractFilters(users, "users", args.where));
-
-        console.log(user);
-        return user;
-      },
-    },
+    notifications: notiQuery,
+    findUser: findUser,
   },
 });
