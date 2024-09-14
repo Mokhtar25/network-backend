@@ -10,7 +10,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
-  pictures: many(postsPicture),
+  postsPicture: many(postsPicture),
   comments: many(comment),
   likes: many(like),
   author: one(users, {
