@@ -185,11 +185,7 @@ passport.use(
             .catch((err) => done(err));
         })
         .catch((er) => console.log(er, "error"));
-      //findOrMake(profile)
-      //  .then((e) => {
-      //    done(null, e);
-      //  })
-      //  .catch((err) => done(err));
+      // findOrMake(profile) .then((e) => { done(null, e); }) .catch((err) => done(err));
     },
   ),
 );

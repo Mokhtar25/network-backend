@@ -34,7 +34,7 @@ export const postsQuery = {
   ) => {
     const infopa = parseResolveInfo(info);
 
-    // this is how you parseIt, posts testing
+    // @ts-expect-error its unknown for now
     console.log(infopa?.fieldsByTypeName.posts_testing.comments);
 
     //const postsDb = await db
@@ -62,9 +62,13 @@ export const postsQuery = {
 
     const news = postsDb.map((ele) => {
       console.log(typeof postsDb[0].postsPicture);
+
       return {
         comment: ele.comments,
-        postsPicture: { ...ele.postsPicture },
+        // this solvers the wired drizzle orm problem and its fixed
+        postsPicture: ele.postsPicture.map((e) => {
+          return { url: e.url, postId: e.postId };
+        }),
         posts: { ...ele, comments: undefined, postsPicture: undefined },
       };
     });
