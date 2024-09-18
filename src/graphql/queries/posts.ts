@@ -67,7 +67,7 @@ export const postsQuery = {
         comment: ele.comments,
         // this solvers the wired drizzle orm problem and its fixed
         postsPicture: ele.postsPicture.map((e) => {
-          return { url: e.url, postId: e.postId };
+          return e;
         }),
         posts: { ...ele, comments: undefined, postsPicture: undefined },
       };
