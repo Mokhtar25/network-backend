@@ -1,7 +1,9 @@
 import {
   GraphQLError,
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLObjectType,
   GraphQLString,
 } from "graphql";
 import { entities } from "../server";
@@ -12,7 +14,18 @@ import type { MyContext } from "../../server";
 import { selectUserSchema } from "../../database/schemas/users";
 
 export const findUser = {
-  type: new GraphQLList(new GraphQLNonNull(entities.types.UsersSelectItem)),
+  type: new GraphQLList(
+    new GraphQLNonNull(
+      new GraphQLObjectType({
+        name: "user_select",
+        fields: {
+          username: { type: new GraphQLNonNull(GraphQLString) },
+          id: { type: new GraphQLNonNull(GraphQLInt) },
+          displayName: { type: GraphQLString },
+        },
+      }),
+    ),
+  ),
   args: {
     where: {
       type: entities.inputs.UsersFilters,
@@ -30,7 +43,11 @@ export const findUser = {
     console.log(context);
     if (!args.where) throw new GraphQLError("missing filters");
     const user = await db
-      .select()
+      .select({
+        username: users.username,
+        displayName: users.displayName,
+        id: users.id,
+      })
       .from(users)
       // method needs to be updated by package devs, currently manually exposed
       // eslint-disable-next-line
