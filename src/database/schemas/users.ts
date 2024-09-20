@@ -34,6 +34,7 @@ export const users = createTable(
         table.username,
         table.provider,
       ),
+      uniqueUsername: unique("unique username").on(table.username),
     };
   },
 );
@@ -51,7 +52,9 @@ export const insertUserSchemaOauth = createInsertSchema(users, {
   role: z.string(),
 });
 //// Schema for selecting a user - can be used to validate API responses
-export const selectUserSchema = createSelectSchema(users);
+export const selectUserSchema = createSelectSchema(users).omit({
+  password: true,
+});
 
 //// Refining the fields - useful if you want to change the fields before they become nullable/optional in the final schem
 

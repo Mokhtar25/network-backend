@@ -2,7 +2,9 @@ import { buildSchema } from "drizzle-graphql";
 import db from "../database";
 import { GraphQLEnumType } from "graphql";
 
-export const { entities } = buildSchema(db);
+export const { entities } = buildSchema(db, {
+  relationsDepthLimit: 0,
+});
 
 import { PubSub } from "graphql-subscriptions";
 

@@ -1,20 +1,8 @@
-import {
-  GraphQLObjectType,
-  GraphQLNonNull,
-  GraphQLList,
-  GraphQLString,
-} from "graphql";
+import { GraphQLObjectType } from "graphql";
 import { entities } from "../server";
-import { pubsub } from "../server";
-import { MyContext } from "../../server";
-import db from "../../database";
-import { extractFilters } from "drizzle-graphql";
-
 import { notiQuery } from "./notiQuery";
-import { users } from "../../database/schemas";
 import { findUser } from "./findUser";
 import { postsQuery } from "./posts";
-// extract resolvers
 
 export const query = new GraphQLObjectType({
   name: "query",

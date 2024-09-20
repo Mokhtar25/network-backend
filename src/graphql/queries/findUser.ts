@@ -9,10 +9,10 @@ import db from "../../database";
 import { extractFilters } from "drizzle-graphql";
 import { users } from "../../database/schemas";
 import type { MyContext } from "../../server";
-import { object, z } from "zod";
+import { selectUserSchema } from "../../database/schemas/users";
 
 export const findUser = {
-  type: new GraphQLList(new GraphQLNonNull(entities.types.UsersItem)),
+  type: new GraphQLList(new GraphQLNonNull(entities.types.UsersSelectItem)),
   args: {
     where: {
       type: entities.inputs.UsersFilters,
@@ -28,6 +28,7 @@ export const findUser = {
     //  .then(() => null)
     //  .catch((er) => console.log(er));
     console.log(context);
+    if (!args.where) throw new GraphQLError("missing filters");
     const user = await db
       .select()
       .from(users)
