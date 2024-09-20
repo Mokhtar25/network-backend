@@ -1,27 +1,15 @@
-import { GraphQLObjectType, GraphQLSchema, GraphQLString } from "graphql";
-import { entities, pubsub } from "./server";
+import { GraphQLSchema } from "graphql";
 
-import { mergeSchemas } from "@graphql-tools/schema";
 import { query } from "./queries/query";
 import { mutation } from "./mutation/mutation";
+import { subs } from "./sockets";
 
 export const schema = new GraphQLSchema({
   query: query,
   mutation: mutation,
-  subscription: new GraphQLObjectType({
-    name: "sub",
-    fields: {
-      testing: {
-        type: GraphQLString,
-        subscribe: () => pubsub.asyncIterator("testing"),
-      },
-      message: {
-        type: entities.types.MessageItem,
-        subscribe: () => pubsub.asyncIterator("message"),
-      },
-    },
-  }),
+  subscription: subs,
 });
+
 //export const schemaA = mergeSchemas({
 //  schemas: [schemaS],
 //  typeDefs: /* GraphQL */ `

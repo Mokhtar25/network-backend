@@ -101,7 +101,17 @@ const wsServer = new WebSocketServer({
   path: "/graphql",
 });
 // the 0 is a bug in Bun, need a zero to work in bun
-const serverCleanup = useServer({ schema }, wsServer, 0);
+const serverCleanup = useServer(
+  {
+    schema,
+    context: (ctx, msg, args) => {
+      console.log(ctx.extra.request, "args from adsoidsa");
+      return true;
+    },
+  },
+  wsServer,
+  0,
+);
 
 const server = new ApolloServer<MyContext>({
   schema: schema,
