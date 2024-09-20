@@ -4,9 +4,10 @@ import { MyContext } from "../../server";
 import { badContentError } from "./errors";
 import { requestObject } from "./posts";
 import { message, MessageType } from "../../database/schemas/message";
-import { receiveMessageNori } from "../constants";
+import { receiveMessageNori } from "../notificationsFunctions";
 import { and, eq } from "drizzle-orm";
 import { GraphQLError } from "graphql";
+import { pubsub } from "../server";
 
 const messageTypeEnum = z.enum(MessageType);
 export const crudMessage = async (
@@ -81,6 +82,11 @@ export const crudMessage = async (
   receiveMessageNori(data[0].senderId, data[0].reciverId, data[0].textContent)
     .then(() => null)
     .catch(() => {});
+
+  pubsub
+    .publish("message", { message: data[0] })
+    .then(() => null)
+    .catch((e) => console.log(e));
 
   return data[0];
 };

@@ -9,7 +9,10 @@ import {
   updatePostLikeCount,
 } from "../utils/sqlHelpers";
 import { notAuthError, badContentError } from "./errors";
-import { addCommentNotifications, addLikeNotifications } from "../constants";
+import {
+  addCommentNotifications,
+  addLikeNotifications,
+} from "../notificationsFunctions";
 
 export const RequestTypeEnum = ["update", "post", "delete"] as const;
 // could have added a var or an enum with every request to check what opreation that is wanted to be done

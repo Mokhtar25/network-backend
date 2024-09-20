@@ -11,7 +11,7 @@ import db from "../../database";
 import { extractFilters } from "drizzle-graphql";
 import { users } from "../../database/schemas";
 import type { MyContext } from "../../server";
-import { selectUserSchema } from "../../database/schemas/users";
+import { pubsub } from "../server";
 
 export const findUser = {
   type: new GraphQLList(
@@ -36,10 +36,10 @@ export const findUser = {
   },
   // args has filter type. may be imported from package internals later
   resolve: async (_: unknown, args: unknown, context: MyContext) => {
-    //pubsub
-    //  .publish("PERSON_ADDED", { personAdded: { name: "him" } })
-    //  .then(() => null)
-    //  .catch((er) => console.log(er));
+    pubsub
+      .publish("testing", { testing: "hiiiiiii" })
+      .then(() => null)
+      .catch((er) => console.log(er));
     console.log(context);
     if (!args.where) throw new GraphQLError("missing filters");
     const user = await db

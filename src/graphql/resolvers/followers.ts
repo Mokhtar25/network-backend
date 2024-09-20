@@ -6,7 +6,7 @@ import { followers } from "../../database/schemas";
 import { requestObject } from "./posts";
 import { and, eq } from "drizzle-orm";
 import { GraphQLError } from "graphql";
-import { addFollowerNotifications } from "../constants";
+import { addFollowerNotifications } from "../notificationsFunctions";
 
 export const Crudfollowers = async (
   _: unknown,
