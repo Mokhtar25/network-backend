@@ -20,7 +20,6 @@ export const query = new GraphQLObjectType({
   name: "query",
   fields: {
     postSingle: entities.queries.postsSingle,
-    posts: postsQuery,
     commentSingle: entities.queries.commentSingle,
     likeSingle: entities.queries.likeSingle,
     likes: entities.queries.like,
@@ -30,6 +29,9 @@ export const query = new GraphQLObjectType({
     profiles: entities.queries.profile,
     profile: entities.queries.profileSingle,
     followers: entities.queries.followers,
+
+    // none-plugin
+    posts: postsQuery,
     notifications: notiQuery,
     findUser: findUser,
   },

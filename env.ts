@@ -27,7 +27,7 @@ const envSchema = z.object({
   NODE_ENV: z
     .union([
       z.literal("development"),
-      z.literal("testing"),
+      z.literal("test"),
       z.literal("production"),
     ])
     .default("development"),

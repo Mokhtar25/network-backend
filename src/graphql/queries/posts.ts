@@ -1,14 +1,8 @@
-import {
-  GraphQLList,
-  GraphQLObjectType,
-  GraphQLResolveInfo,
-  GraphQLString,
-} from "graphql";
-import { comment, posts, postsPicture } from "../../database/schemas";
+import { GraphQLList, GraphQLObjectType, GraphQLResolveInfo } from "graphql";
+import { posts } from "../../database/schemas";
 import { entities } from "../server";
 import type { MyContext } from "../../server";
 import db from "../../database";
-import { eq } from "drizzle-orm";
 import { parseResolveInfo } from "graphql-parse-resolve-info";
 
 const queryName = "posts_testing";
@@ -32,49 +26,28 @@ export const postsQuery = {
     _context: MyContext,
     info: GraphQLResolveInfo,
   ) => {
+    // parse info to know what fields are requested
     const infopa = parseResolveInfo(info);
 
     // @ts-expect-error its unknown for now
-    console.log(infopa?.fieldsByTypeName.posts_testing.comments);
-
-    //const postsDb = await db
-    //  .select()
-    //  .from(posts)
-    //  .rightJoin(comment, eq(comment.postId, posts.id))
-    //  .leftJoin(postsPicture, eq(posts.id, postsPicture.postId))
-    //  .limit(5);
-    //console.log(postsDb);
+    console.log(infopa?.fieldsByTypeName.posts_testing);
 
     const postsDb = await db.query.posts.findMany({
       limit: 2,
       orderBy: posts.createdAt,
       with: {
         comments: true,
-        postsPicture: {
-          columns: {
-            postId: true,
-            url: true,
-          },
-        },
+        postsPicture: true,
       },
     });
-    console.log(postsDb);
-
     const news = postsDb.map((ele) => {
-      console.log(typeof postsDb[0].postsPicture);
-
       return {
         comment: ele.comments,
-        // this solvers the wired drizzle orm problem and its fixed
-        postsPicture: ele.postsPicture.map((e) => {
-          return e;
-        }),
+        // this solvers the wired drizzle ORM problem and its fixed
+        postsPicture: ele.postsPicture,
         posts: { ...ele, comments: undefined, postsPicture: undefined },
       };
     });
-
-    console.log(news, "000");
-
     return news;
   },
 };
