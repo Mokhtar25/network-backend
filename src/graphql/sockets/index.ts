@@ -15,7 +15,7 @@ export const subs = new GraphQLObjectType({
       subscribe: withFilter(
         () => pubsub.asyncIterator("message"),
         (payload, variables) => {
-          console.log(variables, payload);
+          console.log(variables, payload, "here it was ---------------");
 
           return true;
         },
