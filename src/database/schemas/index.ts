@@ -6,6 +6,6 @@ export { profile } from "./profile";
 export { postsPicture } from "./postPictures";
 export { chats } from "./chats";
 export { notifications, notificationsEnum } from "./noti";
-export { message, messageType } from "./message";
+export { message, messageTypeEnum } from "./message";
 export { followers } from "./followers";
 export * from "../relations";

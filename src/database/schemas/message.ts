@@ -12,8 +12,8 @@ import { sql } from "drizzle-orm";
 import { users } from "./users";
 import { chats } from "./chats";
 
-export const messageType = pgEnum("messageType", ["image", "text"]);
-export const MessageType = messageType.enumValues;
+export const messageTypeEnum = pgEnum("messageType", ["image", "text"]);
+export const MessageTypeEnum = messageTypeEnum.enumValues;
 
 export const message = createTable("message", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -25,13 +25,13 @@ export const message = createTable("message", {
   chatId: uuid("chatId")
     .references(() => chats.id, { onDelete: "cascade" })
     .notNull(),
-  reciverId: integer("receiverId")
+  receiverId: integer("receiverId")
     .references(() => users.id, {
       onDelete: "cascade",
     })
     .notNull(),
   read: boolean("read").default(false),
-  messageType: messageType("messageType").default("text"),
+  messageType: messageTypeEnum("messageType").default("text"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -39,3 +39,5 @@ export const message = createTable("message", {
     () => new Date(),
   ),
 });
+
+export type MessageType = typeof message.$inferSelect;

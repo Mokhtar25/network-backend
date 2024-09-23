@@ -11,7 +11,7 @@ export const notiQuery = {
     const noti = await db
       .select()
       .from(notifications)
-      .where(eq(notifications.reciverId, context.user.id));
+      .where(eq(notifications.receiverId, context.user.id));
 
     return noti;
   },

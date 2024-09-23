@@ -3,13 +3,13 @@ import { z } from "zod";
 import { MyContext } from "../../server";
 import { badContentError } from "./errors";
 import { requestObject } from "./posts";
-import { message, MessageType } from "../../database/schemas/message";
+import { message, MessageTypeEnum } from "../../database/schemas/message";
 import { receiveMessageNori } from "../notificationsFunctions";
 import { and, eq } from "drizzle-orm";
 import { GraphQLError } from "graphql";
 import { pubsub } from "../server";
 
-const messageTypeEnum = z.enum(MessageType);
+const messageTypeEnum = z.enum(MessageTypeEnum);
 export const crudMessage = async (
   _: unknown,
   args: unknown,
@@ -74,12 +74,12 @@ export const crudMessage = async (
       imageUrl: safeData.data.imageUrl,
       messageType: safeData.data.messageType,
       senderId: context.user.id,
-      reciverId: safeData.data.receiverId,
+      receiverId: safeData.data.receiverId,
       textContent: safeData.data.textContent,
     })
     .returning();
 
-  receiveMessageNori(data[0].senderId, data[0].reciverId, data[0].textContent)
+  receiveMessageNori(data[0].senderId, data[0].receiverId, data[0].textContent)
     .then(() => null)
     .catch(() => {});
 

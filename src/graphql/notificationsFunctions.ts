@@ -15,7 +15,7 @@ export const addLikeNotifications = async (userid: number, postId: string) => {
     .values({
       type: "like",
       itemID: postId,
-      reciverId: userLikeId[0].userId,
+      receiverId: userLikeId[0].userId,
       senderId: userid,
     })
     .returning();
@@ -37,7 +37,7 @@ export const addCommentNotifications = async (
     .values({
       type: "commnet",
       itemID: postId,
-      reciverId: userLikeId[0].userId,
+      receiverId: userLikeId[0].userId,
       senderId: userid,
     })
     .returning();
@@ -56,7 +56,7 @@ export const addFollowerNotifications = async (
     .insert(notifications)
     .values({
       type: "follow",
-      reciverId: followerId,
+      receiverId: followerId,
       senderId: userId,
     })
     .returning();
@@ -77,7 +77,7 @@ export const receiveMessageNori = async (
       type: "message",
       senderId: userId,
       textContent: message,
-      reciverId: receiverId,
+      receiverId: receiverId,
     })
     .returning();
 

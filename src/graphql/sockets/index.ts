@@ -2,6 +2,13 @@ import { pubsub } from "../server";
 import { GraphQLString, GraphQLObjectType } from "graphql";
 import { entities } from "../server";
 import { withFilter } from "graphql-subscriptions";
+import type { MessageType } from "../../database/schemas/message";
+interface SocketContext {
+  user: number | null;
+}
+interface MessagePayload {
+  message: MessageType;
+}
 
 export const subs = new GraphQLObjectType({
   name: "sub",
@@ -24,11 +31,11 @@ export const subs = new GraphQLObjectType({
       type: entities.types.MessageItem,
       subscribe: withFilter(
         () => pubsub.asyncIterator("message"),
-        (payload, variables, context) => {
-          console.log("run--", payload, context);
-          if (payload.message.reciverId === context.user) return true;
+        (payload: MessagePayload, _variables, context: SocketContext) => {
+          if (!context.user) return false;
 
-          console.log(false);
+          if (payload.message.receiverId === context.user) return true;
+
           return false;
         },
       ),

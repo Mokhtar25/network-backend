@@ -24,7 +24,7 @@ export const notifications = createTable("notifications", {
   senderId: serial("senderId")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  reciverId: serial("reciverId")
+  receiverId: serial("receiverId")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   // not putting a relation to make it more versatile
