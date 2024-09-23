@@ -1,13 +1,18 @@
 import util from "util";
 import cookieParser from "cookie-parser";
 import cookie from "cookie";
-import { RedisClientType, RedisClusterType } from "redis";
 import env from "../../env";
 import { z } from "zod";
+import RedisStore from "connect-redis";
+import { Context } from "graphql-ws";
+import { Extra } from "graphql-ws/lib/use/ws";
 
 export const socketConfig = async (
-  cnxnParams: unknown,
-  store: RedisClusterType,
+  cnxnParams: Context<
+    Record<string, unknown> | undefined,
+    Extra & Partial<Record<PropertyKey, never>>
+  >,
+  store: RedisStore,
   type: "context" | "connect",
 ) => {
   try {
@@ -15,7 +20,7 @@ export const socketConfig = async (
       cnxnParams.extra.request.headers.cookie;
 
     // return null so it keeps trying
-    if (!cookieStr) return null;
+    if (!cookieStr) return;
     const parsedCookie = cookie.parse(cookieStr);
 
     if (parsedCookie["connect.sid"]) {
@@ -25,7 +30,7 @@ export const socketConfig = async (
       );
       if (!singedCookie) throw new Error("couldnt sign cookie");
 
-      // @ts-expect-error need to find the correct type
+      // eslint-disable-next-line
       store.get = util.promisify(store.get);
       const session = await store.get(singedCookie);
       const obj = z.object({
@@ -38,10 +43,11 @@ export const socketConfig = async (
       const user = parsedSession.passport.user;
 
       console.log("user session data:", JSON.stringify(session));
-      return { user };
+      return type === "context" ? { user } : true;
     }
+    return type === "context" ? { user: null } : false;
   } catch (err) {
     console.log(err, "error parsing or getting cookie");
-    return { user: null };
+    return type === "context" ? { user: null } : false;
   }
 };
