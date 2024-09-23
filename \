@@ -8,17 +8,10 @@ export const subs = new GraphQLObjectType({
   fields: {
     testing: {
       type: GraphQLString,
-      subscribe: withFilter(
-        (zx, eq, er) => {
-          console.log(zx, eq, er, "etie-");
-
-          return pubsub.asyncIterator("testing");
-        },
-        (c, x, r, s) => {
-          console.log(c, x, r, "--------------------tesint");
-          return true;
-        },
-      ),
+      subscribe: (root, args, text, info) => {
+        console.log(root, text, "payload ");
+        return pubsub.asyncIterator("testing");
+      },
     },
     message: {
       type: entities.types.MessageItem,

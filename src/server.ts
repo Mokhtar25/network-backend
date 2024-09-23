@@ -1,7 +1,7 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 
-import session, { Cookie } from "express-session";
+import session from "express-session";
 import { ApolloServer } from "@apollo/server";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
@@ -18,10 +18,12 @@ import fileRouter from "./controllers/fileManger";
 import helmet from "helmet";
 import cookie from "cookie";
 import cookieParser from "cookie-parser";
+import util from "util";
 
 // web sockets
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
+import { z } from "zod";
 
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
@@ -107,36 +109,85 @@ const wsServer = new WebSocketServer({
 const serverCleanup = useServer(
   {
     schema,
-    onConnect: (cnxnParams, webSocket, cnxnContext) => {
-      const cookieStr = cnxnParams.extra.request.headers.cookie;
-      if (!cookieStr) return null;
-      console.log("hi", cnxnParams.extra.request.headers);
-      console.log(typeof cookieStr);
-      const parsedCookie = cookie.parse(cookieStr);
-      console.log("parsed", parsedCookie.sid);
-      if (parsedCookie["connect.sid"]) {
-        console.log("inside");
-        const singedCookie = cookieParser.signedCookie(
-          parsedCookie["connect.sid"],
-          env.SESSION_SECRET,
-        );
-        console.log(singedCookie, "sadss singed");
-        redisStore.get(singedCookie, (err, session) => {
-          if (err) throw err;
+    // @ts-expect-error the type of params in not really clear and im wrapping it in try catch
+    onConnect: (cnxnParams, _webSocket: unknown, _cnxnContext: unknown) => {
+      try {
+        // function will throw and be handled if this throws
+        // eslint-disable-next-line
+        const cookieStr: string | undefined =
+          // eslint-disable-next-line
+          cnxnParams.extra.request.headers.cookie;
 
-          const user = session.passport.user;
-          console.log(user);
-          console.log("user session data:", JSON.stringify(session));
-        });
+        // return null so it keeps trying
+        if (!cookieStr) return null;
+        const parsedCookie = cookie.parse(cookieStr);
+
+        if (parsedCookie["connect.sid"]) {
+          const singedCookie = cookieParser.signedCookie(
+            parsedCookie["connect.sid"],
+            env.SESSION_SECRET,
+          );
+          if (!singedCookie) throw new Error("couldnt sign cookie");
+
+          redisStore
+            .get(singedCookie, (err, session) => {
+              if (err instanceof Error) throw err;
+
+              const obj = z.object({
+                passport: z.object({
+                  user: z.number(),
+                }),
+              });
+
+              const parsedSession = obj.parse(session);
+              const user = parsedSession.passport.user;
+
+              console.log("user session data:", JSON.stringify(session));
+              return true;
+            })
+            // returns a promise with void
+            .then(() => null)
+            .catch(() => null);
+        }
+      } catch (err) {
+        console.log(err, "error parsing or getting cookie");
+        return false;
       }
-      return {
-        loginUser: 0,
-      };
     },
-    // under development
-    context: (ctx, msg, args) => {
-      //console.log(ctx.extra.request, "args from adsoidsa");
-      return true;
+    context: async (cnxnParams, _webSocket: unknown, _cnxnContext: unknown) => {
+      try {
+        const cookieStr: string | undefined =
+          cnxnParams.extra.request.headers.cookie;
+
+        // return null so it keeps trying
+        if (!cookieStr) return null;
+        const parsedCookie = cookie.parse(cookieStr);
+
+        if (parsedCookie["connect.sid"]) {
+          const singedCookie = cookieParser.signedCookie(
+            parsedCookie["connect.sid"],
+            env.SESSION_SECRET,
+          );
+          if (!singedCookie) throw new Error("couldnt sign cookie");
+
+          redisStore.get = util.promisify(redisStore.get);
+          const session = await redisStore.get(singedCookie);
+          const obj = z.object({
+            passport: z.object({
+              user: z.number(),
+            }),
+          });
+
+          const parsedSession = obj.parse(session);
+          const user = parsedSession.passport.user;
+
+          console.log("user session data:", JSON.stringify(session));
+          return { user };
+        }
+      } catch (err) {
+        console.log(err, "error parsing or getting cookie");
+        return { user: null };
+      }
     },
   },
   wsServer,
