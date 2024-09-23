@@ -22,13 +22,14 @@ export const subs = new GraphQLObjectType({
     },
     message: {
       type: entities.types.MessageItem,
-
       subscribe: withFilter(
         () => pubsub.asyncIterator("message"),
-        (payload, variables, xtx) => {
-          console.log(variables, payload, xtx, "here it was ---------------");
+        (payload, variables, context) => {
+          console.log("run--", payload, context);
+          if (payload.message.reciverId === context.user) return true;
 
-          return true;
+          console.log(false);
+          return false;
         },
       ),
     },

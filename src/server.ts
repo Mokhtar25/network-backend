@@ -16,14 +16,10 @@ import env from "../env";
 import { GraphQLError } from "graphql";
 import fileRouter from "./controllers/fileManger";
 import helmet from "helmet";
-import cookie from "cookie";
-import cookieParser from "cookie-parser";
-import util from "util";
 
 // web sockets
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
-import { z } from "zod";
 import { socketConfig } from "./config/sockets";
 
 const redisClient = createClient();

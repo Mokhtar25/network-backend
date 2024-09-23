@@ -7,6 +7,9 @@ import RedisStore from "connect-redis";
 import { Context } from "graphql-ws";
 import { Extra } from "graphql-ws/lib/use/ws";
 
+/* parsing the cookie and getting the user from the Redisstore to determine to allow the
+ user to connect to the sockets
+or not. and if choosing context it gives back the id of the user and pass it as context */
 export const socketConfig = async (
   cnxnParams: Context<
     Record<string, unknown> | undefined,
@@ -16,10 +19,9 @@ export const socketConfig = async (
   type: "context" | "connect",
 ) => {
   try {
-    const cookieStr: string | undefined =
-      cnxnParams.extra.request.headers.cookie;
+    const cookieStr = cnxnParams.extra.request.headers.cookie;
 
-    // return null so it keeps trying
+    // return so it keeps trying
     if (!cookieStr) return;
     const parsedCookie = cookie.parse(cookieStr);
 

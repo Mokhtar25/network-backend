@@ -25,7 +25,7 @@ export const message = createTable("message", {
   chatId: uuid("chatId")
     .references(() => chats.id, { onDelete: "cascade" })
     .notNull(),
-  reciverId: integer("reciverId")
+  reciverId: integer("receiverId")
     .references(() => users.id, {
       onDelete: "cascade",
     })
