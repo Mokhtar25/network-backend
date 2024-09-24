@@ -157,16 +157,15 @@ passport.use(
       callbackURL: "http://localhost:4000/auth/github/callback",
     },
     function (
-      _: string,
-      __: string,
+      token: string,
+      _refreshToken: string,
       profile: GithubProfile,
       done: passport.DoneCallback,
     ) {
       //this is how you get users email in github
       const headers = new Headers();
-      headers.set("Authorization", "Bearer " + _);
+      headers.set("Authorization", "Bearer " + token);
 
-      console.log(_, __, "tokens are here");
       fetch(`https://api.github.com/user/emails`, {
         method: "get",
         headers: headers,
@@ -185,7 +184,6 @@ passport.use(
             .catch((err) => done(err));
         })
         .catch((er) => console.log(er, "error"));
-      // findOrMake(profile) .then((e) => { done(null, e); }) .catch((err) => done(err));
     },
   ),
 );

@@ -33,6 +33,8 @@ the queries for the basic stuff for now
 -[]clear up the sup models, for messaging first, then comments, then others.
 -[x] sockets for messaging and notifications
 -[]set up production environment. redirect urls, etc
+-[] set up a docker container and a production environment with .env and everything
+-[] set up Github actions and run tests and lints on every push and merge 
 =
 
 

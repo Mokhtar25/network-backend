@@ -10,7 +10,7 @@ test("things run", async () => {
   expect(da).toBeString();
 });
 
-it("graphql", async () => {
+it("graphql and findUser", async () => {
   const data = await server.executeOperation({
     query: `query( $where: UsersFilters) {
   findUser (where: $where) {
@@ -24,4 +24,29 @@ it("graphql", async () => {
   expect(data.body.kind).toBe("single");
   expect(data.body.singleResult.errors).toBeUndefined();
   expect(data.body.singleResult.data.findUser[0].username).toBeString();
+});
+
+it("context in graphql and notifications", async () => {
+  const data = await server.executeOperation(
+    {
+      query: `query{
+  notifications {
+    itemID
+    id
+    read
+  }
+}`,
+    },
+    {
+      contextValue: {
+        isAuthenticated: () => true,
+        user: { id: 1 },
+      },
+    },
+  );
+  expect(data.body.kind).toBe("single");
+  expect(data.body.singleResult.errors).toBeUndefined();
+  expect(data.body.singleResult.data.notifications).toBeArray();
+  expect(data.body.singleResult.data.notifications[0].id).toBeString();
+  expect(data.body.singleResult.data.notifications[0].read).toBeBoolean();
 });

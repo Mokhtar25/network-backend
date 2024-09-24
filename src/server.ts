@@ -10,6 +10,7 @@ import "dotenv/config";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "http";
+
 import { loginRouter } from "./controllers/auth";
 import { schema } from "./graphql";
 import env from "../env";
@@ -170,5 +171,7 @@ const errorHandler = (
   res.send(`error has ouccred, ${err.message}`).status(501);
 };
 app.use(errorHandler);
-httpServer.listen({ port: env.PORT });
-console.log(`🚀 Server ready at http://localhost:${env.PORT}`);
+// to run testing while running the program so ports don't collide
+const PORT = env.NODE_ENV === "test" ? env.PORT + 1 : env.PORT;
+httpServer.listen({ port: PORT });
+console.log(`🚀 Server ready at http://localhost:${PORT}`);
