@@ -117,9 +117,8 @@ const serverCleanup = useServer(
   0,
 );
 
-const server = new ApolloServer<MyContext>({
+export const server = new ApolloServer<MyContext>({
   schema: schema,
-
   plugins: [
     ApolloServerPluginDrainHttpServer({ httpServer }),
 

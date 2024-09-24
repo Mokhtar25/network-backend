@@ -27,9 +27,11 @@ AUTH/ Check if the username already exists in the dataBase and if the Github or 
 -[x]clear up datebase stuff. and separate the schemas into a folder
 -[x-]clear up graphql mutations, messages, posts, friends and requested, notifications, resolvers etc. no sockets, writr 
 the queries for the basic stuff for now 
--[x] add queries, and resolvers for quires for notifications 
+-[x] add queries, and resolve's for quires for notifications 
 -[]setup sending a photo with messaging and pictures
+-[] fix finding a user resolver
 -[]clear up the sup models, for messaging first, then comments, then others.
+-[x] sockets for messaging and notifications
 -[]set up production environment. redirect urls, etc
 =
 

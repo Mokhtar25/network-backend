@@ -44,7 +44,6 @@ export const socketConfig = async (
       const parsedSession = obj.parse(session);
       const user = parsedSession.passport.user;
 
-      console.log("user session data:", JSON.stringify(session));
       return type === "context" ? { user } : true;
     }
     return type === "context" ? { user: null } : false;
