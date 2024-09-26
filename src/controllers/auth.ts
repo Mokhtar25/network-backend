@@ -199,7 +199,7 @@ routesAuth.get("/test", (_req, res) => {
 routesAuth.post(
   "/login",
   passport.authenticate("local", {
-    failureRedirect: "/",
+    failureRedirect: env.FAILED_REDIRECT_URL,
   }) as RequestHandler,
   (_req, res) => {
     res.json(_req.user);
@@ -269,20 +269,21 @@ routesAuth.get(
 routesAuth.get(
   "/github/callback",
   passport.authenticate("github", {
-    failureRedirect: "/login",
-    successRedirect: "/auth/pro",
+    failureRedirect: env.FAILED_REDIRECT_URL,
+    successRedirect: env.SUCCESS_REDIRECT_URL,
   }) as RequestHandler,
 );
 routesAuth.get(
   "/google",
   passport.authenticate("google", {
-    failureRedirect: "/auth/test",
-    successRedirect: "pro",
+    failureRedirect: env.FAILED_REDIRECT_URL,
+    successRedirect: env.SUCCESS_REDIRECT_URL,
   }) as RequestHandler,
 );
 routesAuth.post("/logout", (req, res, next) => {
   req.logout(function (err) {
     if (err) {
+      console.log("error", err);
       return next(err);
     }
     res.send(200);
@@ -312,6 +313,11 @@ routesAuth.post("/updateUser", (async (req, res) => {
 routesAuth.get("/pro", (req, res) => {
   console.log(req.isAuthenticated(), req.session.cookie);
   if (req.isAuthenticated()) return res.send("authenticated");
+  return res.send("not authenticated");
+});
+
+routesAuth.get("/me", (req, res) => {
+  if (req.isAuthenticated()) return res.json(req.user.id);
   return res.send("not authenticated");
 });
 

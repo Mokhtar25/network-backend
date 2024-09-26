@@ -13,6 +13,9 @@ const envSchema = z.object({
 
   GoogleClientSecret: z.string().min(1),
 
+  SUCCESS_REDIRECT_URL: z.string().url(),
+  FAILED_REDIRECT_URL: z.string().url(),
+
   DATABASE_URI: z.string().url(),
   SESSION_SECRET: z.string().min(25, { message: "Secret should be lengthy" }),
 
