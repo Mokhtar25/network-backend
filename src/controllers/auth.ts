@@ -82,15 +82,19 @@ routesAuth.get(
   }) as RequestHandler,
 );
 
+// this must match the ones in the .env
 routesAuth.get(
-  "/github/callback",
+  env.CALLBACK_GITHUB_PREFIX,
   passport.authenticate("github", {
     failureRedirect: env.FAILED_REDIRECT_URL,
     successRedirect: env.SUCCESS_REDIRECT_URL,
   }) as RequestHandler,
 );
+
+console.log(env.CALLBACK_GITHUB_PREFIX, env.CALLBACK_GOOGLE_PREFIX);
+// this must match the ones in the .env
 routesAuth.get(
-  "/google",
+  env.CALLBACK_GOOGLE_PREFIX,
   passport.authenticate("google", {
     failureRedirect: env.FAILED_REDIRECT_URL,
     successRedirect: env.SUCCESS_REDIRECT_URL,

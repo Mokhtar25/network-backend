@@ -30,27 +30,8 @@ const envSchema = z.object({
   CLOUD_NAME: z.string().min(1),
   CLOUD_API_KEY: z.string().min(1),
 
-  CALLBACK_GITHUB_PREFIX: z
-    .string()
-    .transform((e) => (e.startsWith("/") ? e : "/" + e))
-    .refine(
-      (e) => {
-        if (!process.env.CALLBACK_URL_GITHUB!.endsWith(e)) return false;
-        return true;
-      },
-      { message: "prefix must match the callback url for github" },
-    ),
+  CALLBACK_GITHUB_PREFIX : z.string().refine((e)=> if (e[0] !== "/"))
 
-  CALLBACK_GOOGLE_PREFIX: z
-    .string()
-    .transform((e) => (e.startsWith("/") ? e : "/" + e))
-    .refine(
-      (e) => {
-        if (!process.env.CALLBACK_URL_GOOGLE!.endsWith(e)) return false;
-        return true;
-      },
-      { message: "prefix must match the callback url for google" },
-    ),
   NODE_ENV: z
     .union([
       z.literal("development"),

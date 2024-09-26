@@ -71,7 +71,7 @@ passport.use(
     {
       clientID: env.GoogleClientID,
       clientSecret: env.GoogleClientSecret,
-      callbackURL: "http://localhost:4000/auth/google",
+      callbackURL: env.CALLBACK_URL_GOOGLE,
       passReqToCallback: true,
     },
     function (
@@ -154,7 +154,7 @@ passport.use(
     {
       clientID: env.GithubClientID,
       clientSecret: env.GithubClientSecret,
-      callbackURL: "http://localhost:4000/auth/github/callback",
+      callbackURL: env.CALLBACK_URL_GITHUB,
     },
     function (
       token: string,
