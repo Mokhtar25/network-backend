@@ -8,10 +8,10 @@ import {
 } from "graphql";
 import { entities } from "../server";
 import db from "../../database";
-import { extractFilters, Filters, Table } from "drizzle-graphql";
 import { users } from "../../database/schemas";
 import type { MyContext } from "../../server";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 
 export const findUser = {
   type: new GraphQLList(
@@ -37,30 +37,46 @@ export const findUser = {
       type: GraphQLString,
     },
   },
+
   // args has filter type. may be imported from package internals later
   resolve: async (_: unknown, args: unknown, _context: MyContext) => {
-    const returnType = {
+    const userReturnTypes = {
       username: users.username,
       displayName: users.displayName,
       id: users.id,
     };
-    if (args.id || args.username) {
-      const user = await db
-        .select(returnType)
-        .from(users)
-        .where(
-          eq(args.id ? users.id : users.username, args.id ?? args.username),
-        );
-      return user;
-    }
 
-    if (!args.where) throw new GraphQLError("missing filters");
+    // refine args to accept only usernames OR ids
+    const argsObject = z
+      .object({
+        id: z.number().optional(),
+        username: z.string().min(1).optional(),
+      })
+      .refine((data) => {
+        if (!data.username && !data.id) {
+          return false;
+        }
+        if (data.username && data.id) {
+          return false;
+        }
+        return true;
+      });
+
+    const safeArgs = argsObject.safeParse(args);
+
+    if (!safeArgs.success) {
+      throw new GraphQLError("Please provide a username or an id");
+    }
     const user = await db
-      .select(returnType)
+      .select(userReturnTypes)
       .from(users)
-      // method needs to be updated by package devs, currently manually exposed
-      // eslint-disable-next-line
-      .where(extractFilters(users, "users", args.where));
+      .where(
+        // @ts-expect-error this will exist because its check and refined by zod and not dented by lsp
+        eq(
+          safeArgs.data.id ? users.id : users.username,
+          safeArgs.data.id ?? safeArgs.data.username,
+        ),
+      );
     return user;
   },
 };

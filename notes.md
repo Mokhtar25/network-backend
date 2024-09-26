@@ -25,12 +25,13 @@ AUTH/ Check if the username already exists in the dataBase and if the Github or 
 (how would chat work? how are they created or how they are used, are there two per each user, there should be a way to save them between two users or lock for them)
 -----------------------------------
 -[x]clear up datebase stuff. and separate the schemas into a folder
--[x-]clear up graphql mutations, messages, posts, friends and requested, notifications, resolvers etc. no sockets, writr 
+-[x]clear up graphql mutations, messages, posts, friends and requested, notifications, resolvers etc. no sockets, writr 
 the queries for the basic stuff for now 
 -[x] add queries, and resolve's for quires for notifications 
--[]setup sending a photo with messaging and pictures
+-[] setup sending a photo with messaging and pictures
 -[] fix finding a user resolver
--[]clear up the sup models, for messaging first, then comments, then others.
+-[x] implement rate limiting 
+-[] clear up the sup models, for messaging first, then comments, then others.
 -[x] sockets for messaging and notifications
 -[]set up production environment. redirect urls, etc
 -[] set up a docker container and a production environment with .env and everything
