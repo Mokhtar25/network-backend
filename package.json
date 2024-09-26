@@ -39,6 +39,7 @@
     "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
     "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
     "express-session": "^1.18.0",
     "graphql": "^16.9.0",
     "graphql-language-service-server": "^2.13.2",

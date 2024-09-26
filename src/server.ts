@@ -22,6 +22,7 @@ import helmet from "helmet";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 import { socketConfig } from "./config/sockets";
+import { rateLimiter } from "./config/rateLimit";
 
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
@@ -32,6 +33,8 @@ const redisStore = new RedisStore({
 });
 
 const app = express();
+
+app.use(rateLimiter);
 
 app.use(
   helmet({
