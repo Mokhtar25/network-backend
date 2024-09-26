@@ -1,8 +1,6 @@
 file uploaing 
 
 use signed urls from the server and from the client make the uploading. use superbase to handel that
-
-
 // add file uploads using mullet 
 and express. superbase
 
@@ -32,10 +30,8 @@ the queries for the basic stuff for now
 -[x] implement rate limiting 
 -[x] clear up the sup models, for messaging first, then comments, then others.
 -[x] sockets for messaging and notifications
--[]set up production environment. redirect urls, etc
+-[x] set up production environment. redirect urls, etc
 -[] set up a docker container and a production environment with .env and everything
 -[] set up Github actions and run tests and lints on every push and merge 
 -[-] setup sending a photo with messaging and pictures|| to be done on the frontend 
 =
-
-

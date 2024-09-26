@@ -11,18 +11,21 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "http";
 
-import { loginRouter } from "./controllers/auth";
+import passportRouter from "./config/passport";
 import { schema } from "./graphql";
 import env from "../env";
 import { GraphQLError } from "graphql";
-import fileRouter from "./controllers/fileManger";
 import helmet from "helmet";
+// routes
+import fileRouter from "./controllers/fileManger";
+import { routesAuth } from "./controllers/auth";
 
 // web sockets
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 import { socketConfig } from "./config/sockets";
 import { rateLimiter } from "./config/rateLimit";
+import { helmetConfig } from "./config/helmet";
 
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
@@ -36,27 +39,7 @@ const app = express();
 
 app.use(rateLimiter);
 
-app.use(
-  helmet({
-    crossOriginEmbedderPolicy: false,
-    contentSecurityPolicy: {
-      directives: {
-        // allow Apollo server playground
-        imgSrc: [
-          `'self'`,
-          "data:",
-          "apollo-server-landing-page.cdn.apollographql.com",
-        ],
-        scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
-        manifestSrc: [
-          `'self'`,
-          "apollo-server-landing-page.cdn.apollographql.com",
-        ],
-        frameSrc: [`'self'`, "sandbox.embed.apollographql.com"],
-      },
-    },
-  }),
-);
+app.use(helmet(helmetConfig));
 
 app.use(
   cors({
@@ -82,8 +65,8 @@ app.use(
   }),
 );
 
-app.use(loginRouter);
-app.use("/files", fileRouter);
+app.use(passportRouter);
+
 const loger = (
   req: Express.Request,
   _: Express.Response,
@@ -93,6 +76,9 @@ const loger = (
   next();
 };
 app.use(loger);
+
+app.use("/auth", routesAuth);
+app.use("/files", fileRouter);
 
 app.get("/", (_req, res) => {
   res.send("<h2>hello, world</h2>");
