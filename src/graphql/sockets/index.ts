@@ -1,9 +1,10 @@
 import { pubsub } from "../server";
-import { GraphQLString, GraphQLObjectType } from "graphql";
+import { GraphQLObjectType } from "graphql";
 import { entities } from "../server";
 import { withFilter } from "graphql-subscriptions";
 import type { MessageType } from "../../database/schemas/message";
 import { NotificationsSelection } from "../../database/schemas/noti";
+
 interface SocketContext {
   user: number | null;
 }
@@ -18,21 +19,6 @@ interface notificationsPayload {
 export const subs = new GraphQLObjectType({
   name: "sub",
   fields: {
-    testing: {
-      type: GraphQLString,
-      subscribe: withFilter(
-        (zx, eq, er) => {
-          console.log(zx, eq, er, "etie-");
-
-          return pubsub.asyncIterator("testing");
-        },
-        (c, x, r, s) => {
-          console.log(c, x, r, "--------------------tesint");
-          return true;
-        },
-      ),
-    },
-
     notifications: {
       type: entities.types.NotificationsItem,
       subscribe: withFilter(

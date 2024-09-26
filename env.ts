@@ -31,7 +31,6 @@ const envSchema = z.object({
       z.literal("production"),
     ])
     .default("development"),
-  // ...
 });
 
 // Validate `process.env` against our schema

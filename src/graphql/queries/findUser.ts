@@ -8,10 +8,10 @@ import {
 } from "graphql";
 import { entities } from "../server";
 import db from "../../database";
-import { extractFilters } from "drizzle-graphql";
+import { extractFilters, Filters, Table } from "drizzle-graphql";
 import { users } from "../../database/schemas";
 import type { MyContext } from "../../server";
-import { pubsub } from "../server";
+import { eq } from "drizzle-orm";
 
 export const findUser = {
   type: new GraphQLList(

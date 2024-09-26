@@ -9,25 +9,3 @@ export const schema = new GraphQLSchema({
   mutation: mutation,
   subscription: subs,
 });
-
-//export const schemaA = mergeSchemas({
-//  schemas: [schemaS],
-//  typeDefs: /* GraphQL */ `
-//    type Subscription {
-//      personAdded: Person!
-//    }
-//    type Person {
-//      name: String
-//    }
-//  `,
-//  resolvers: {
-//    Person: {
-//      name: () => "adam",
-//    },
-//    Subscription: {
-//      personAdded: {
-//        subscribe: () => pubsub.asyncIterator("PERSON_ADDED"),
-//      },
-//    },
-//  },
-//});
