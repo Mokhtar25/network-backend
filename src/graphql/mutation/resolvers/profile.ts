@@ -1,8 +1,8 @@
-import db from "../../database";
+import db from "../../../database";
 import { z } from "zod";
-import { MyContext } from "../../server";
+import { MyContext } from "../../../server";
 import { badContentError } from "./errors";
-import { profile } from "../../database/schemas";
+import { profile } from "../../../database/schemas";
 import { requestObject } from "./posts";
 
 export const CrudProfile = async (

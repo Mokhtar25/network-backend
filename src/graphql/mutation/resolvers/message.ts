@@ -1,13 +1,13 @@
-import db from "../../database";
+import db from "../../../database";
 import { z } from "zod";
-import { MyContext } from "../../server";
+import { MyContext } from "../../../server";
 import { badContentError } from "./errors";
 import { requestObject } from "./posts";
-import { message, MessageTypeEnum } from "../../database/schemas/message";
-import { receiveMessageNori } from "../notificationsFunctions";
+import { message, MessageTypeEnum } from "../../../database/schemas/message";
+import { receiveMessageNori } from "../../notificationsFunctions";
 import { and, eq } from "drizzle-orm";
 import { GraphQLError } from "graphql";
-import { pubsub } from "../server";
+import { pubsub } from "../../server";
 
 const messageTypeEnum = z.enum(MessageTypeEnum);
 export const crudMessage = async (

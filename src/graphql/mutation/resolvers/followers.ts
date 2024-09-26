@@ -1,12 +1,12 @@
-import db from "../../database";
+import db from "../../../database";
 import { z } from "zod";
-import { MyContext } from "../../server";
+import { MyContext } from "../../../server";
 import { badContentError } from "./errors";
-import { followers } from "../../database/schemas";
+import { followers } from "../../../database/schemas";
 import { requestObject } from "./posts";
 import { and, eq } from "drizzle-orm";
 import { GraphQLError } from "graphql";
-import { addFollowerNotifications } from "../notificationsFunctions";
+import { addFollowerNotifications } from "../../notificationsFunctions";
 
 export const Crudfollowers = async (
   _: unknown,

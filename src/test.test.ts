@@ -12,12 +12,12 @@ test("things run", async () => {
 
 it("graphql and findUser", async () => {
   const data = await server.executeOperation({
-    query: `query( $where: UsersFilters) {
-  findUser (where: $where) {
+    query: `query( $id: Int) {
+  findUser (id : $id) {
     username
   }
 }`,
-    variables: { where: { id: { eq: 1 } } },
+    variables: { id: 1 },
   });
 
   console.log(data.body.singleResult.data.findUser);

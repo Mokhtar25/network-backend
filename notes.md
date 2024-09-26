@@ -28,14 +28,14 @@ AUTH/ Check if the username already exists in the dataBase and if the Github or 
 -[x]clear up graphql mutations, messages, posts, friends and requested, notifications, resolvers etc. no sockets, writr 
 the queries for the basic stuff for now 
 -[x] add queries, and resolve's for quires for notifications 
--[] setup sending a photo with messaging and pictures
--[] fix finding a user resolver
+-[x] fix finding a user resolver
 -[x] implement rate limiting 
--[] clear up the sup models, for messaging first, then comments, then others.
+-[x] clear up the sup models, for messaging first, then comments, then others.
 -[x] sockets for messaging and notifications
 -[]set up production environment. redirect urls, etc
 -[] set up a docker container and a production environment with .env and everything
 -[] set up Github actions and run tests and lints on every push and merge 
+-[-] setup sending a photo with messaging and pictures|| to be done on the frontend 
 =
 
 

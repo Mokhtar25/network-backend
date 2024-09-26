@@ -1,18 +1,18 @@
 import { GraphQLError } from "graphql";
-import db from "../../database";
+import db from "../../../database";
 import { z } from "zod";
-import { posts, comment, like } from "../../database/schemas";
-import { MyContext } from "../../server";
+import { posts, comment, like } from "../../../database/schemas";
+import { MyContext } from "../../../server";
 import { and, eq } from "drizzle-orm";
 import {
   updatePostCommentCount,
   updatePostLikeCount,
-} from "../utils/sqlHelpers";
+} from "../../utils/sqlHelpers";
 import { notAuthError, badContentError } from "./errors";
 import {
   addCommentNotifications,
   addLikeNotifications,
-} from "../notificationsFunctions";
+} from "../../notificationsFunctions";
 
 export const RequestTypeEnum = ["update", "post", "delete"] as const;
 // could have added a var or an enum with every request to check what opreation that is wanted to be done

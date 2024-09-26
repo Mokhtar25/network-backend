@@ -1,10 +1,13 @@
-import db from "../../database";
+import db from "../../../database";
 import { z } from "zod";
-import { MyContext } from "../../server";
+import { MyContext } from "../../../server";
 import { badContentError } from "./errors";
 
 import { requestObject } from "./posts";
-import { notifications, NotificationsEnum } from "../../database/schemas/noti";
+import {
+  notifications,
+  NotificationsEnum,
+} from "../../../database/schemas/noti";
 // this shouldnt be in graphql. its called just to update read or not. make another one for something else
 export const crudNoti = async (
   _: unknown,

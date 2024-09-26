@@ -8,10 +8,10 @@ import {
 } from "graphql";
 import { entities } from "../server";
 import { RequestTypeEnumGraphQl } from "../server";
-import * as mute from "../resolvers/posts";
-import { CrudProfile } from "../resolvers/profile";
-import { Crudfollowers } from "../resolvers/followers";
-import { crudMessage } from "../resolvers/message";
+import * as mute from "./resolvers/posts";
+import { CrudProfile } from "./resolvers/profile";
+import { Crudfollowers } from "./resolvers/followers";
+import { crudMessage } from "./resolvers/message";
 
 export const mutation = new GraphQLObjectType({
   name: "Mutation",

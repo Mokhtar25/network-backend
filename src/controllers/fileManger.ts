@@ -17,7 +17,7 @@ cloudinary.config({
 
 function auth(req: Request, res: Response, next: NextFunction) {
   if (!req.isAuthenticated() || !req.user) {
-    res.send("Not Auth here it ran").status(401);
+    res.send("Unauthorized to handelfiles").status(401);
     console.log("scho");
   }
   next();
@@ -72,7 +72,7 @@ fileRouter.post("/getSignUrl", (req, res) => {
   const body = params.safeParse(req.body);
   if (!body.success) return res.send("Missing content : File name").status(400);
 
-  // timestamp is needed for signature, Valid for an hout
+  // timestamp is needed for signature, Valid for an hour
   const timestamp = Math.round(new Date().getTime() / 1000);
   const name = `${req.user.id}_${timestamp}_name:${body.data.fileName}`;
   const signature = cloudinary.utils.api_sign_request(
@@ -85,7 +85,7 @@ fileRouter.post("/getSignUrl", (req, res) => {
 
   console.log(
     cloudinary.utils.verifyNotificationSignature(name, timestamp, signature),
-    "test verfity fun",
+    "test verfity func",
   );
   return res.json({ timestamp, signature, fileName: name });
 });
