@@ -18,6 +18,7 @@ const type = new GraphQLObjectType({
     },
   },
 });
+// TODO
 export const postsQuery = {
   type: new GraphQLList(type),
   resolve: async (
