@@ -112,7 +112,6 @@ export const server = new ApolloServer<MyContext>({
   schema: schema,
   plugins: [
     ApolloServerPluginDrainHttpServer({ httpServer }),
-
     {
       // has to be async
       // eslint-disable-next-line
@@ -129,7 +128,6 @@ export const server = new ApolloServer<MyContext>({
 await server.start();
 app.use(
   "/graphql",
-
   express.json(),
   expressMiddleware(server, {
     // apollo context requires a promise
@@ -153,12 +151,12 @@ app.use(
 // todo more logic goes in here to identify error
 const errorHandler = (
   err: Error,
-  _: Request,
+  _req: Request,
   res: Response,
-  __: NextFunction,
+  _next: NextFunction,
 ) => {
-  console.log(err);
-  res.send(`error has ouccred, ${err.message}`).status(501);
+  console.log(err, "Error handler func ------");
+  res.send(`an error has ouccred, ${err.message}`).status(501);
 };
 app.use(errorHandler);
 // to run testing while running the program so ports don't collide

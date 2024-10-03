@@ -12,6 +12,7 @@ export const notiQuery = {
       .select()
       .from(notifications)
       .where(eq(notifications.receiverId, context.user.id))
+      .limit(10)
       .orderBy(notifications.createdAt);
 
     return noti;

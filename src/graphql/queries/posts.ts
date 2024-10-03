@@ -30,7 +30,6 @@ export const postsQuery = {
     // parse info to know what fields are requested
     const infopa = parseResolveInfo(info);
 
-    // @ts-expect-error its unknown for now
     console.log(infopa?.fieldsByTypeName.posts_testing);
 
     const postsDb = await db.query.posts.findMany({

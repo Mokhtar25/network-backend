@@ -5,7 +5,8 @@ import * as _relations from "./relations";
 import env from "../../env";
 
 const pool = new Pool({
-  connectionString: env.DATABASE_URI,
+  connectionString:
+    env.NODE_ENV === "test" ? env.TESTING_DATABASE_URI : env.DATABASE_URI,
 });
 
 const db = drizzle(pool, { schema, logger: true });

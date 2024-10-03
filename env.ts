@@ -20,6 +20,8 @@ const envSchema = z.object({
   FAILED_REDIRECT_URL: z.string().url(),
 
   DATABASE_URI: z.string().url(),
+
+  TESTING_DATABASE_URI: z.string().url(),
   SESSION_SECRET: z.string().min(25, { message: "Secret should be lengthy" }),
 
   SUPERBASE_KEY: z.string().min(1),
