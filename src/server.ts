@@ -1,3 +1,4 @@
+//import "dotenv/config";
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 
@@ -6,7 +7,6 @@ import { ApolloServer } from "@apollo/server";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
 import cors from "cors";
-import "dotenv/config";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "http";
@@ -65,6 +65,7 @@ app.use(
   }),
 );
 
+// passport config
 app.use(passportRouter);
 
 const loger = (
@@ -77,6 +78,7 @@ const loger = (
 };
 app.use(loger);
 
+// routes
 app.use("/auth", routesAuth);
 app.use("/files", fileRouter);
 
@@ -148,7 +150,7 @@ app.use(
     },
   }),
 );
-// todo more logic goes in here to identify error
+// TODO more logic goes in here to identify error
 const errorHandler = (
   err: Error,
   _req: Request,

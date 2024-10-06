@@ -6,7 +6,7 @@ if (!process.env.DATABASE_URI || !process.env.TESTING_DATABASE_URI)
 export default defineConfig({
   schema: "./src/database/schemas/index.ts",
   dialect: "postgresql",
-  out: "./src/database/migrations",
+  //out: "./src/database/migrations",
   verbose: true,
   strict: true,
   dbCredentials: {

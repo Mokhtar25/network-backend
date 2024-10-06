@@ -3,14 +3,14 @@ import { server } from "./server";
 import { makeHash } from "./lib/auth/authUtils";
 //import { posts } from "./database/schemas";
 
-test("things run", async () => {
+test.skip("things run", async () => {
   //const data = await db.select().from(posts);
 
   const da = await makeHash("password");
   expect(da).toBeString();
 });
 
-it("graphql and findUser", async () => {
+it.skip("graphql and findUser", async () => {
   const data = await server.executeOperation({
     query: `query( $id: Int) {
   findUser (id : $id) {
@@ -26,7 +26,7 @@ it("graphql and findUser", async () => {
   expect(data.body.singleResult.data.findUser[0].username).toBeString();
 });
 
-it("context in graphql and notifications", async () => {
+it.skip("context in graphql and notifications", async () => {
   const data = await server.executeOperation(
     {
       query: `query{

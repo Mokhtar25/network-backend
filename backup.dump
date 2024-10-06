@@ -1,0 +1,1257 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 14.12 (Homebrew)
+-- Dumped by pg_dump version 14.12 (Homebrew)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: drizzle; Type: SCHEMA; Schema: -; Owner: moktarali
+--
+
+CREATE SCHEMA drizzle;
+
+
+ALTER SCHEMA drizzle OWNER TO moktarali;
+
+--
+-- Name: messageType; Type: TYPE; Schema: public; Owner: moktarali
+--
+
+CREATE TYPE public."messageType" AS ENUM (
+    'image',
+    'text'
+);
+
+
+ALTER TYPE public."messageType" OWNER TO moktarali;
+
+--
+-- Name: type; Type: TYPE; Schema: public; Owner: moktarali
+--
+
+CREATE TYPE public.type AS ENUM (
+    'commnet',
+    'like',
+    'follow',
+    'message'
+);
+
+
+ALTER TYPE public.type OWNER TO moktarali;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: __drizzle_migrations; Type: TABLE; Schema: drizzle; Owner: moktarali
+--
+
+CREATE TABLE drizzle.__drizzle_migrations (
+    id integer NOT NULL,
+    hash text NOT NULL,
+    created_at bigint
+);
+
+
+ALTER TABLE drizzle.__drizzle_migrations OWNER TO moktarali;
+
+--
+-- Name: __drizzle_migrations_id_seq; Type: SEQUENCE; Schema: drizzle; Owner: moktarali
+--
+
+CREATE SEQUENCE drizzle.__drizzle_migrations_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE drizzle.__drizzle_migrations_id_seq OWNER TO moktarali;
+
+--
+-- Name: __drizzle_migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: drizzle; Owner: moktarali
+--
+
+ALTER SEQUENCE drizzle.__drizzle_migrations_id_seq OWNED BY drizzle.__drizzle_migrations.id;
+
+
+--
+-- Name: test_network:chats; Type: TABLE; Schema: public; Owner: moktarali
+--
+
+CREATE TABLE public."test_network:chats" (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    "userId" integer NOT NULL,
+    "receiverId" integer,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public."test_network:chats" OWNER TO moktarali;
+
+--
+-- Name: test_network:chats_reciverId_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:chats_reciverId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:chats_reciverId_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:chats_reciverId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:chats_reciverId_seq" OWNED BY public."test_network:chats"."receiverId";
+
+
+--
+-- Name: test_network:chats_userId_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:chats_userId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:chats_userId_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:chats_userId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:chats_userId_seq" OWNED BY public."test_network:chats"."userId";
+
+
+--
+-- Name: test_network:comment; Type: TABLE; Schema: public; Owner: moktarali
+--
+
+CREATE TABLE public."test_network:comment" (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    "userId" integer NOT NULL,
+    "postId" uuid NOT NULL,
+    content text NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public."test_network:comment" OWNER TO moktarali;
+
+--
+-- Name: test_network:comment_userId_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:comment_userId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:comment_userId_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:comment_userId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:comment_userId_seq" OWNED BY public."test_network:comment"."userId";
+
+
+--
+-- Name: test_network:following; Type: TABLE; Schema: public; Owner: moktarali
+--
+
+CREATE TABLE public."test_network:following" (
+    "userId" integer NOT NULL,
+    id integer NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public."test_network:following" OWNER TO moktarali;
+
+--
+-- Name: test_network:following_id_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:following_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:following_id_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:following_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:following_id_seq" OWNED BY public."test_network:following".id;
+
+
+--
+-- Name: test_network:following_userId_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:following_userId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:following_userId_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:following_userId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:following_userId_seq" OWNED BY public."test_network:following"."userId";
+
+
+--
+-- Name: test_network:like; Type: TABLE; Schema: public; Owner: moktarali
+--
+
+CREATE TABLE public."test_network:like" (
+    "userId" integer NOT NULL,
+    "postId" uuid NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public."test_network:like" OWNER TO moktarali;
+
+--
+-- Name: test_network:like_userId_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:like_userId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:like_userId_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:like_userId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:like_userId_seq" OWNED BY public."test_network:like"."userId";
+
+
+--
+-- Name: test_network:message; Type: TABLE; Schema: public; Owner: moktarali
+--
+
+CREATE TABLE public."test_network:message" (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    "senderId" integer NOT NULL,
+    "textContent" text,
+    "receiverId" integer NOT NULL,
+    read boolean DEFAULT false,
+    "messageType" public."messageType" DEFAULT 'text'::public."messageType",
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone,
+    "chatId" uuid NOT NULL,
+    "imageUrl" character varying(256)
+);
+
+
+ALTER TABLE public."test_network:message" OWNER TO moktarali;
+
+--
+-- Name: test_network:message_reciverId_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:message_reciverId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:message_reciverId_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:message_reciverId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:message_reciverId_seq" OWNED BY public."test_network:message"."receiverId";
+
+
+--
+-- Name: test_network:message_senderId_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:message_senderId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:message_senderId_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:message_senderId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:message_senderId_seq" OWNED BY public."test_network:message"."senderId";
+
+
+--
+-- Name: test_network:notifications; Type: TABLE; Schema: public; Owner: moktarali
+--
+
+CREATE TABLE public."test_network:notifications" (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    "senderId" integer NOT NULL,
+    "itemId" uuid,
+    "textContent" text,
+    read boolean DEFAULT false,
+    type public.type NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "receiverId" integer NOT NULL
+);
+
+
+ALTER TABLE public."test_network:notifications" OWNER TO moktarali;
+
+--
+-- Name: test_network:notifications_reciverId_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:notifications_reciverId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:notifications_reciverId_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:notifications_reciverId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:notifications_reciverId_seq" OWNED BY public."test_network:notifications"."receiverId";
+
+
+--
+-- Name: test_network:notifications_userId_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:notifications_userId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:notifications_userId_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:notifications_userId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:notifications_userId_seq" OWNED BY public."test_network:notifications"."senderId";
+
+
+--
+-- Name: test_network:posts; Type: TABLE; Schema: public; Owner: moktarali
+--
+
+CREATE TABLE public."test_network:posts" (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    "userId" integer NOT NULL,
+    "textContent" text,
+    "likesCount" integer DEFAULT 0,
+    "commentCount" integer DEFAULT 0,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public."test_network:posts" OWNER TO moktarali;
+
+--
+-- Name: test_network:postsPicture; Type: TABLE; Schema: public; Owner: moktarali
+--
+
+CREATE TABLE public."test_network:postsPicture" (
+    "postId" uuid NOT NULL,
+    url character varying(256) NOT NULL
+);
+
+
+ALTER TABLE public."test_network:postsPicture" OWNER TO moktarali;
+
+--
+-- Name: test_network:posts_userId_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:posts_userId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:posts_userId_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:posts_userId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:posts_userId_seq" OWNED BY public."test_network:posts"."userId";
+
+
+--
+-- Name: test_network:profile; Type: TABLE; Schema: public; Owner: moktarali
+--
+
+CREATE TABLE public."test_network:profile" (
+    "userId" integer NOT NULL,
+    "ProfilePic" character varying(256),
+    "backgroundPic" character varying(256),
+    text text,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public."test_network:profile" OWNER TO moktarali;
+
+--
+-- Name: test_network:profile_userId_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:profile_userId_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:profile_userId_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:profile_userId_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:profile_userId_seq" OWNED BY public."test_network:profile"."userId";
+
+
+--
+-- Name: test_network:users_test; Type: TABLE; Schema: public; Owner: moktarali
+--
+
+CREATE TABLE public."test_network:users_test" (
+    id integer NOT NULL,
+    "providerId" character varying(256),
+    password text,
+    username character varying(256),
+    email text,
+    description text,
+    provider text DEFAULT 'local'::text,
+    role text DEFAULT 'user'::text NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone,
+    "displayName" text
+);
+
+
+ALTER TABLE public."test_network:users_test" OWNER TO moktarali;
+
+--
+-- Name: test_network:users_test_id_seq; Type: SEQUENCE; Schema: public; Owner: moktarali
+--
+
+CREATE SEQUENCE public."test_network:users_test_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."test_network:users_test_id_seq" OWNER TO moktarali;
+
+--
+-- Name: test_network:users_test_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: moktarali
+--
+
+ALTER SEQUENCE public."test_network:users_test_id_seq" OWNED BY public."test_network:users_test".id;
+
+
+--
+-- Name: __drizzle_migrations id; Type: DEFAULT; Schema: drizzle; Owner: moktarali
+--
+
+ALTER TABLE ONLY drizzle.__drizzle_migrations ALTER COLUMN id SET DEFAULT nextval('drizzle.__drizzle_migrations_id_seq'::regclass);
+
+
+--
+-- Name: test_network:chats userId; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:chats" ALTER COLUMN "userId" SET DEFAULT nextval('public."test_network:chats_userId_seq"'::regclass);
+
+
+--
+-- Name: test_network:chats receiverId; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:chats" ALTER COLUMN "receiverId" SET DEFAULT nextval('public."test_network:chats_reciverId_seq"'::regclass);
+
+
+--
+-- Name: test_network:comment userId; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:comment" ALTER COLUMN "userId" SET DEFAULT nextval('public."test_network:comment_userId_seq"'::regclass);
+
+
+--
+-- Name: test_network:following userId; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:following" ALTER COLUMN "userId" SET DEFAULT nextval('public."test_network:following_userId_seq"'::regclass);
+
+
+--
+-- Name: test_network:following id; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:following" ALTER COLUMN id SET DEFAULT nextval('public."test_network:following_id_seq"'::regclass);
+
+
+--
+-- Name: test_network:like userId; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:like" ALTER COLUMN "userId" SET DEFAULT nextval('public."test_network:like_userId_seq"'::regclass);
+
+
+--
+-- Name: test_network:message senderId; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:message" ALTER COLUMN "senderId" SET DEFAULT nextval('public."test_network:message_senderId_seq"'::regclass);
+
+
+--
+-- Name: test_network:message receiverId; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:message" ALTER COLUMN "receiverId" SET DEFAULT nextval('public."test_network:message_reciverId_seq"'::regclass);
+
+
+--
+-- Name: test_network:notifications senderId; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:notifications" ALTER COLUMN "senderId" SET DEFAULT nextval('public."test_network:notifications_userId_seq"'::regclass);
+
+
+--
+-- Name: test_network:notifications receiverId; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:notifications" ALTER COLUMN "receiverId" SET DEFAULT nextval('public."test_network:notifications_reciverId_seq"'::regclass);
+
+
+--
+-- Name: test_network:posts userId; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:posts" ALTER COLUMN "userId" SET DEFAULT nextval('public."test_network:posts_userId_seq"'::regclass);
+
+
+--
+-- Name: test_network:profile userId; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:profile" ALTER COLUMN "userId" SET DEFAULT nextval('public."test_network:profile_userId_seq"'::regclass);
+
+
+--
+-- Name: test_network:users_test id; Type: DEFAULT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:users_test" ALTER COLUMN id SET DEFAULT nextval('public."test_network:users_test_id_seq"'::regclass);
+
+
+--
+-- Data for Name: __drizzle_migrations; Type: TABLE DATA; Schema: drizzle; Owner: moktarali
+--
+
+COPY drizzle.__drizzle_migrations (id, hash, created_at) FROM stdin;
+1	be4f8472b4b24a0aafa16b35972353a34fb5f921c0a8da1e58b3827d00996907	1724160694982
+2	b6700c5d7255918c87a044f10e21108963567d5914cb401b15322461b021a680	1724236251863
+3	5b42936f2d6a1963f8a130fe5aa96cbed0a202cc3df5a65f0156eef5893466c2	1724265803585
+4	651fc73eb8871d20d9f01ddfa40e2cbe89c16379ad7f2e8557d4a4060100b071	1724265908866
+5	6dc6f3c2762a77b5e81ddbee9971d2f3c2aa75e926c9365bb73f5f1feb2c51ea	1724274609292
+6	68629a1280465c15fabd4576f125a2ff2baea97b74b81a4ff4c2578321ddccdf	1724274820880
+7	e83433fb90cfbb7e2b1d437fae33a335865069e217ed39374798f2890aecca71	1725196888522
+8	b56f61f8aad37e095c1e629149b4c1c4445f8410640954217358e14b69a220c5	1725196982401
+9	418f801627be1aa2623a33916d90b3ac73ee0751676b0997c456e465e14769e8	1725197136791
+13	1c8af1af0d04a40d7c03439219c01fce2d536964cad3023ad50a8a740b135bf7	1725808350989
+14	eff40c1ab143fd259ec27ea8c897b0c79f075e0a4fd6be43422689c6cd8a6067	1725812407446
+15	1dfe664017056dad1f0cb4559c1bc2ef9c2583b3357625ee29a90e299b4fc1dd	1725813336442
+16	483332bb729a324d6b225d1a0149aca8535a117152eb9f83076258b06f69e784	1725814674557
+17	54847e34e0fbd3f1632bded28d7da56a83d651ba559c18aae897562732998006	1726142122733
+18	7b82aa83ebecf884bd6f76f186d0e3f3c7b5be09e96edea86c1837c1caebca2d	1727113487019
+19	a04f5c7f332c47d40cd702f4177c1229c2415af5a8ed4e938b9b4d2a97ba7fcf	1727115103752
+\.
+
+
+--
+-- Data for Name: test_network:chats; Type: TABLE DATA; Schema: public; Owner: moktarali
+--
+
+COPY public."test_network:chats" (id, "userId", "receiverId", created_at, updated_at) FROM stdin;
+d237c33c-ba8f-48c7-9fce-2db7702bdb9a	20	1	2024-09-11 19:14:09.734054+02	\N
+\.
+
+
+--
+-- Data for Name: test_network:comment; Type: TABLE DATA; Schema: public; Owner: moktarali
+--
+
+COPY public."test_network:comment" (id, "userId", "postId", content, created_at, updated_at) FROM stdin;
+ca42508f-e8c9-4446-bde6-5ead3620d8da	1	352aaabb-8402-4771-829f-f68d563cf275	hi	2024-08-20 15:50:53.801842+02	\N
+8bd8e643-7a69-4172-93be-8404637240e9	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	and now edating it	2024-08-21 23:54:36.245839+02	2024-08-23 14:01:30.141+02
+3374161b-85ec-462d-be47-e186192e5497	1	cd3fdfa9-6a64-4c21-9946-3af1113bacaf	sad	2024-08-23 18:01:54.760424+02	2024-08-23 18:01:54.759+02
+9a6c3937-155a-44f0-b10f-fa2558182397	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new comment	2024-08-24 17:18:06.410433+02	2024-08-24 17:18:06.409+02
+a0ed056f-3d5c-4a55-9bcc-2785af30c7b0	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new comment 222	2024-08-24 17:19:45.111688+02	2024-08-24 17:19:45.11+02
+58f90ce1-ccc6-4572-8fe4-988004eb209a	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new comment 222	2024-08-24 17:20:54.177931+02	2024-08-24 17:20:54.177+02
+eaf966cc-3cff-40d2-9348-15eb88e26314	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:21:44.667049+02	2024-08-24 17:21:44.666+02
+30baa4ac-2937-4f64-bb93-44e96b03fac1	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:22:09.76886+02	2024-08-24 17:22:09.768+02
+e3583ef0-c107-4355-935a-9e5b043fca53	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:22:32.922235+02	2024-08-24 17:22:32.921+02
+9936da53-7cce-4c83-98bc-82ae0c441b40	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:27:49.76492+02	2024-08-24 17:27:49.764+02
+4ccdbabe-fdcd-4d2c-989c-cfd89c9fc3f0	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:04.922991+02	2024-08-24 17:28:04.922+02
+83da0a68-2b91-4860-a649-8b72aada9c0c	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:26.679034+02	2024-08-24 17:28:26.678+02
+39606a1e-7ded-4dd2-b5e0-a19f5bfcc68e	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:26.779647+02	2024-08-24 17:28:26.778+02
+7a69ef0a-28d1-4cd1-947f-7aa34e1ee2bb	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:26.904789+02	2024-08-24 17:28:26.904+02
+1ceb305f-1b2a-482e-9f1d-249661c99255	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:27.062745+02	2024-08-24 17:28:27.06+02
+25a3b381-68ee-4a03-ac21-37bde5c29b44	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:27.167989+02	2024-08-24 17:28:27.167+02
+a047bb19-a8c2-4396-93f7-5e7077ae660e	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:27.320571+02	2024-08-24 17:28:27.32+02
+71a45bf3-2399-4f1b-a013-70d89c5f5124	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:27.427492+02	2024-08-24 17:28:27.426+02
+882d76ba-f7c7-419d-b127-92dc58626505	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:27.561155+02	2024-08-24 17:28:27.56+02
+751f83e2-bdf4-4c7a-94c3-05a1db242013	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:27.712132+02	2024-08-24 17:28:27.711+02
+fab381e3-236e-44db-b551-e62b303c6b67	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:27.84634+02	2024-08-24 17:28:27.844+02
+fa185121-b6aa-4b4e-a456-4d0657268844	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:27.975061+02	2024-08-24 17:28:27.974+02
+21999144-a565-440d-989e-94ef812a1646	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	new comment update 23	2024-08-21 22:39:03.968498+02	2024-08-21 23:39:32.896+02
+e84ede3a-dbb3-4ca1-b889-6224e289e84a	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	new comment update 23	2024-08-21 23:22:40.938595+02	2024-08-21 23:39:32.896+02
+75f084fd-b087-4806-816b-20eaf7d1958b	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	new comment update 23	2024-08-21 23:22:57.177574+02	2024-08-21 23:39:32.896+02
+2db95273-cd12-4c06-875f-056adf7d1640	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	new comment update 23	2024-08-21 23:22:59.806515+02	2024-08-21 23:39:32.896+02
+79f35fb6-da2c-4f21-8258-f74d368fd473	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:28.131696+02	2024-08-24 17:28:28.131+02
+78e47a3b-32e5-49d3-863a-30ee8177dcd6	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	new comment update 23	2024-08-21 23:26:25.188044+02	2024-08-21 23:39:32.896+02
+1e24ae17-9379-47bf-9dd7-a92a69a2898b	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:28:28.274233+02	2024-08-24 17:28:28.273+02
+3014ce32-6d98-48ad-9b00-d1eabe131790	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	new comment update 23	2024-08-21 23:26:54.898073+02	2024-08-21 23:39:32.896+02
+e3790a91-f731-403a-8162-e6963dffd526	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	new comment update 23	2024-08-21 23:30:06.080047+02	2024-08-21 23:39:32.896+02
+baf3deb9-374d-4a85-9c4b-2c18b9848bfe	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	my new123231132	2024-08-24 17:29:00.135556+02	2024-08-24 17:29:00.135+02
+a5fbb7cb-4d4e-4af8-b58b-776860ae0cd9	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	fixed hesssre	2024-08-21 23:26:35.499049+02	2024-08-21 23:43:04.523+02
+1fdd858f-c608-4619-9ae5-c756fad69672	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	fixed new comment with update	2024-08-21 23:43:36.979286+02	2024-08-21 23:44:46.746+02
+fc1db318-4039-4e39-a944-a648b0c50377	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	trying again to see what happens	2024-08-21 23:46:15.833115+02	2024-08-21 23:46:15.832+02
+30c69078-568f-4db3-9437-3e9ebd05e95b	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	trying again to see what haphpens	2024-08-21 23:46:41.551411+02	2024-08-21 23:46:41.55+02
+d2709fa0-47f6-4291-afb4-34e63e7f1b96	20	8d68cef6-5a87-48fb-bcef-2aca83f8869b	neaieanasmd jnadsdas	2024-09-08 17:48:54.367855+02	2024-09-08 17:48:54.365+02
+5b1f8ede-afb7-4ff0-8f91-712314968397	20	e2f9be4a-c0f2-4a40-bd3e-754a96017fed	tni	2024-09-23 20:20:41.780585+02	2024-09-23 20:20:41.779+02
+857cadaa-93eb-420b-a635-5b3c801597af	20	e2f9be4a-c0f2-4a40-bd3e-754a96017fed	tni	2024-09-23 20:20:46.804136+02	2024-09-23 20:20:46.803+02
+11bcef43-33cf-4306-a139-1d8cc98bb304	1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	again to something else and again	2024-08-21 23:23:02.232694+02	2024-08-21 23:53:02.9+02
+4ee2c8b2-13e7-4c32-bcd7-f53efe532138	20	d6ee875e-6581-4a1b-95a9-9926c45e2c06	tni	2024-09-23 20:21:07.1297+02	2024-09-23 20:21:07.129+02
+ca889fc7-761c-4ad0-8a17-d4c439da5c39	20	d6ee875e-6581-4a1b-95a9-9926c45e2c06	tni	2024-09-23 20:21:07.871467+02	2024-09-23 20:21:07.871+02
+2b79e9df-ff59-4812-9971-ef331aabcfbd	20	d6ee875e-6581-4a1b-95a9-9926c45e2c06	tni	2024-09-23 20:21:08.665914+02	2024-09-23 20:21:08.665+02
+c1ce9e31-dcdf-47c2-a714-6ee49713ac2d	20	e2f9be4a-c0f2-4a40-bd3e-754a96017fed	tni	2024-09-23 20:21:11.688055+02	2024-09-23 20:21:11.687+02
+bc73f113-cbf5-4503-a0e7-10fd0858a35e	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	masddsadads. asdsadsadajksn djask dja s	2024-08-24 17:32:23.301403+02	2024-08-24 17:32:23.299+02
+87e1589a-56a8-41e7-a59b-7a959160fc0e	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	masddsadads. asdsadsadajksn djask dja s	2024-08-24 17:32:48.709096+02	2024-08-24 17:32:48.708+02
+81b6ce01-6e07-4152-8a51-adf3671138f8	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	masddsadads. asdsadsadajksn djask dja s	2024-08-24 17:32:55.165761+02	2024-08-24 17:32:55.165+02
+7a5ce82d-03b4-485a-9c5b-48fff97e2f79	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	masddsadads. asdsadsadajksn djask dja s	2024-08-24 17:33:56.924878+02	2024-08-24 17:33:56.924+02
+b846f761-c1bd-41ef-91da-4eb29d58815d	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	masddsadads. asdsadsadajksn djask dja s	2024-08-24 17:43:46.259221+02	2024-08-24 17:43:46.257+02
+ff3bd530-7f28-4513-8c83-2bef6247a3db	1	891bcfd0-8af3-4a09-bf5c-5830315b9a54	masddsadads. asdsadsadajksn djask dja s	2024-08-24 17:45:29.002031+02	2024-08-24 17:45:29.001+02
+\.
+
+
+--
+-- Data for Name: test_network:following; Type: TABLE DATA; Schema: public; Owner: moktarali
+--
+
+COPY public."test_network:following" ("userId", id, created_at) FROM stdin;
+20	9	2024-09-08 18:36:59.53797+02
+1	9	2024-09-08 19:06:25.521551+02
+1	1	2024-09-08 19:07:13.829851+02
+20	1	2024-09-11 19:09:37.870667+02
+20	20	2024-09-23 20:21:34.423914+02
+\.
+
+
+--
+-- Data for Name: test_network:like; Type: TABLE DATA; Schema: public; Owner: moktarali
+--
+
+COPY public."test_network:like" ("userId", "postId", created_at) FROM stdin;
+1	4ee5881a-ab12-4df6-9881-64aa1ca6145d	2024-08-21 22:43:57.05508+02
+1	8d68cef6-5a87-48fb-bcef-2aca83f8869b	2024-08-24 18:37:07.984528+02
+20	8d68cef6-5a87-48fb-bcef-2aca83f8869b	2024-09-08 17:24:07.405276+02
+20	352aaabb-8402-4771-829f-f68d563cf275	2024-09-23 20:19:20.506878+02
+20	e2f9be4a-c0f2-4a40-bd3e-754a96017fed	2024-09-23 20:20:03.39747+02
+\.
+
+
+--
+-- Data for Name: test_network:message; Type: TABLE DATA; Schema: public; Owner: moktarali
+--
+
+COPY public."test_network:message" (id, "senderId", "textContent", "receiverId", read, "messageType", created_at, updated_at, "chatId", "imageUrl") FROM stdin;
+66ad8dd9-290f-411f-ac06-a32d8b4e6cfd	20	hi there	1	f	text	2024-09-11 19:17:34.821934+02	2024-09-11 19:17:34.821+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+402f7947-4708-4e67-97f8-e30d5ecc70ba	20	hi there	1	f	text	2024-09-11 19:29:28.208224+02	2024-09-11 19:29:28.207+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+96e7948c-e15d-46d6-aff6-0919d7e899eb	20	hello, world	1	f	text	2024-09-12 13:50:29.48928+02	2024-09-12 13:50:29.488+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+6dec9710-9858-41dc-9af3-626187902f06	20	hello, world	1	f	image	2024-09-12 13:55:29.083063+02	2024-09-12 13:55:29.082+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	urssl
+4d937e05-8067-43b1-afc0-8c4bfd6c8e26	20	\N	1	f	image	2024-09-12 13:55:54.975618+02	2024-09-12 13:55:54.974+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	urssl
+34035204-d17c-4e07-b06a-885d5a8e4b46	20	\N	1	f	image	2024-09-12 14:14:36.434138+02	2024-09-12 14:14:36.433+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	urssl
+e0bdb375-8204-445c-a728-8e79c248e0a7	20	hi subs	1	f	text	2024-09-20 18:16:30.164964+02	2024-09-20 18:16:30.163+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+4966e062-160b-487f-826d-80071194c8c4	20	hi subs	1	f	text	2024-09-20 18:16:42.921949+02	2024-09-20 18:16:42.921+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+f5d9b89b-161a-4d88-9648-9a34ed916407	20	hi subs	1	f	text	2024-09-20 18:17:17.973989+02	2024-09-20 18:17:17.973+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+7a31c447-7b5d-40cd-acd2-7bb3e8094ba2	20	hi subs	1	f	text	2024-09-20 18:17:33.344608+02	2024-09-20 18:17:33.343+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+36fd90f5-3240-4484-b91b-7a5652bf9cd3	20	hi subs	1	f	text	2024-09-20 18:18:10.332592+02	2024-09-20 18:18:10.331+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+670a6f8e-a047-42d5-a44b-2b89525a7709	20	hi subs	1	f	text	2024-09-20 18:41:03.587567+02	2024-09-20 18:41:03.586+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+52895567-51a8-4481-b6d5-10e386a77a67	20	hi subs	1	f	text	2024-09-23 16:06:31.232549+02	2024-09-23 16:06:31.231+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+dee7eb45-9b01-42c1-8b38-09489f79a7d9	20	hi subs	1	f	text	2024-09-23 16:21:51.394978+02	2024-09-23 16:21:51.394+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+bd9f936d-259a-4e9a-9f9e-6fc1948df432	20	hi subs	1	f	text	2024-09-23 16:23:15.414951+02	2024-09-23 16:23:15.414+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+cac12e5f-7841-45e1-af01-1ca1e2f4a5b6	20	hi subs	1	f	text	2024-09-23 17:58:20.400145+02	2024-09-23 17:58:20.399+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+4c2bde0e-7001-45ce-a758-79d895e51c4f	20	hi subs	1	f	text	2024-09-23 19:39:33.783539+02	2024-09-23 19:39:33.782+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+54ea5652-0910-4409-8b25-fd12b92bd32d	20	hi subs	1	f	text	2024-09-23 19:40:05.648951+02	2024-09-23 19:40:05.648+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+ac649702-1dc5-4bb6-ae59-99bc85e0d766	20	hi subs	1	f	text	2024-09-23 19:40:14.675609+02	2024-09-23 19:40:14.674+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+886cd02c-34d6-44d5-99b5-32c3b34951e7	20	hi subs	1	f	text	2024-09-23 19:40:32.316178+02	2024-09-23 19:40:32.315+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+2a67fc92-fb16-49e7-8e5a-9640ed8e3dfc	20	hi subs	1	f	text	2024-09-23 19:41:05.972597+02	2024-09-23 19:41:05.972+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+6fa8d309-595c-499b-b02c-fe5b65c008f6	20	hi subs	1	f	text	2024-09-23 19:41:07.168747+02	2024-09-23 19:41:07.167+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+0d5da1fd-c49a-4aa1-b880-d6468439a8ad	20	hi subs	1	f	text	2024-09-23 19:41:08.421923+02	2024-09-23 19:41:08.421+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+3a4ae24a-54dc-4c78-a86f-18ad42b33d21	20	hi asdasdjja ds	20	f	text	2024-09-23 19:41:20.845298+02	2024-09-23 19:41:20.843+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+32646a4d-2dc7-4b45-ad68-7cdf5e6b1854	20	hi asdasdjja ds	20	f	text	2024-09-23 19:41:28.117318+02	2024-09-23 19:41:28.116+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+7649d862-1303-48f6-8741-2283ce0e3a6c	20	hi asdasdjja ds	20	f	text	2024-09-23 19:41:50.038372+02	2024-09-23 19:41:50.037+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+66d179a8-26fc-48a4-832d-5fb3c3b4ff61	20	hi asdasdjja ds	20	f	text	2024-09-23 19:42:22.992146+02	2024-09-23 19:42:22.99+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+66b8334f-4e5e-4943-b8a3-824363f6e95e	20	hi asdasdjja ds	20	f	text	2024-09-23 19:42:45.871881+02	2024-09-23 19:42:45.87+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+a6007e75-a116-48eb-a4dd-723fb64990af	20	hi asdasdjja ds	20	f	text	2024-09-23 19:45:16.211847+02	2024-09-23 19:45:16.211+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+fac95b4d-28ca-45c3-8e0d-5ae06b212199	20	hi asdasdjja ds	1	f	text	2024-09-23 19:45:26.491588+02	2024-09-23 19:45:26.491+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+ac325c04-ab46-44b2-90e6-464cab035fcf	20	hi asdasdjja ds	1	f	text	2024-09-23 19:45:27.619873+02	2024-09-23 19:45:27.619+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+7db64342-53ab-4fe9-8d1b-42eed2f5ebe3	20	hi asdasdjja ds	1	f	text	2024-09-23 19:45:31.417017+02	2024-09-23 19:45:31.415+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+ca677a52-c2b5-4f9f-a534-7cf9ba1399d9	20	hi asdasdjja ds	1	f	text	2024-09-23 19:57:47.181005+02	2024-09-23 19:57:47.18+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+d0b21a1b-8910-4e66-aab0-46e5c7f9e9f2	20	hi asdasdjja ds	1	f	text	2024-09-23 19:57:55.880128+02	2024-09-23 19:57:55.878+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+ffb0fd69-32ca-4cca-96a9-e3f9af7fb8ae	20	hi asdasdjja ds	20	f	text	2024-09-23 19:58:03.777333+02	2024-09-23 19:58:03.777+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+a9a67082-e472-4ed0-a647-fecef4b7ffd1	20	hi asdasdjja ds	20	f	text	2024-09-23 19:58:09.183776+02	2024-09-23 19:58:09.182+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+3d84480d-b208-4b68-b9f0-f2bcbbf2f068	20	hi asdasdjja ds	20	f	text	2024-09-23 19:58:17.068821+02	2024-09-23 19:58:17.068+02	d237c33c-ba8f-48c7-9fce-2db7702bdb9a	\N
+\.
+
+
+--
+-- Data for Name: test_network:notifications; Type: TABLE DATA; Schema: public; Owner: moktarali
+--
+
+COPY public."test_network:notifications" (id, "senderId", "itemId", "textContent", read, type, created_at, "receiverId") FROM stdin;
+a6409a8e-3183-41c1-a3fb-95e10d78f168	20	8d68cef6-5a87-48fb-bcef-2aca83f8869b	\N	f	commnet	2024-09-08 17:48:54.391876+02	1
+269dcf5d-3d7a-4c73-b45c-6534a159d29b	20	8d68cef6-5a87-48fb-bcef-2aca83f8869b	\N	f	like	2024-09-08 17:24:07.422507+02	1
+4df13fec-1b4b-4d6f-b1a4-084f9a52bdfa	20	\N	\N	f	follow	2024-09-08 18:36:59.555955+02	9
+dff45ced-860d-4540-8ba2-a7aad60567d4	1	\N	\N	f	follow	2024-09-08 19:06:25.537772+02	9
+8eec1f90-c2c6-4d59-b5c1-a87ea7739ca5	1	\N	\N	f	follow	2024-09-08 19:07:13.836746+02	1
+21223e67-b046-45da-82ed-7a2db39b50c0	20	\N	\N	f	follow	2024-09-11 19:09:37.89477+02	1
+efd1663b-4dbf-4ac3-8dda-e9deaf45b4d4	20	\N	hello, world	f	message	2024-09-12 13:55:29.092168+02	1
+4f8f06f1-579a-4d97-b5d6-e8835fedefbe	20	\N	\N	f	message	2024-09-12 13:55:54.983199+02	1
+6836b087-8841-4b2c-81c8-d87450df9f54	20	\N	\N	f	message	2024-09-12 14:14:36.450834+02	1
+98900f47-1168-42e2-ad06-8967f8f54538	20	\N	this will be deleted	f	message	2024-09-12 14:15:07.674821+02	1
+2a7681e6-8bb3-4022-a549-bfc00d3bb741	20	\N	hi subs	f	message	2024-09-20 18:16:30.186766+02	1
+2a49bdfc-38a5-4820-a2ae-a55da88cefb7	20	\N	hi subs	f	message	2024-09-20 18:16:42.931062+02	1
+cf9f8ec7-abae-405a-a061-b633bb1cf8d1	20	\N	hi subs	f	message	2024-09-20 18:17:17.983722+02	1
+930a7897-c3b8-4e15-8cf5-764ffc39c518	20	\N	hi subs	f	message	2024-09-20 18:17:33.36469+02	1
+0bc4c0f8-3ca8-4339-b5c6-21d1ce10979e	20	\N	hi subs	f	message	2024-09-20 18:18:10.342507+02	1
+c441282a-fb74-45a3-baf0-e18e70028a36	20	\N	hi subs	f	message	2024-09-20 18:41:03.609404+02	1
+c14b373e-cf97-43fa-b107-ca00fe2572e5	20	\N	hi subs	f	message	2024-09-23 16:06:31.259745+02	1
+7ce72800-d736-4ba3-8944-0f039176e825	20	\N	hi subs	f	message	2024-09-23 16:21:51.40977+02	1
+9dea3c5f-c0a7-41b3-aa0f-bfecce8eb571	20	\N	hi subs	f	message	2024-09-23 16:23:15.425741+02	1
+c6135b95-f9fa-4996-9227-93821c20951a	20	\N	hi subs	f	message	2024-09-23 17:58:20.43121+02	1
+a8fd76e1-3c72-45f0-8725-b014cd041712	20	\N	hi subs	f	message	2024-09-23 19:39:33.801674+02	1
+4da8fb40-b3aa-41de-915a-7e9417267464	20	\N	hi subs	f	message	2024-09-23 19:40:05.660045+02	1
+243f11d8-ef83-43c3-bfb7-4bb26ebb5068	20	\N	hi subs	f	message	2024-09-23 19:40:14.682722+02	1
+d7dd4a8a-3f76-4ebb-96a8-335f4f4c5477	20	\N	hi subs	f	message	2024-09-23 19:40:32.334666+02	1
+9450f40c-bb65-49fa-ac64-d57184b0d8ca	20	\N	hi subs	f	message	2024-09-23 19:41:05.980188+02	1
+d046d571-e558-46e0-b986-0fdbe2b25ec5	20	\N	hi subs	f	message	2024-09-23 19:41:07.173712+02	1
+b4dbf20f-12bb-4548-8b2f-cb58017b5a09	20	\N	hi subs	f	message	2024-09-23 19:41:08.425035+02	1
+a2bf5836-cc8b-4427-a692-782c2fe1b5dd	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:41:20.854581+02	20
+b236a26d-a41c-44cd-8d42-a67f57961f13	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:41:28.120603+02	20
+32081cca-dee5-4a28-aa69-40586fff25e3	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:41:50.078942+02	20
+77f847e1-5729-40f5-a0fb-c9e52a93b2a9	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:42:23.015795+02	20
+aa5655fa-40f5-4ebe-bc3c-0eed2c4b3775	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:42:45.881482+02	20
+5f2d17c6-f3b8-4e9a-971a-c489548932eb	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:45:16.222154+02	20
+2de9217a-5924-4f57-858c-8a3ecff1f201	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:45:26.495486+02	1
+661f5597-8d24-4758-800a-33740ef77c9d	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:45:27.633162+02	1
+9c376940-bb03-43ee-80af-aad84527fd03	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:45:31.434188+02	1
+c2416908-656a-4e40-a29b-e360dcb8285e	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:57:47.188528+02	1
+3a32509e-a987-4700-a4a9-8c756bc1c775	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:57:55.90064+02	1
+a6b733a8-4856-4a7d-898f-a14070d44aed	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:58:03.780924+02	20
+e4186ae2-0f8a-4935-ac5f-93f9234ab904	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:58:09.194029+02	20
+a306eedb-7307-4efb-a91e-cbc8c8c81aa7	20	\N	hi asdasdjja ds	f	message	2024-09-23 19:58:17.073153+02	20
+8021c47f-8e1f-4b0d-aae9-3276a294b457	20	352aaabb-8402-4771-829f-f68d563cf275	\N	f	like	2024-09-23 20:19:20.542491+02	1
+3424300e-ce3f-4235-bf8d-9701f5df4ec6	20	e2f9be4a-c0f2-4a40-bd3e-754a96017fed	\N	f	like	2024-09-23 20:20:03.411129+02	20
+ea50fe1c-35a6-4eca-905e-b885ea01c4da	20	e2f9be4a-c0f2-4a40-bd3e-754a96017fed	\N	f	commnet	2024-09-23 20:20:41.803801+02	20
+54751924-b77a-468d-a583-2ac3ecace74d	20	e2f9be4a-c0f2-4a40-bd3e-754a96017fed	\N	f	commnet	2024-09-23 20:20:46.810423+02	20
+3fe9d023-8510-406b-b892-75124bde603a	20	d6ee875e-6581-4a1b-95a9-9926c45e2c06	\N	f	commnet	2024-09-23 20:21:07.141358+02	1
+4110f611-786e-46e3-8cf9-9a6ad7174573	20	d6ee875e-6581-4a1b-95a9-9926c45e2c06	\N	f	commnet	2024-09-23 20:21:07.878021+02	1
+2fa8e3d1-6d5d-473c-b5aa-d88fdc2bfe15	20	d6ee875e-6581-4a1b-95a9-9926c45e2c06	\N	f	commnet	2024-09-23 20:21:08.671328+02	1
+efc46e2f-65ca-46ab-a97d-4c8459a28d9f	20	e2f9be4a-c0f2-4a40-bd3e-754a96017fed	\N	f	commnet	2024-09-23 20:21:11.693816+02	20
+5bda2775-eb5b-43b7-9ec9-61ae20621036	20	\N	\N	f	follow	2024-09-23 20:21:34.429995+02	20
+\.
+
+
+--
+-- Data for Name: test_network:posts; Type: TABLE DATA; Schema: public; Owner: moktarali
+--
+
+COPY public."test_network:posts" (id, "userId", "textContent", "likesCount", "commentCount", created_at, updated_at) FROM stdin;
+891bcfd0-8af3-4a09-bf5c-5830315b9a54	1	bello	0	18	2024-08-24 15:09:50.745286+02	2024-08-24 17:45:40.557+02
+8d68cef6-5a87-48fb-bcef-2aca83f8869b	1	my new post	3	1	2024-08-21 20:36:54.990674+02	2024-09-08 17:48:54.383+02
+77d53e2e-c215-455d-a82b-7a6ce7d90962	13	new post 123	\N	\N	2024-08-26 16:05:41.22799+02	2024-09-08 17:48:54.383+02
+352aaabb-8402-4771-829f-f68d563cf275	1	mew	1	0	2024-08-20 15:38:00.716721+02	2024-09-23 20:19:20.52+02
+d6ee875e-6581-4a1b-95a9-9926c45e2c06	1	update	0	3	2024-08-20 15:37:59.76453+02	2024-09-23 20:21:08.666+02
+e2f9be4a-c0f2-4a40-bd3e-754a96017fed	20	hi asdasdjja ds	1	3	2024-09-23 20:19:34.702852+02	2024-09-23 20:21:11.69+02
+4ee5881a-ab12-4df6-9881-64aa1ca6145d	1	my new post with a comment	0	0	2024-08-21 22:31:09.353264+02	2024-08-24 17:30:10.973+02
+6a45b74c-894d-4cae-adb4-4ffb174962b7	1	this is sucsseful	0	0	2024-08-21 20:38:47.829103+02	2024-08-24 17:30:10.973+02
+5c69176f-355c-4a5d-8438-59366e99e4a9	1	my new post	0	0	2024-08-21 20:38:28.648673+02	2024-08-24 17:30:10.973+02
+cd3fdfa9-6a64-4c21-9946-3af1113bacaf	1	my new post	0	0	2024-08-21 20:37:21.073991+02	2024-08-24 17:30:10.973+02
+\.
+
+
+--
+-- Data for Name: test_network:postsPicture; Type: TABLE DATA; Schema: public; Owner: moktarali
+--
+
+COPY public."test_network:postsPicture" ("postId", url) FROM stdin;
+352aaabb-8402-4771-829f-f68d563cf275	sad
+352aaabb-8402-4771-829f-f68d563cf275	123
+cd3fdfa9-6a64-4c21-9946-3af1113bacaf	test 1
+77d53e2e-c215-455d-a82b-7a6ce7d90962	one
+77d53e2e-c215-455d-a82b-7a6ce7d90962	two
+77d53e2e-c215-455d-a82b-7a6ce7d90962	three
+77d53e2e-c215-455d-a82b-7a6ce7d90962	one
+77d53e2e-c215-455d-a82b-7a6ce7d90962	two
+77d53e2e-c215-455d-a82b-7a6ce7d90962	three
+77d53e2e-c215-455d-a82b-7a6ce7d90962	one
+77d53e2e-c215-455d-a82b-7a6ce7d90962	three
+77d53e2e-c215-455d-a82b-7a6ce7d90962	two
+cd3fdfa9-6a64-4c21-9946-3af1113bacaf	test 1
+\.
+
+
+--
+-- Data for Name: test_network:profile; Type: TABLE DATA; Schema: public; Owner: moktarali
+--
+
+COPY public."test_network:profile" ("userId", "ProfilePic", "backgroundPic", text, updated_at) FROM stdin;
+20	okay good	asdasd	helxzccxzxczlo, worsdaasddsald	2024-09-08 14:51:33.647+02
+\.
+
+
+--
+-- Data for Name: test_network:users_test; Type: TABLE DATA; Schema: public; Owner: moktarali
+--
+
+COPY public."test_network:users_test" (id, "providerId", password, username, email, description, provider, role, created_at, updated_at, "displayName") FROM stdin;
+2	test	test	test	\N	\N	local	user	2024-08-20 15:35:11.235442+02	\N	\N
+5	\N	test	test1	\N	\N	local	user	2024-08-20 19:17:02.344094+02	2024-08-20 19:17:02.32+02	\N
+9	\N	$2b$12$W7MbjyreXSKBVWURSQ2z1Ow9aQNNxLXqyLMmlLGGSYzfIIvFbFYGi	tesst	\N	\N	local	user	2024-08-20 19:20:20.600697+02	2024-08-20 19:20:20.595+02	\N
+10	\N	$2b$12$N6mPM./d1aHpufOfkmZHse4tJQ9StYFetIhuVSdb60cbXZcQz299O	tanoyher	\N	\N	local	user	2024-08-20 19:21:29.509263+02	2024-08-20 19:21:29.508+02	\N
+11	\N	$2b$12$VdisnLmhwHhyi/aQIAtHyeCnd8O1Pr0p8wGPbjKPjTcc3OFws0OUq	tanoydher	\N	\N	local	user	2024-08-20 19:21:49.12582+02	2024-08-20 19:21:49.125+02	\N
+12	\N	$2b$12$HFx2OAWAWVJ5/an30XptmOrhJCeX27Pd8ai.elifwhOu6DB4sNqge	tanoydhdder	\N	\N	local	user	2024-08-20 19:22:09.0097+02	2024-08-20 19:22:09.008+02	\N
+13	\N	$2b$12$wkeICMrHVPubsXI03/jVouwwi4LUfVjmgrUYfSNjhKogBHvAu8cgu	admin	\N	\N	local	user	2024-08-20 19:53:13.308418+02	2024-08-20 19:53:13.3+02	\N
+15	\N	$2b$12$nf.4SWxhDPKZ1bYzicCM0eLeRZ41Rc3XFsamv5u3wDH4ifKl1cxt6	admin1	\N	\N	local	user	2024-08-25 10:56:14.31144+02	2024-08-25 13:00:48.835+02	\N
+20	154358125	\N	mokhtar25	mokhtar2000naj@gmail.com	\N	github	user	2024-08-27 23:07:34.809723+02	2024-08-27 23:07:34.808+02	\N
+21	101801364580656263366	\N	\N	mokhtar21e2@gmail.com	\N	google	user	2024-08-27 23:20:19.309078+02	2024-08-27 23:20:19.307+02	mokhtar ali
+1	154358125	\N	Mokhtar25c	\N	\N	github	user	2024-08-20 15:33:03.02434+02	2024-08-20 15:33:03.022+02	\N
+\.
+
+
+--
+-- Name: __drizzle_migrations_id_seq; Type: SEQUENCE SET; Schema: drizzle; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('drizzle.__drizzle_migrations_id_seq', 19, true);
+
+
+--
+-- Name: test_network:chats_reciverId_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:chats_reciverId_seq"', 1, false);
+
+
+--
+-- Name: test_network:chats_userId_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:chats_userId_seq"', 1, false);
+
+
+--
+-- Name: test_network:comment_userId_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:comment_userId_seq"', 1, false);
+
+
+--
+-- Name: test_network:following_id_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:following_id_seq"', 1, false);
+
+
+--
+-- Name: test_network:following_userId_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:following_userId_seq"', 1, false);
+
+
+--
+-- Name: test_network:like_userId_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:like_userId_seq"', 1, false);
+
+
+--
+-- Name: test_network:message_reciverId_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:message_reciverId_seq"', 1, false);
+
+
+--
+-- Name: test_network:message_senderId_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:message_senderId_seq"', 1, false);
+
+
+--
+-- Name: test_network:notifications_reciverId_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:notifications_reciverId_seq"', 1, false);
+
+
+--
+-- Name: test_network:notifications_userId_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:notifications_userId_seq"', 1, false);
+
+
+--
+-- Name: test_network:posts_userId_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:posts_userId_seq"', 1, false);
+
+
+--
+-- Name: test_network:profile_userId_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:profile_userId_seq"', 1, false);
+
+
+--
+-- Name: test_network:users_test_id_seq; Type: SEQUENCE SET; Schema: public; Owner: moktarali
+--
+
+SELECT pg_catalog.setval('public."test_network:users_test_id_seq"', 21, true);
+
+
+--
+-- Name: __drizzle_migrations __drizzle_migrations_pkey; Type: CONSTRAINT; Schema: drizzle; Owner: moktarali
+--
+
+ALTER TABLE ONLY drizzle.__drizzle_migrations
+    ADD CONSTRAINT __drizzle_migrations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: test_network:following id; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:following"
+    ADD CONSTRAINT id PRIMARY KEY ("userId", id);
+
+
+--
+-- Name: test_network:users_test provider and username; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:users_test"
+    ADD CONSTRAINT "provider and username" UNIQUE (username, provider);
+
+
+--
+-- Name: test_network:chats test_network:chats_id_unique; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:chats"
+    ADD CONSTRAINT "test_network:chats_id_unique" PRIMARY KEY (id);
+
+
+--
+-- Name: test_network:comment test_network:comment_id_unique; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:comment"
+    ADD CONSTRAINT "test_network:comment_id_unique" PRIMARY KEY (id);
+
+
+--
+-- Name: test_network:like test_network:like_postId_userId_pk; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:like"
+    ADD CONSTRAINT "test_network:like_postId_userId_pk" PRIMARY KEY ("postId", "userId");
+
+
+--
+-- Name: test_network:message test_network:message_id_unique; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:message"
+    ADD CONSTRAINT "test_network:message_id_unique" PRIMARY KEY (id);
+
+
+--
+-- Name: test_network:notifications test_network:notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:notifications"
+    ADD CONSTRAINT "test_network:notifications_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: test_network:posts test_network:posts_id_unique; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:posts"
+    ADD CONSTRAINT "test_network:posts_id_unique" PRIMARY KEY (id);
+
+
+--
+-- Name: test_network:profile test_network:profile_pkey; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:profile"
+    ADD CONSTRAINT "test_network:profile_pkey" PRIMARY KEY ("userId");
+
+
+--
+-- Name: test_network:users_test test_network:users_test_id_unique; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:users_test"
+    ADD CONSTRAINT "test_network:users_test_id_unique" PRIMARY KEY (id);
+
+
+--
+-- Name: test_network:users_test test_network:users_test_username_unique; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:users_test"
+    ADD CONSTRAINT "test_network:users_test_username_unique" UNIQUE (username);
+
+
+--
+-- Name: test_network:users_test unique username; Type: CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:users_test"
+    ADD CONSTRAINT "unique username" UNIQUE (username);
+
+
+--
+-- Name: test_network:chats test_network:chats_receiverId_test_network:users_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:chats"
+    ADD CONSTRAINT "test_network:chats_receiverId_test_network:users_test_id_fk" FOREIGN KEY ("receiverId") REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:chats test_network:chats_userId_test_network:users_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:chats"
+    ADD CONSTRAINT "test_network:chats_userId_test_network:users_test_id_fk" FOREIGN KEY ("userId") REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:comment test_network:comment_postId_test_network:posts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:comment"
+    ADD CONSTRAINT "test_network:comment_postId_test_network:posts_id_fk" FOREIGN KEY ("postId") REFERENCES public."test_network:posts"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:comment test_network:comment_userId_test_network:users_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:comment"
+    ADD CONSTRAINT "test_network:comment_userId_test_network:users_test_id_fk" FOREIGN KEY ("userId") REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:following test_network:following_id_test_network:users_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:following"
+    ADD CONSTRAINT "test_network:following_id_test_network:users_test_id_fk" FOREIGN KEY (id) REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:following test_network:following_userId_test_network:users_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:following"
+    ADD CONSTRAINT "test_network:following_userId_test_network:users_test_id_fk" FOREIGN KEY ("userId") REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:like test_network:like_postId_test_network:posts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:like"
+    ADD CONSTRAINT "test_network:like_postId_test_network:posts_id_fk" FOREIGN KEY ("postId") REFERENCES public."test_network:posts"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:like test_network:like_userId_test_network:users_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:like"
+    ADD CONSTRAINT "test_network:like_userId_test_network:users_test_id_fk" FOREIGN KEY ("userId") REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:message test_network:message_chatId_test_network:chats_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:message"
+    ADD CONSTRAINT "test_network:message_chatId_test_network:chats_id_fk" FOREIGN KEY ("chatId") REFERENCES public."test_network:chats"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:message test_network:message_receiverId_test_network:users_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:message"
+    ADD CONSTRAINT "test_network:message_receiverId_test_network:users_test_id_fk" FOREIGN KEY ("receiverId") REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:message test_network:message_senderId_test_network:users_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:message"
+    ADD CONSTRAINT "test_network:message_senderId_test_network:users_test_id_fk" FOREIGN KEY ("senderId") REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:notifications test_network:notifications_receiverId_test_network:users_test_i; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:notifications"
+    ADD CONSTRAINT "test_network:notifications_receiverId_test_network:users_test_i" FOREIGN KEY ("receiverId") REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:notifications test_network:notifications_senderId_test_network:users_test_id_; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:notifications"
+    ADD CONSTRAINT "test_network:notifications_senderId_test_network:users_test_id_" FOREIGN KEY ("senderId") REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:postsPicture test_network:postsPicture_postId_test_network:posts_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:postsPicture"
+    ADD CONSTRAINT "test_network:postsPicture_postId_test_network:posts_id_fk" FOREIGN KEY ("postId") REFERENCES public."test_network:posts"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:posts test_network:posts_userId_test_network:users_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:posts"
+    ADD CONSTRAINT "test_network:posts_userId_test_network:users_test_id_fk" FOREIGN KEY ("userId") REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: test_network:profile test_network:profile_userId_test_network:users_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: moktarali
+--
+
+ALTER TABLE ONLY public."test_network:profile"
+    ADD CONSTRAINT "test_network:profile_userId_test_network:users_test_id_fk" FOREIGN KEY ("userId") REFERENCES public."test_network:users_test"(id) ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+

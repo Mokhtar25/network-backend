@@ -4,11 +4,11 @@ import * as schema from "./schemas/index";
 import * as _relations from "./relations";
 import env from "../../env";
 
-const pool = new Pool({
+export const pool = new Pool({
   connectionString:
     env.NODE_ENV === "test" ? env.TESTING_DATABASE_URI : env.DATABASE_URI,
 });
 
-const db = drizzle(pool, { schema, logger: true });
+const db = drizzle(pool, { schema, logger: env.NODE_ENV === "test" });
 
 export default db;

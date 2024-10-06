@@ -1,5 +1,5 @@
 {
-  "id": "9dd47e7f-2718-4e6d-b22f-63ac8e8faa86",
+  "id": "283e410f-b1d0-4443-af25-746eda124750",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -171,13 +171,13 @@
       "columns": {
         "userId": {
           "name": "userId",
-          "type": "integer",
+          "type": "serial",
           "primaryKey": false,
           "notNull": true
         },
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "serial",
           "primaryKey": false,
           "notNull": true
         },
@@ -316,20 +316,14 @@
           "primaryKey": false,
           "notNull": false
         },
-        "imageUrl": {
-          "name": "imageUrl",
-          "type": "varchar(256)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "chatId": {
           "name": "chatId",
-          "type": "uuid",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "receiverId": {
-          "name": "receiverId",
+        "reciverId": {
+          "name": "reciverId",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -388,15 +382,15 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "test_network:message_receiverId_test_network:users_test_id_fk": {
-          "name": "test_network:message_receiverId_test_network:users_test_id_fk",
+        "test_network:message_reciverId_test_network:users_test_id_fk": {
+          "name": "test_network:message_reciverId_test_network:users_test_id_fk",
           "tableFrom": "test_network:message",
           "tableTo": "test_network:users_test",
           "columnsFrom": [
-            "receiverId"
+            "reciverId"
           ],
           "columnsTo": [
             "id"
@@ -425,8 +419,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "receiverId": {
-          "name": "receiverId",
+        "reciverId": {
+          "name": "reciverId",
           "type": "serial",
           "primaryKey": false,
           "notNull": true
@@ -435,7 +429,7 @@
           "name": "itemId",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "textContent": {
           "name": "textContent",
@@ -480,12 +474,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "test_network:notifications_receiverId_test_network:users_test_id_fk": {
-          "name": "test_network:notifications_receiverId_test_network:users_test_id_fk",
+        "test_network:notifications_reciverId_test_network:users_test_id_fk": {
+          "name": "test_network:notifications_reciverId_test_network:users_test_id_fk",
           "tableFrom": "test_network:notifications",
           "tableTo": "test_network:users_test",
           "columnsFrom": [
-            "receiverId"
+            "reciverId"
           ],
           "columnsTo": [
             "id"
@@ -617,7 +611,7 @@
       "columns": {
         "userId": {
           "name": "userId",
-          "type": "integer",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
@@ -764,37 +758,11 @@
             "username",
             "provider"
           ]
-        },
-        "unique username": {
-          "name": "unique username",
-          "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
         }
       }
     }
   },
-  "enums": {
-    "public.messageType": {
-      "name": "messageType",
-      "schema": "public",
-      "values": [
-        "image",
-        "text"
-      ]
-    },
-    "public.type": {
-      "name": "type",
-      "schema": "public",
-      "values": [
-        "commnet",
-        "follow",
-        "like",
-        "message"
-      ]
-    }
-  },
+  "enums": {},
   "schemas": {},
   "sequences": {},
   "_meta": {
