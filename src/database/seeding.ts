@@ -3,7 +3,6 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from "./schemas/";
 import { getTableName, sql } from "drizzle-orm";
 import { makeHash } from "../lib/auth/authUtils";
-import { User } from "./schemas/users";
 
 type schemaType = typeof schema;
 export async function turbTable(db: NodePgDatabase<schemaType>, table: Table) {
@@ -13,7 +12,13 @@ export async function turbTable(db: NodePgDatabase<schemaType>, table: Table) {
 }
 
 export async function seedDb(db: NodePgDatabase<schemaType>) {
-  await Promise.all([turbTable(db, schema.users), turbTable(db, schema.posts)]);
+  await Promise.all([
+    turbTable(db, schema.users),
+    turbTable(db, schema.posts),
+    turbTable(db, schema.like),
+    turbTable(db, schema.comment),
+    turbTable(db, schema.profile),
+  ]);
 
   const password = await makeHash("test");
 
@@ -88,18 +93,26 @@ export async function seedDb(db: NodePgDatabase<schemaType>) {
     seededComments.push(comment[0]);
   }
 
-  const seeded = [];
+  const seededMessages = [];
 
   for (let i = 0; i < 4; i++) {
-    const comment = await db
-      .insert(schema.message)
+    const chatId = await db
+      .insert(schema.chats)
       .values({
         userId: seededUsers[i].id,
-        content: "test comment",
-        postId: seededPosts[i].id,
+        receiverId: seededUsers[seededUsers.length - 1 - i].id,
+      })
+      .returning({ id: schema.chats.id });
+    const message = await db
+      .insert(schema.message)
+      .values({
+        chatId: chatId[0].id,
+        receiverId: seededUsers[seededUsers.length - 1 - i].id,
+        senderId: seededUsers[i].id,
+        textContent: "hello, world",
       })
       .returning();
 
-    seededComments.push(comment[0]);
+    seededMessages.push(message[0]);
   }
 }
