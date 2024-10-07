@@ -8,28 +8,29 @@ beforeAll(async () => {
 
   await Promise.all([turbTable(db, users)]);
 
-  //await Promise.all([
-  //  db
-  //    .insert(users)
-  //    .values({ username: "test1", provider: "local", password: "test" }),
-  //
-  //  db
-  //    .insert(users)
-  //    .values({ username: "test2", provider: "local", password: "test" }),
-  //
-  //  db
-  //    .insert(users)
-  //    .values({ username: "test3", provider: "local", password: "test" }),
-  //]);
+  await Promise.all([
+    db
+      .insert(users)
+      .values({ username: "test1", provider: "local", password: "test" }),
+
+    db
+      .insert(users)
+      .values({ username: "test2", provider: "local", password: "test" }),
+
+    db
+      .insert(users)
+      .values({ username: "test3", provider: "local", password: "test" }),
+  ]);
 });
 
 afterAll(async () => {
   await pool.end();
 });
 
-test.only("tesintg users table", async () => {
+test("tesintg users table", async () => {
   const data = await db.select().from(users);
 
+  console.log(data);
   expect(data).toBeArray();
   expect(data[0].id).toEqual(1);
   expect(data[0].role).toEqual("user");
