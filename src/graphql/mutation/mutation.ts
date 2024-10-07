@@ -73,9 +73,6 @@ export const mutation = new GraphQLObjectType({
         textContent: {
           type: GraphQLString,
         },
-        chatId: {
-          type: new GraphQLNonNull(GraphQLID),
-        },
         messageId: {
           type: GraphQLID,
         },

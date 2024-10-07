@@ -5,9 +5,10 @@ import { badContentError } from "./errors";
 import { requestObject } from "./posts";
 import { message, MessageTypeEnum } from "../../../database/schemas/message";
 import { receiveMessageNori } from "../../notificationsFunctions";
-import { and, eq } from "drizzle-orm";
+import { and, eq, or, sql } from "drizzle-orm";
 import { GraphQLError } from "graphql";
 import { pubsub } from "../../server";
+import { chats } from "../../../database/schemas";
 
 const messageTypeEnum = z.enum(MessageTypeEnum);
 export const crudMessage = async (
@@ -50,7 +51,6 @@ export const crudMessage = async (
       textContent: z.string().optional(),
       messageType: messageTypeEnum,
       imageUrl: z.string().optional(),
-      chatId: z.string().uuid(),
       receiverId: z.number(),
     })
     .passthrough()
@@ -67,17 +67,64 @@ export const crudMessage = async (
   console.log(safeData.error);
   if (!safeData.success) return badContentError();
 
-  const data = await db
-    .insert(message)
-    .values({
-      chatId: safeData.data.chatId,
-      imageUrl: safeData.data.imageUrl,
-      messageType: safeData.data.messageType,
-      senderId: context.user.id,
-      receiverId: safeData.data.receiverId,
-      textContent: safeData.data.textContent,
-    })
-    .returning();
+  // it doesn't matter who is the id
+  const chatsq = db.$with("chatsq").as(
+    db
+      .select({ id: chats.id })
+      .from(chats)
+      .where(
+        or(
+          and(
+            eq(chats.receiverId, safeData.data.receiverId),
+            eq(chats.userId, context.user.id),
+          ),
+          and(
+            eq(chats.userId, safeData.data.receiverId),
+            eq(chats.receiverId, context.user.id),
+          ),
+        ),
+      ),
+  );
+
+  //// find the chat id, Or make a new chat
+  let data;
+  try {
+    data = await db
+      .with(chatsq)
+      .insert(message)
+      .values({
+        chatId: sql`(select id from chatsq limit 1)`,
+        imageUrl: safeData.data.imageUrl,
+        messageType: safeData.data.messageType,
+        senderId: context.user.id,
+        receiverId: safeData.data.receiverId,
+        textContent: safeData.data.textContent,
+      })
+      .returning();
+  } catch (err) {
+    console.log(err);
+    // find a method to combine the two queries into trip to the db: currently drizzle supports only select
+    // with with clause
+    const chatId = await db
+      .insert(chats)
+      .values({
+        receiverId: safeData.data.receiverId,
+        userId: context.user.id,
+      })
+      .returning({ id: chats.id });
+
+    data = await db
+      .insert(message)
+      .values({
+        chatId: chatId[0].id,
+        imageUrl: safeData.data.imageUrl,
+        messageType: safeData.data.messageType,
+        senderId: context.user.id,
+        receiverId: safeData.data.receiverId,
+        textContent: safeData.data.textContent,
+      })
+      .returning();
+  }
 
   receiveMessageNori(data[0].senderId, data[0].receiverId, data[0].textContent)
     .then(() => null)
