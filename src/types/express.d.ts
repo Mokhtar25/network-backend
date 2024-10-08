@@ -4,6 +4,8 @@ export {};
 
 declare global {
   namespace Express {
-    interface User extends appUser {}
+    interface User extends appUser {
+      foo?;
+    }
   }
 }

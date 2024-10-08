@@ -31,6 +31,8 @@ the queries for the basic stuff for now
 -[x] clear up the sup models, for messaging first, then comments, then others.
 -[x] sockets for messaging and notifications
 -[x] set up production environment. redirect Urls, etc
+-[x] set up a testing env
+-[/] test all endpoints and every function, notifications, etc
 -[] set up a docker container and a production environment with .env and everything
 -[] set up Github actions and run tests and lints on every push and merge 
 -[-] setup sending a photo with messaging and pictures|| to be done on the Frontend
