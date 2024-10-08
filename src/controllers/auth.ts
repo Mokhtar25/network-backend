@@ -132,7 +132,10 @@ routesAuth.post("/updateUser", (async (req, res) => {
 
 routesAuth.get("/pro", (req, res) => {
   console.log(req.isAuthenticated(), req.session.cookie);
-  if (req.isAuthenticated()) return res.send("authenticated");
+  if (req.isAuthenticated())
+    return res.send(
+      '<h1 style="background-color : black; color : white; height: 100vh;">authenticated<h1>',
+    );
   return res.send("not authenticated");
 });
 

@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 import { server } from "../../server";
 import { test, expect } from "bun:test";
 

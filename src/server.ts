@@ -1,4 +1,4 @@
-//import "dotenv/config";
+//import "dotenv/config"; only needed in node
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 

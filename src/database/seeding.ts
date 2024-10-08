@@ -67,6 +67,20 @@ export async function seedDb(db: NodePgDatabase<schemaType>) {
     seededPosts.push(post[0]);
   }
 
+  const seededPostsPictures = [];
+
+  for (let i = 0; i < 4; i++) {
+    const postPic = await db
+      .insert(schema.postsPicture)
+      .values({
+        url: "test url",
+        postId: seededPosts[i].id,
+      })
+      .returning();
+
+    seededPostsPictures.push(postPic[0]);
+  }
+
   const seededLikes = [];
 
   for (let i = 0; i < 4; i++) {

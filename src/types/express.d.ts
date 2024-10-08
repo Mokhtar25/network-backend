@@ -5,6 +5,7 @@ export {};
 declare global {
   namespace Express {
     interface User extends appUser {
+      // must add this or typescript will start bitching
       foo?;
     }
   }
