@@ -5,6 +5,8 @@ import { badContentError } from "./errors";
 import { profile } from "../../../database/schemas";
 import { requestObject } from "./posts";
 
+// move the sending of the pictures to graphql, sign the pictures and
+// and send them with the initial request
 export const CrudProfile = async (
   _: unknown,
   args: unknown,
@@ -13,8 +15,8 @@ export const CrudProfile = async (
   const request = requestObject.safeParse(args);
   if (!request.success) return badContentError();
 
-  // check when to update and when to add stuff/or make its on the frontend to send which fields
-  // // if you dont provide the field it wont be changed. so that is good and is left to the frontend
+  // check when to update and when to add stuff/or make its on the Frontend to send which fields
+  //  if you don't provide the field it wont be changed. so that is good and is left to the Frontend
   const argsData = z
     .object({
       bio: z.string().max(256).optional(),

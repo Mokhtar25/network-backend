@@ -34,6 +34,7 @@ fileRouter.post("/addpics", (async (req, res) => {
   if (!safeArgs.success || !req.user)
     return res.send("bad content").status(400);
 
+  // this is for security reasons
   const subQ = db.$with("subQ").as(
     db
       .select({ id: posts.id })
