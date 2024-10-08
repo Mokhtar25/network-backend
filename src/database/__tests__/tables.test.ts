@@ -1,17 +1,7 @@
-import { test, expect, beforeAll, afterAll } from "bun:test";
-import db, { pool } from "../index";
+import { test, expect } from "bun:test";
+import db from "../index";
 import { users } from "../schemas";
-import { migrateDB } from "../migrate";
-import { seedDb } from "../seeding";
 import { checkPassword } from "../../lib/auth/authUtils";
-beforeAll(async () => {
-  await migrateDB();
-  await seedDb(db);
-});
-
-afterAll(async () => {
-  await pool.end();
-});
 
 test("users table is rested and seed with users for testing", async () => {
   const data = await db.select().from(users);

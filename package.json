@@ -10,6 +10,7 @@
     "start": "node dist/src/server.js",
     "preserve": "npm run build",
     "serve": "concurrently \"npx tsc -w\"  \"nodemon dist/index.js\"",
+    "test": "bun test --preload ./src/test.setup.ts",
     "lint": "eslint",
     "db:generate": "npx drizzle-kit generate",
     "db:migrate": "npx drizzle-kit migrate",

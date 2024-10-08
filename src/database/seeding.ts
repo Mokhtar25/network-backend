@@ -16,8 +16,11 @@ export async function seedDb(db: NodePgDatabase<schemaType>) {
     turbTable(db, schema.users),
     turbTable(db, schema.posts),
     turbTable(db, schema.like),
+    turbTable(db, schema.chats),
+    turbTable(db, schema.notifications),
     turbTable(db, schema.comment),
     turbTable(db, schema.profile),
+    turbTable(db, schema.followers),
   ]);
 
   const password = await makeHash("test");
@@ -114,5 +117,19 @@ export async function seedDb(db: NodePgDatabase<schemaType>) {
       .returning();
 
     seededMessages.push(message[0]);
+  }
+
+  const seededFollowers = [];
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      const follower = await db
+        .insert(schema.followers)
+        .values({
+          userId: seededUsers[i].id,
+          followeId: seededUsers[j].id,
+        })
+        .returning();
+      seededFollowers.push(follower[0]);
+    }
   }
 }
