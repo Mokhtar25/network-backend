@@ -13,7 +13,6 @@ import {
   addCommentNotifications,
   addLikeNotifications,
 } from "../../notificationsFunctions";
-import { argv0 } from "process";
 
 export const RequestTypeEnum = ["update", "post", "delete"] as const;
 // could have added a var or an enum with every request to check what opreation that is wanted to be done
@@ -57,7 +56,6 @@ export const crudPost = async (
       })
       .returning();
 
-    console.log(safeArgs.data);
     if (safeArgs.data.postPictures) {
       const data = await Promise.all(
         safeArgs.data.postPictures.map(async (e) => {
@@ -102,7 +100,7 @@ export const crudPost = async (
 
     if (!post[0]) throw new GraphQLError("Post not found, or Not Authorized");
 
-    return post[0];
+    return { post: post[0], postPictures: [] };
   } else {
     const makePostArgs = z.object({
       postId: z.string().min(1),
@@ -123,7 +121,7 @@ export const crudPost = async (
 
     if (!post[0]) throw new GraphQLError("Not found or unAuthorized");
 
-    return post[0];
+    return { post: post[0], postPictures: [] };
   }
 };
 export const crudComment = async (
