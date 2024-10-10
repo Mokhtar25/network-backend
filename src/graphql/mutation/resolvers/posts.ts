@@ -1,7 +1,7 @@
 import { GraphQLError } from "graphql";
 import db from "../../../database";
 import { z } from "zod";
-import { posts, comment, like } from "../../../database/schemas";
+import { posts, comment, like, postsPicture } from "../../../database/schemas";
 import { MyContext } from "../../../server";
 import { and, eq } from "drizzle-orm";
 import {
@@ -13,6 +13,7 @@ import {
   addCommentNotifications,
   addLikeNotifications,
 } from "../../notificationsFunctions";
+import { argv0 } from "process";
 
 export const RequestTypeEnum = ["update", "post", "delete"] as const;
 // could have added a var or an enum with every request to check what opreation that is wanted to be done
@@ -42,6 +43,7 @@ export const crudPost = async (
   if (argsMethode.data.type === "post") {
     const makePostArgs = z.object({
       textContent: z.string().min(1),
+      postPictures: z.array(z.string()).optional(),
     });
     const safeArgs = makePostArgs.safeParse(args);
 
@@ -55,7 +57,27 @@ export const crudPost = async (
       })
       .returning();
 
-    return post[0];
+    console.log(safeArgs.data);
+    if (safeArgs.data.postPictures) {
+      const data = await Promise.all(
+        safeArgs.data.postPictures.map(async (e) => {
+          return await db
+            .insert(postsPicture)
+            .values({
+              url: e,
+              postId: post[0].id,
+            })
+            .returning();
+        }),
+      ).then((e) => e.flatMap((e) => e));
+
+      return {
+        post: post[0],
+        postPictures: data,
+      };
+    }
+
+    return { post: post[0], postPictures: [] };
   } else if (argsMethode.data.type === "update") {
     const makePostArgs = z.object({
       textContent: z.string().min(1),

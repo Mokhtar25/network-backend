@@ -5,6 +5,7 @@ import {
   GraphQLID,
   GraphQLInt,
   GraphQLEnumType,
+  GraphQLList,
 } from "graphql";
 import { entities } from "../server";
 import { RequestTypeEnumGraphQl } from "../server";
@@ -114,13 +115,28 @@ export const mutation = new GraphQLObjectType({
       resolve: CrudProfile,
     },
     crudPost: {
-      type: new GraphQLNonNull(entities.types.PostsItem),
+      type: new GraphQLNonNull(
+        new GraphQLObjectType({
+          name: "PostWithPictures",
+          fields: {
+            post: { type: new GraphQLNonNull(entities.types.PostsItem) },
+            postPictures: {
+              type: new GraphQLNonNull(
+                new GraphQLList(entities.types.PostsPictureItem),
+              ),
+            },
+          },
+        }),
+      ),
       args: {
         type: {
           type: new GraphQLNonNull(RequestTypeEnumGraphQl),
         },
         textContent: {
-          type: new GraphQLNonNull(GraphQLString),
+          type: GraphQLString,
+        },
+        postPictures: {
+          type: new GraphQLList(new GraphQLNonNull(GraphQLString)),
         },
         postId: {
           type: GraphQLString,
