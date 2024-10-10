@@ -22,7 +22,7 @@ import { checkPassword } from "../lib/auth/authUtils";
 
 const passportRouter = Router();
 
-const verfiy: VerifyFunction = (username, password, done) => {
+export const verfiy: VerifyFunction = (username, password, done) => {
   db.select()
     .from(users)
     .where(and(eq(users.username, username)))
@@ -115,7 +115,7 @@ const profileValid = z
     emails: z.array(z.string()),
   })
   .passthrough();
-async function findOrMake(profile: passport.Profile) {
+export async function findOrMake(profile: passport.Profile) {
   const userProfile = profileValid.parse(profile);
 
   console.log("find or make start", userProfile);

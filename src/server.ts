@@ -35,7 +35,7 @@ const redisStore = new RedisStore({
   prefix: "myapp:",
 });
 
-const app = express();
+export const app = express();
 
 app.use(rateLimiter);
 

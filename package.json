@@ -29,6 +29,7 @@
     "@apollo/gateway": "^2.9.2",
     "@apollo/server": "^4.11.0",
     "@graphql-tools/schema": "^10.0.6",
+    "@types/supertest": "^6.0.2",
     "@types/ws": "^8.5.12",
     "apollo-server": "^3.13.0",
     "apollo-server-express": "^3.13.0",
@@ -58,6 +59,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.13.0",
     "redis": "^4.7.0",
+    "supertest": "^7.0.0",
     "util": "^0.12.5",
     "ws": "^8.18.0",
     "zod": "^3.23.8"
