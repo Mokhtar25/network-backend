@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import db from "../database";
 import { notifications, posts } from "../database/schemas";
 import { NotificationsSelection } from "../database/schemas/noti";
@@ -13,21 +13,27 @@ const sendNoti = (payload: NotificationsSelection) => {
 
 export const addLikeNotifications = async (userid: number, postId: string) => {
   // you can maybe combine both queries into a one query
-  const userLikeId = await db.select().from(posts).where(eq(posts.id, postId));
+
+  const userLikeId = db
+    .$with("userLikeId")
+    .as(
+      db
+        .select({ userId: posts.userId })
+        .from(posts)
+        .where(eq(posts.id, postId)),
+    );
 
   const returnNot = await db
+    .with(userLikeId)
     .insert(notifications)
     .values({
       type: "like",
       itemID: postId,
-      receiverId: userLikeId[0].userId,
+      receiverId: sql`(select "userId" from "userLikeId")`,
       senderId: userid,
     })
     .returning();
 
-  // do the call here
-
-  console.log("done", userid, postId, returnNot[0]);
   sendNoti(returnNot[0]);
 };
 
@@ -36,14 +42,23 @@ export const addCommentNotifications = async (
   postId: string,
 ) => {
   // you can maybe combine both queries into a one query
-  const userLikeId = await db.select().from(posts).where(eq(posts.id, postId));
+
+  const userLikeId = db
+    .$with("userLikeId")
+    .as(
+      db
+        .select({ userId: posts.userId })
+        .from(posts)
+        .where(eq(posts.id, postId)),
+    );
 
   const returnNot = await db
+    .with(userLikeId)
     .insert(notifications)
     .values({
       type: "commnet",
       itemID: postId,
-      receiverId: userLikeId[0].userId,
+      receiverId: sql`(select "userId" from "userLikeId")`,
       senderId: userid,
     })
     .returning();
