@@ -134,8 +134,8 @@ export async function seedDb(db: NodePgDatabase<schemaType>) {
   }
 
   const seededFollowers = [];
-  for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) {
+  for (let i = 0; i < 2; i++) {
+    for (let j = 0; j < 2; j++) {
       const follower = await db
         .insert(schema.followers)
         .values({
