@@ -1,5 +1,8 @@
 /* eslint-disable */
 // @ts-nocheck
+import { eq } from "drizzle-orm";
+import db from "../../../database";
+import { notifications } from "../../../database/schemas";
 import { server } from "../../../server";
 import { expect, it } from "bun:test";
 
@@ -146,4 +149,22 @@ mutation($type: requestMethod!, $receiverId: Int!, $messageType: MessageType!, $
   console.log(data.body.singleResult);
   expect(data.body.singleResult.errors).toBeDefined();
   expect(data.body.singleResult.data).toBeNull();
+});
+/*
+=========================
+Testing notifications after adding messages
+=============================
+     */
+
+it("notifications are added after sending a messages", async () => {
+  const noti = await db
+    .select()
+    .from(notifications)
+    // the id from above, receiver
+    .where(eq(notifications.receiverId, 2));
+
+  console.log(noti);
+  expect(noti).toBeArray();
+  expect(noti.length > 0).toBeTrue();
+  expect(noti[0].type).toEqual("message");
 });

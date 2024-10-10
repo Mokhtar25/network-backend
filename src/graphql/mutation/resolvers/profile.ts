@@ -3,7 +3,6 @@ import { z } from "zod";
 import { MyContext } from "../../../server";
 import { badContentError } from "./errors";
 import { profile } from "../../../database/schemas";
-import { requestObject } from "./posts";
 
 // move the sending of the pictures to graphql, sign the pictures and
 // and send them with the initial request
@@ -12,9 +11,6 @@ export const CrudProfile = async (
   args: unknown,
   context: MyContext,
 ) => {
-  const request = requestObject.safeParse(args);
-  if (!request.success) return badContentError();
-
   // check when to update and when to add stuff/or make its on the Frontend to send which fields
   //  if you don't provide the field it wont be changed. so that is good and is left to the Frontend
   const argsData = z
@@ -29,6 +25,7 @@ export const CrudProfile = async (
   console.log(safeData.error);
   if (!safeData.success) return badContentError();
 
+  console.log(safeData);
   const data = await db
     .insert(profile)
     .values({
@@ -47,6 +44,6 @@ export const CrudProfile = async (
     })
     .returning();
 
-  console.log(data);
+  console.log(data, "returned -----------");
   return data[0];
 };

@@ -99,13 +99,10 @@ export const mutation = new GraphQLObjectType({
     crudProfile: {
       type: new GraphQLNonNull(entities.types.ProfileItem),
       args: {
-        type: {
-          type: new GraphQLNonNull(RequestTypeEnumGraphQl),
-        },
         bio: {
           type: GraphQLString,
         },
-        backgrondPic: {
+        backgroundPic: {
           type: GraphQLString,
         },
         profilePic: {
