@@ -85,7 +85,7 @@ app.use("/files", fileRouter);
 app.get("/", (_req, res) => {
   res.send("<h2>hello, world</h2>");
 });
-const httpServer = http.createServer(app);
+export const httpServer = http.createServer(app);
 
 export interface MyContext {
   user: Express.User;

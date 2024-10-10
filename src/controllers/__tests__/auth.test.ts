@@ -1,5 +1,5 @@
 import supertest from "supertest";
-import { it, describe, expect } from "bun:test";
+import { it, describe } from "bun:test";
 
 import { app } from "../../server";
 
