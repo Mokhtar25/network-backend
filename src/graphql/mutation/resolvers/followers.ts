@@ -1,6 +1,7 @@
 import db from "../../../database";
 import { z } from "zod";
-import { MyContext } from "../../../server";
+
+import type { MyContext } from "../../../types/context";
 import { badContentError } from "./errors";
 import { followers } from "../../../database/schemas";
 import { requestObject } from "./posts";

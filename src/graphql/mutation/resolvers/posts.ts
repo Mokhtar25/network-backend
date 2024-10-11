@@ -2,7 +2,7 @@ import { GraphQLError } from "graphql";
 import db from "../../../database";
 import { z } from "zod";
 import { posts, comment, like, postsPicture } from "../../../database/schemas";
-import { MyContext } from "../../../server";
+import type { MyContext } from "../../../types/context";
 import { and, eq } from "drizzle-orm";
 import {
   updatePostCommentCount,

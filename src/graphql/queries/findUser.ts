@@ -9,7 +9,7 @@ import {
 import { entities } from "../server";
 import db from "../../database";
 import { users } from "../../database/schemas";
-import type { MyContext } from "../../server";
+import type { MyContext } from "../../types/context";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 

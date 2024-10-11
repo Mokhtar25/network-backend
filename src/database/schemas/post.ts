@@ -1,12 +1,5 @@
 import { createTable } from "../schema";
-import {
-  uuid,
-  serial,
-  text,
-  integer,
-  timestamp,
-  pgEnum,
-} from "drizzle-orm/pg-core";
+import { uuid, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { users } from "./users";

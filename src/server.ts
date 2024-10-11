@@ -1,78 +1,46 @@
 //import "dotenv/config"; only needed in node
+//libs
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
-
 import session from "express-session";
 import { ApolloServer } from "@apollo/server";
-import RedisStore from "connect-redis";
-import { createClient } from "redis";
 import cors from "cors";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "http";
-
-import passportRouter from "./config/passport";
-import { schema } from "./graphql";
-import env from "../env";
-import { GraphQLError } from "graphql";
 import helmet from "helmet";
+
+import env from "../env";
+import { schema } from "./graphql";
+import type { MyContext } from "./types/context";
+
 // routes
+import passportRouter from "./config/passport";
 import fileRouter from "./controllers/fileManger";
 import { routesAuth } from "./controllers/auth";
 
 // web sockets
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
+
+//configs
 import { socketConfig } from "./config/sockets";
 import { rateLimiter } from "./config/rateLimit";
 import { helmetConfig } from "./config/helmet";
-
-const redisClient = createClient();
-redisClient.connect().catch(console.error);
-
-const redisStore = new RedisStore({
-  client: redisClient,
-  prefix: "myapp:",
-});
+import { redisStore, sessionConfig } from "./config/session";
+import { makeGraphqlContext } from "./lib/graphql/utils";
 
 export const app = express();
 
 app.use(rateLimiter);
-
 app.use(helmet(helmetConfig));
-
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  }),
-);
+app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(
-  session({
-    secret: env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    store: redisStore,
-    cookie: {
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24,
-      secure: env.NODE_ENV === "production",
-      sameSite: "lax",
-    },
-  }),
-);
-
-// passport config
+app.use(session(sessionConfig));
 app.use(passportRouter);
 
-const loger = (
-  req: Express.Request,
-  _: Express.Response,
-  next: NextFunction,
-) => {
+const loger = (req: Request, _: Response, next: NextFunction) => {
   console.log(req.user, "---req");
   next();
 };
@@ -83,14 +51,11 @@ app.use("/auth", routesAuth);
 app.use("/files", fileRouter);
 
 app.get("/", (_req, res) => {
-  res.send("<h2>hello, world</h2>");
+  res.send(200);
 });
+
 export const httpServer = http.createServer(app);
 
-export interface MyContext {
-  user: Express.User;
-  isAuthenticated: () => boolean;
-}
 const wsServer = new WebSocketServer({
   server: httpServer,
   path: "/graphql",
@@ -132,22 +97,7 @@ app.use(
   "/graphql",
   express.json(),
   expressMiddleware(server, {
-    // apollo context requires a promise
-    // eslint-disable-next-line
-    context: async ({ req }) => {
-      if (!req.isAuthenticated()) {
-        throw new GraphQLError("User is not authenticated", {
-          extensions: {
-            code: "UNAUTHENTICATED",
-            http: { status: 401 },
-          },
-        });
-      }
-      return {
-        user: req.user,
-        isAuthenticated: () => req.isAuthenticated(),
-      };
-    },
+    context: makeGraphqlContext,
   }),
 );
 // TODO more logic goes in here to identify error

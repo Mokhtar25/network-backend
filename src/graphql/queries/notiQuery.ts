@@ -1,7 +1,7 @@
 import { GraphQLList } from "graphql";
 import { notifications } from "../../database/schemas";
 import { entities } from "../server";
-import type { MyContext } from "../../server";
+import { MyContext } from "../../types/context";
 import db from "../../database";
 import { eq } from "drizzle-orm";
 

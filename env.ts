@@ -24,6 +24,8 @@ const envSchema = z.object({
   TESTING_DATABASE_URI: z.string().url(),
   SESSION_SECRET: z.string().min(25, { message: "Secret should be lengthy" }),
 
+  CORS_ORIGIN: z.string().url(),
+
   CLOUD_API_SECRET: z.string().min(1),
   CLOUD_NAME: z.string().min(1),
   CLOUD_API_KEY: z.string().min(1),

@@ -1,9 +1,9 @@
 import { GraphQLList, GraphQLObjectType, GraphQLResolveInfo } from "graphql";
 import { posts } from "../../database/schemas";
 import { entities } from "../server";
-import type { MyContext } from "../../server";
 import db from "../../database";
 import { parseResolveInfo } from "graphql-parse-resolve-info";
+import { MyContext } from "../../types/context";
 
 const queryName = "posts_testing";
 // this has n + 1 problem and need to be fixed
