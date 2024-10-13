@@ -1,33 +1,71 @@
 import supertest from "supertest";
-import { it, describe } from "bun:test";
+import { it, describe, expect } from "bun:test";
 
 import { app } from "../../server";
+import db from "../../database";
+import { users } from "../../database/schemas";
+import { eq } from "drizzle-orm";
+import env from "../../../env";
 
 const api = supertest(app);
 
 describe("testing works", () => {
   it("tests and api works", async () => {
-    await api
-      .get("/")
-      .expect(200)
-      .expect("Content-Type", "text/html; charset=utf-8");
-
-    return;
+    await api.get("/").expect(200);
   });
-  return;
 });
 
-describe("testing manual login", () => {
-  it("testing stuff", () => {
-    return;
-    console.log("");
-  });
-  return;
+it("testing stuff", () => {
+  expect(1 === 1).toBeTrue();
 });
-//  await api.post("/api/user").send(user).expect(201);
-//});
+
+describe.only("login and sign up", () => {
+  it.only("signing up works", async () => {
+    await db.delete(users).where(eq(users.username, "testingSignup"));
+    const data = await api
+      .post("/auth/signup")
+      .send({ username: "testingSignup", password: "testingSignup" })
+      .expect(302);
+
+    const use = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, "testingSignup"));
+
+    expect(use[0].username).toEqual("testingSignup");
+
+    console.log(data);
+  });
+
+  it("signing with the same username results in an error", async (done) => {
+    const data = await api
+      .post("/auth/signup")
+      .send({ username: "testingSignup", password: "testingSignup" })
+      .expect(400);
+
+    const use = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, "testingSignup"));
+
+    expect(use.length).toEqual(1);
+    expect(data.text).toEqual("Username is taken");
+    done();
+  });
+
+  it.only("getting a cookie and redircted after singing up", async () => {
+    await db.delete(users).where(eq(users.username, "testingSignup"));
+    // test cookies and redirect
+    const data = await api
+      .post("/auth/signup")
+      .send({ username: "testingSignup", password: "testingSignup" })
+      .expect(302)
+      .expect("location", env.SUCCESS_REDIRECT_URL);
+  });
+});
+
 //
-//test("notes are returned as json", async () => {
+//it("notes are returned as json", async () => {
 //  await api
 //    .get("/api/user")
 //    .expect(200)

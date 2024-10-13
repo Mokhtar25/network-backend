@@ -51,7 +51,7 @@ app.use("/auth", routesAuth);
 app.use("/files", fileRouter);
 
 app.get("/", (_req, res) => {
-  res.send(200);
+  res.sendStatus(200);
 });
 
 export const httpServer = http.createServer(app);

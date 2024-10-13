@@ -42,6 +42,7 @@ routesAuth.get(
 
 routesAuth.post("/signUp", (async (req, res, next) => {
   try {
+    console.log(req.body, "sda-------====");
     const type = z.object({
       username: z.string().min(1),
       password: z.string().min(1),
@@ -62,7 +63,7 @@ routesAuth.post("/signUp", (async (req, res, next) => {
 
       req.login(user[0], (err) => {
         if (err) return next(err);
-        return res.redirect("pro");
+        return res.redirect(env.SUCCESS_REDIRECT_URL);
       });
       return;
     } catch (err) {
