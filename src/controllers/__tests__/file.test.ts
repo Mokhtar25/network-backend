@@ -37,10 +37,10 @@ describe("you can get a signed url", () => {
       .post("/files/getsignurl")
       .set("Cookie", cookie)
       .send({ fileName: "" })
-      .expect(401);
+      .expect(400);
   });
 
   it("you cant get singedurl if not authed ", async () => {
-    await api.post("/files/getsignurl").send({ fileName: "hello" }).expect(400);
+    await api.post("/files/getsignurl").send({ fileName: "hello" }).expect(401);
   });
 });

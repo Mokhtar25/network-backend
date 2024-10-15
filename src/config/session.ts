@@ -3,7 +3,7 @@ import RedisStore from "connect-redis";
 import { createClient } from "redis";
 import type { SessionOptions } from "express-session";
 
-const redisClient = createClient();
+const redisClient = createClient({ url: env.REDIS_URI });
 redisClient.connect().catch(console.error);
 
 export const redisStore = new RedisStore({
