@@ -34,7 +34,10 @@ export const app = express();
 
 app.use(rateLimiter);
 app.use(helmet(helmetConfig));
-app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+
+if (env.NODE_ENV === "production")
+  app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session(sessionConfig));
