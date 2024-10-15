@@ -7,6 +7,39 @@ on:
     pull_request:
       branches: [main]
       types: [opened, synchronize]
+
+
+env:
+  
+  PORT : 4000
+  GithubClientID  :  nfasjaskjd
+  GithubClientSecret  :  sdlkdasjlkads
+
+  GoogleClientID  : dsasdadsajn
+  GoogleClientSecret :  notneededfortest
+
+  SESSION_SECRET  :  klsadnjfan@)!)@LSAMnfwaaskd---019-23
+
+  CALLBACK_GITHUB_PREFIX : github/callback
+  CALLBACK_GOOGLE_PREFIX : google
+
+  CALLBACK_URL_GITHUB : http://localhost:4000/auth/github/callback
+  CALLBACK_URL_GOOGLE : http://localhost:4000/auth/google
+
+  DATABASE_URI : ${{ secrets.DATABASE_URI }}
+
+  TESTING_DATABASE_URI : ${{ secrets.DATABASE_URI }}
+
+  CORS_ORIGIN :  http://localhost:5173
+
+  CLOUD_API_SECRET : ${{ secrets.CLOUD_API_SECRET }}
+ 
+  CLOUD_NAME  :  ${{ secrets.CLOUD_NAME }}
+  CLOUD_API_KEY  :  ${{ secrets.CLOUD_API_KEY }}
+
+  SUCCESS_REDIRECT_URL  : http://localhost:4000/auth/pro 
+  FAILED_REDIRECT_URL  : http://localhost:4000/auth/login
+
 jobs:
   simple_deployment_pipeline:
     if: ${{ github.event_name == 'push' }}
@@ -20,6 +53,7 @@ jobs:
         run: bun install
       - name: Check style
         run: bun run eslint
+      - name: Check env
+        run: echo $CLOUD_NAME; echo $CORS_ORIGIN
       - name:  tests
         run: bun run test
-
