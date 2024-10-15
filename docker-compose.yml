@@ -1,0 +1,12 @@
+services:
+  app:   
+    image: server
+    secrets:
+      - .env
+    build: .
+    ports:
+      - 4000:4000
+
+secrets:
+  .env:
+    file: ./.env
