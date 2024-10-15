@@ -3,10 +3,10 @@ import { Request, Response } from "express";
 import { NextFunction, RequestHandler, Router } from "express";
 import env from "../../env";
 import { z } from "zod";
-import db from "../database";
-import { postsPicture, posts } from "../database/schemas";
-import { and, eq, sql } from "drizzle-orm";
-
+//import db from "../database";
+//import { postsPicture, posts } from "../database/schemas";
+//import { and, eq, sql } from "drizzle-orm";
+//
 const fileRouter = Router();
 
 cloudinary.config({
@@ -23,47 +23,6 @@ function auth(req: Request, res: Response, next: NextFunction) {
   next();
 }
 fileRouter.use(auth);
-
-// do this with help of the frontend
-fileRouter.post("/addpics", (async (req, res) => {
-  const validData = z.object({
-    postId: z.string().uuid(),
-    pictures: z.array(z.string()).min(1),
-  });
-  const safeArgs = validData.safeParse(req.body);
-  if (!safeArgs.success || !req.user)
-    return res.send("bad content").status(400);
-
-  // this is for security reasons
-  const subQ = db.$with("subQ").as(
-    db
-      .select({ id: posts.id })
-      .from(posts)
-      .where(
-        and(eq(posts.id, safeArgs.data.postId), eq(posts.userId, req.user.id)),
-      ),
-  );
-
-  try {
-    await Promise.all(
-      safeArgs.data.pictures.map(async (e) => {
-        const data = await db
-          .with(subQ)
-          .insert(postsPicture)
-          .values({
-            postId: sql`(select "id" from "subQ")`,
-            url: e,
-          });
-        console.log(data);
-      }),
-    );
-
-    return res.status(200);
-  } catch (err) {
-    console.log(err);
-    return res.send("Unauthorized for this action").status(401);
-  }
-}) as RequestHandler);
 
 fileRouter.post("/getSignUrl", (req, res) => {
   if (!req.isAuthenticated()) return res.send("unAuth");
@@ -84,13 +43,50 @@ fileRouter.post("/getSignUrl", (req, res) => {
     env.CLOUD_API_SECRET,
   );
 
-  console.log(
-    cloudinary.utils.verifyNotificationSignature(name, timestamp, signature),
-    "test verfity func",
-  );
   return res.json({ timestamp, signature, fileName: name });
 });
 
+// do this with help of the frontend
+//fileRouter.post("/addpics", (async (req, res) => {
+//  const validData = z.object({
+//    postId: z.string().uuid(),
+//    pictures: z.array(z.string()).min(1),
+//  });
+//  const safeArgs = validData.safeParse(req.body);
+//  if (!safeArgs.success || !req.user)
+//    return res.send("bad content").status(400);
+//
+//  // this is for security reasons
+//  const subQ = db.$with("subQ").as(
+//    db
+//      .select({ id: posts.id })
+//      .from(posts)
+//      .where(
+//        and(eq(posts.id, safeArgs.data.postId), eq(posts.userId, req.user.id)),
+//      ),
+//  );
+//
+//  try {
+//    await Promise.all(
+//      safeArgs.data.pictures.map(async (e) => {
+//        const data = await db
+//          .with(subQ)
+//          .insert(postsPicture)
+//          .values({
+//            postId: sql`(select "id" from "subQ")`,
+//            url: e,
+//          });
+//        console.log(data);
+//      }),
+//    );
+//
+//    return res.status(200);
+//  } catch (err) {
+//    console.log(err);
+//    return res.send("Unauthorized for this action").status(401);
+//  }
+//}) as RequestHandler);
+//
 export default fileRouter;
 
 /// client side

@@ -19,7 +19,6 @@ routesAuth.post(
   }) as RequestHandler,
   (_req, res) => {
     res.json(_req.user);
-    console.log("da");
   },
 );
 

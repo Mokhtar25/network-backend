@@ -7,7 +7,7 @@ import { ApolloServer } from "@apollo/server";
 import cors from "cors";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import http from "http";
+import http from "node:http";
 import helmet from "helmet";
 
 import env from "../env";

@@ -15,12 +15,8 @@ describe("testing works", () => {
   });
 });
 
-it("testing stuff", () => {
-  expect(1 === 1).toBeTrue();
-});
-
-describe.only("login and sign up", () => {
-  it.only("signing up works", async () => {
+describe("login and sign up", () => {
+  it("signing up works", async () => {
     await db.delete(users).where(eq(users.username, "testingSignup"));
     const data = await api
       .post("/auth/signup")
@@ -53,7 +49,18 @@ describe.only("login and sign up", () => {
     done();
   });
 
-  it.only("getting a cookie and redircted after singing up", async () => {
+  it("signing with invalid data gives error", async (done) => {
+    const data = await api
+      .post("/auth/signup")
+      .send({ username: "2", password: "" })
+      .expect(400);
+
+    expect(data.text).toEqual("Invalid data");
+    done();
+  });
+
+  let cookie: string;
+  it("getting a cookie and redircted after singing up", async () => {
     await db.delete(users).where(eq(users.username, "testingSignup"));
     // test cookies and redirect
     const data = await api
@@ -61,43 +68,20 @@ describe.only("login and sign up", () => {
       .send({ username: "testingSignup", password: "testingSignup" })
       .expect(302)
       .expect("location", env.SUCCESS_REDIRECT_URL);
+    console.log(data.body);
+    expect(data.headers["set-cookie"][0]).toMatch(/^connect.sid=s%/);
+    cookie = data.headers["set-cookie"][0];
+  });
+
+  it("singing with cookie", async () => {
+    const data = await api.get("/auth/me").set("Cookie", cookie).expect(200);
+    expect(data.body).toBeNumber();
+  });
+
+  it("singing with information", async () => {
+    await api
+      .post("/auth/login")
+      .send({ username: "test1", password: "test" })
+      .expect(302);
   });
 });
-
-//
-//it("notes are returned as json", async () => {
-//  await api
-//    .get("/api/user")
-//    .expect(200)
-//    .expect("Content-Type", /application\/json/);
-//});
-//
-//test("two users in database", async () => {
-//  const users = await api
-//    .get("/api/user")
-//    .expect(200)
-//    .expect("Content-Type", /application\/json/);
-//  assert.strictEqual(users.body.length, initUsers.length);
-//});
-//
-//test("creating a valid user", async () => {
-//  const user = {
-//    name: "hani",
-//    username: "hani12",
-//    password: "123456",
-//  };
-//
-//  const res = await api.post("/api/user").send(user).expect(201);
-//
-//  const users = await usersInDb();
-//
-//  assert.strictEqual(users.length, initUsers.length + 1);
-//  assert.strictEqual(res.body.name.includes("hani"), true);
-//});
-//
-//test("creating a invalid users", async () => {
-//  const user = {
-//    name: "hani",
-//    password: "123456",
-//  };
-//

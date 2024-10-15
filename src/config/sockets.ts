@@ -32,9 +32,12 @@ export const socketConfig = async (
       );
       if (!singedCookie) throw new Error("couldnt sign cookie");
 
-      // eslint-disable-next-line
+      // i didnt find any workaround the eslint rule that works
+      //eslint-disable-next-line
       store.get = util.promisify(store.get);
+
       const session = await store.get(singedCookie);
+
       const obj = z.object({
         passport: z.object({
           user: z.number(),

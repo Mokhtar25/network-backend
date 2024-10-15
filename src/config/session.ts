@@ -11,6 +11,8 @@ export const redisStore = new RedisStore({
   prefix: "myapp:",
 });
 
+const cookieAgeInDays = 7;
+
 export const sessionConfig: SessionOptions = {
   secret: env.SESSION_SECRET,
   resave: false,
@@ -18,7 +20,7 @@ export const sessionConfig: SessionOptions = {
   store: redisStore,
   cookie: {
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24,
+    maxAge: 1000 * 60 * 60 * 24 * cookieAgeInDays,
     secure: env.NODE_ENV === "production",
     sameSite: "lax",
   },
