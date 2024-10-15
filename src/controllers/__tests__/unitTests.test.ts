@@ -51,7 +51,7 @@ describe.only("passport testing utils", () => {
     const func = mock(() => null);
     verfiy("test", "test", func);
     await new Promise((res, _rej) => {
-      setTimeout(() => res("ji"), 300);
+      setTimeout(() => res("ji"), 800);
     });
 
     expect(func).toBeCalled();

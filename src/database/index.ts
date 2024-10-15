@@ -9,6 +9,6 @@ export const pool = new Pool({
     env.NODE_ENV === "test" ? env.TESTING_DATABASE_URI : env.DATABASE_URI,
 });
 
-const db = drizzle(pool, { schema, logger: true });
+const db = drizzle(pool, { schema, logger: env.NODE_ENV !== "test" });
 
 export default db;
