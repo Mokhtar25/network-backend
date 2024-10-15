@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import { Request, Response } from "express";
-import { NextFunction, RequestHandler, Router } from "express";
+import { NextFunction, Router } from "express";
 import env from "../../env";
 import { z } from "zod";
 //import db from "../database";
