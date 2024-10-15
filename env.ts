@@ -19,6 +19,8 @@ const envSchema = z.object({
   SUCCESS_REDIRECT_URL: z.string().url(),
   FAILED_REDIRECT_URL: z.string().url(),
 
+  REDIS_URI: z.string(),
+
   DATABASE_URI: z.string().url(),
 
   TESTING_DATABASE_URI: z.string().url(),
