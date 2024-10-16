@@ -40,7 +40,11 @@ describe("you can get a signed url", () => {
       .expect(400);
   });
 
-  it("you cant get singedurl if not authed ", async () => {
-    await api.post("/files/getsignurl").send({ fileName: "hello" }).expect(401);
+  it("you cant get singedurl if not authed ", (done) => {
+    api
+      .post("/files/getsignurl")
+      .send({ fileName: "hello" })
+      .expect(401)
+      .then(() => done());
   });
 });
