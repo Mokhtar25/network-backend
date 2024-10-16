@@ -33,7 +33,6 @@ env:
   CORS_ORIGIN :  http://localhost:5173
 
   CLOUD_API_SECRET : ${{ secrets.CLOUD_API_SECRET }}
- 
   CLOUD_NAME  :  ${{ secrets.CLOUD_NAME }}
   CLOUD_API_KEY  :  ${{ secrets.CLOUD_API_KEY }}
 
@@ -49,8 +48,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - name: Install dependencies
-        run: bun install
-      - name: Check style
+        run: bun install --frozen-lockfile
+      - name: Check lint
         run: bun run eslint
       - name: Check env
         run: echo $CLOUD_NAME

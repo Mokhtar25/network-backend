@@ -4,7 +4,7 @@ import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { ApolloServer } from "@apollo/server";
-import cors from "cors";
+//import cors from "cors";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "node:http";
@@ -35,9 +35,9 @@ export const app = express();
 app.use(rateLimiter);
 app.use(helmet(helmetConfig));
 
-if (env.NODE_ENV === "production")
-  app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
-
+//if (env.NODE_ENV === "production")
+//  app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+//
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session(sessionConfig));
