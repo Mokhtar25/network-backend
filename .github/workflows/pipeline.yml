@@ -44,6 +44,7 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     environment: testing 
     runs-on: ubuntu-20.04
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
