@@ -5,7 +5,11 @@ import { it, describe, expect } from "bun:test";
 
 import { app } from "../../server";
 
-const api = supertest(app);
+//const api = supertest(app);
+
+const api = supertest.agent(app);
+
+api.set("timeout", 20000);
 
 describe("you can get a signed url", () => {
   it("you can get a singed url", async () => {
@@ -41,7 +45,8 @@ describe("you can get a signed url", () => {
   });
 
   it("you cant get singedurl if not authed ", (done) => {
-    api
+    supertest
+      .agent(app)
       .post("/files/getsignurl")
       .send({ fileName: "hello" })
       .expect(401)
