@@ -8,5 +8,5 @@ RUN bun install
 
 USER bun
 
-CMD ["bun" ,"run" ,"dev", ";", "ls", "cat .env"]
+CMD ["bun" ,"run" ,"test"]
 

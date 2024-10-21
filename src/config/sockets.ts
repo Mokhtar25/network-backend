@@ -51,7 +51,7 @@ export const socketConfig = async (
     }
     return type === "context" ? { user: null } : false;
   } catch (err) {
-    console.log(err, "error parsing or getting cookie");
+    console.log(err, "error parsing or no cookie");
     return type === "context" ? { user: null } : false;
   }
 };

@@ -24,7 +24,6 @@ export const subs = new GraphQLObjectType({
       subscribe: withFilter(
         () => pubsub.asyncIterator("notifications"),
         (payload: notificationsPayload, _variables, context: SocketContext) => {
-          console.log(payload);
           if (payload.notifications.receiverId === context.user) return true;
           return false;
         },
