@@ -1,5 +1,5 @@
 import supertest from "supertest";
-import { it, describe, expect } from "bun:test";
+import { it, describe, expect, afterAll } from "bun:test";
 
 import { app } from "../../server";
 import db from "../../database";
@@ -9,16 +9,25 @@ import env from "../../../env";
 
 const api = supertest(app);
 
+const sa = app.listen(4000);
+afterAll(() => {
+  sa.close();
+});
+
 describe("testing works", () => {
   it("tests and api works", async () => {
     await api.get("/").timeout(10000).expect(200);
+  });
+
+  it("tests and api works", async () => {
+    await fetch("http://127.0.0.1:4000/").then((sa) => console.log(sa));
   });
 });
 
 describe("login and sign up", () => {
   it("signing up works", async () => {
     await db.delete(users).where(eq(users.username, "testingSignup"));
-    const data = await api
+    await api
       .post("/auth/signup")
       .timeout(10000)
       .send({ username: "testingSignup", password: "testingSignup" })
@@ -30,8 +39,6 @@ describe("login and sign up", () => {
       .where(eq(users.username, "testingSignup"));
 
     expect(use[0].username).toEqual("testingSignup");
-
-    console.log(data);
   });
 
   it("signing with the same username results in an error", async (done) => {
@@ -69,7 +76,6 @@ describe("login and sign up", () => {
       .send({ username: "testingSignup", password: "testingSignup" })
       .expect(302)
       .expect("location", env.SUCCESS_REDIRECT_URL);
-    console.log(data.body);
     expect(data.headers["set-cookie"][0]).toMatch(/^connect.sid=s%/);
     cookie = data.headers["set-cookie"][0];
   });
