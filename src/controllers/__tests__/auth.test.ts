@@ -11,7 +11,7 @@ const api = supertest(app);
 
 describe("testing works", () => {
   it("tests and api works", async () => {
-    await api.get("/").expect(200);
+    await api.get("/").timeout(10000).expect(200);
   });
 });
 
@@ -20,6 +20,7 @@ describe("login and sign up", () => {
     await db.delete(users).where(eq(users.username, "testingSignup"));
     const data = await api
       .post("/auth/signup")
+      .timeout(10000)
       .send({ username: "testingSignup", password: "testingSignup" })
       .expect(302);
 
