@@ -51,7 +51,6 @@ const start = new LocalStrategy(verfiy);
 passport.use(start);
 
 passport.serializeUser((user, done) => {
-  console.log("run");
   done(null, user.id);
 });
 
@@ -166,7 +165,7 @@ passport.use(
       const headers = new Headers();
       headers.set("Authorization", "Bearer " + token);
 
-      fetch(`https://api.github.com/user/emails`, {
+       fetch(`https://api.github.com/user/emails`, {
         method: "get",
         headers: headers,
       })

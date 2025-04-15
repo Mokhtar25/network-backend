@@ -4,6 +4,10 @@ use signed urls from the server and from the client make the uploading. use supe
 // add file uploads using mullet 
 and express. superbase
 
+commands to run with docker
+docker run -d --name redis-container -p 6379:6379 redis
+docker run -d --name postgres-container -e POSTGRES_PASSWORD=200106 -p 5432:5432 postgres
+
 sockets
 implement using subscriptions in graphql
 // create one for messaging and chat rooms and other for notifications like likes and comments

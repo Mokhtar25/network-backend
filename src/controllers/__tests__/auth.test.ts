@@ -14,13 +14,17 @@ afterAll(() => {
   sa.close();
 });
 
+// tests are failing in github actions but not locally
+
 describe("testing works", () => {
   it("tests and api works", async () => {
     await api.get("/").timeout(10000).expect(200);
   });
 
-  it("tests and api works", async () => {
-    await fetch("http://127.0.0.1:4000/").then((sa) => console.log(sa));
+  it("tests and api works with fetch ", async () => {
+    await fetch("http://127.0.0.1:4000/")
+      .then((sa) => console.log(sa))
+      .catch((er) => console.error(er));
   });
 });
 

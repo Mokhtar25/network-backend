@@ -7,12 +7,13 @@ import {
   serial,
   text,
   timestamp,
+  index
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { users } from "./users";
 
 export const notificationsEnum = pgEnum("type", [
-  "commnet",
+  "commet",
   "follow",
   "like",
   "message",
@@ -35,7 +36,14 @@ export const notifications = createTable("notifications", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-});
+},(table)=>{
+    return {
+      receiverIndex: index("notifications_receiver_idx").on(table.receiverId),
+      readIndex: index("notifications_read_idx").on(table.read),
+      createdAtIndex: index("notifications_created_at_idx").on(table.createdAt),
+    };
+} );
+
 
 export type NotificationsInsert = typeof notifications.$inferInsert;
 export type NotificationsSelection = typeof notifications.$inferSelect;

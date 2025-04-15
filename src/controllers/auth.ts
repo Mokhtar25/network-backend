@@ -135,7 +135,7 @@ routesAuth.get("/pro", (req, res) => {
   if (req.isAuthenticated())
     return res.send(
       '<h1 style="background-color : black; color : white; height: 100vh;">authenticated<h1>',
-    );
+    ).contentType("html");
   return res.send("not authenticated");
 });
 
